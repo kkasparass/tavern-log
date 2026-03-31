@@ -1,0 +1,101 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+}
+
+model Character {
+  id           String          @id @default(cuid())
+  slug         String          @unique
+  name         String
+  system       String
+  campaign     String?
+  status       CharacterStatus @default(ACTIVE)
+  bio          String?
+  personality  String?
+  thumbnailUrl String?
+  isPublic     Boolean         @default(true)
+  theme        Json            @default("{}")
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  tags       CharacterTag[]
+  stories    Story[]
+  voiceLines VoiceLine[]
+  artworks   Artwork[]
+  timeline   TimelineEvent[]
+}
+
+enum CharacterStatus {
+  ACTIVE
+  RETIRED
+  DECEASED
+}
+
+model CharacterTag {
+  id          String    @id @default(cuid())
+  character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  characterId String
+  tag         String
+
+  @@unique([characterId, tag])
+}
+
+model Story {
+  id          String    @id @default(cuid())
+  character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  characterId String
+  title       String
+  slug        String
+  content     String
+  isDraft     Boolean   @default(true)
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([characterId, slug])
+}
+
+model VoiceLine {
+  id          String    @id @default(cuid())
+  character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  characterId String
+  audioUrl    String
+  transcript  String
+  context     String?
+  order       Int       @default(0)
+  createdAt   DateTime  @default(now())
+}
+
+model Artwork {
+  id           String    @id @default(cuid())
+  character    Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  characterId  String
+  imageUrl     String
+  title        String?
+  caption      String?
+  artistCredit String?
+  order        Int       @default(0)
+  createdAt    DateTime  @default(now())
+}
+
+model TimelineEvent {
+  id          String    @id @default(cuid())
+  character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  characterId String
+  title       String
+  description String?
+  dateLabel   String?
+  order       Int       @default(0)
+  createdAt   DateTime  @default(now())
+}
