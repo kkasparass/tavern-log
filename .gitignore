@@ -1,0 +1,30 @@
+# Claude Code — machine-specific settings
+.claude/settings.local.json
+
+# Dependencies
+node_modules/
+
+# Environment files — keep .env.example, ignore real secrets
+.env
+.env.local
+.env.*.local
+
+# Next.js
+apps/web/.next/
+apps/web/out/
+
+# Build output
+dist/
+build/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
