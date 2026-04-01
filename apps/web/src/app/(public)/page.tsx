@@ -1,5 +1,15 @@
+import type { Metadata } from 'next'
 import { QueryClient, dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { CharacterGrid } from '@/components/character/CharacterGrid'
+
+export const metadata: Metadata = {
+  title: 'Tavern Log',
+  description: 'A personal archive of TTRPG characters.',
+  openGraph: {
+    title: 'Tavern Log',
+    description: 'A personal archive of TTRPG characters.',
+  },
+}
 
 export default async function HomePage() {
   const queryClient = new QueryClient()
