@@ -32,6 +32,22 @@ export async function characterRoutes(app: FastifyInstance) {
     },
   );
 
+  app.get<{ Params: { slug: string; storySlug: string } }>(
+    "/:slug/stories/:storySlug",
+    async (request, reply) => {
+      const { slug, storySlug } = request.params
+      const story = await prisma.story.findFirst({
+        where: {
+          slug: storySlug,
+          isDraft: false,
+          character: { slug, isPublic: true },
+        },
+      })
+      if (!story) return reply.code(404).send({ error: "Story not found" })
+      return story
+    }
+  )
+
   app.get<{ Params: { slug: string } }>("/:slug", async (request, reply) => {
     const { slug } = request.params;
 

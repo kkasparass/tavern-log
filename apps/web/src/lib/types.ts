@@ -12,6 +12,17 @@ export type CharacterTheme = {
   transition?: string
 }
 
+export type StoryEntry = {
+  id: string
+  slug: string
+  title: string
+  content: string
+  isDraft: boolean
+  publishedAt: string | null
+  createdAt: string
+  updatedAt: string
+}
+
 export type CharacterStory = {
   id: string
   slug: string
