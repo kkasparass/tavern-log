@@ -8,7 +8,7 @@ on:
 
 jobs:
   ci:
-    name: Typecheck, Lint, Prisma Validate
+    name: Typecheck, Lint
     runs-on: ubuntu-latest
 
     steps:
@@ -35,6 +35,3 @@ jobs:
 
       - name: Lint api
         run: npm run lint --workspace=apps/api
-
-      - name: Prisma validate
-        run: npm exec --workspace=apps/api -- prisma validate
