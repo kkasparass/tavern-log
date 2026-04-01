@@ -240,8 +240,37 @@ Key model notes:
 
 ---
 
+## Testing
+
+Both apps use **Vitest**. No database needed — tests run fully offline.
+
+### Running tests
+
+```bash
+npm test --workspace=apps/api    # 6 route tests
+npm test --workspace=apps/web    # 3 component tests
+```
+
+### `apps/api` — route integration tests
+- Uses Fastify `app.inject()` — no real server or network
+- Prisma is mocked via `vi.mock('../lib/prisma')` — no database connection
+- Fixtures in `src/test/fixtures.ts` are typed with `Prisma.CharacterGetPayload<...>` to match exact route query shapes — no `as any`
+
+### `apps/web` — component tests
+- jsdom environment, React Testing Library
+- `next/link` and `next/image` are mocked in test files — standard pattern for Next.js components
+- Fixtures in `src/test/fixtures.ts` are typed with `Character` / `StoryEntry` from `@/lib/types`
+
+### Shared fixture data
+Both apps have their own `src/test/fixtures.ts` built from Mira Ashveil's seed data (`apps/api/prisma/seed.ts`). They are separate files with different type systems (Prisma types vs API response types) — **keep them in sync when the seed changes**.
+
+### No `as any` in tests
+Fixture types must be derived from the actual types used by the code under test (`Prisma.CharacterGetPayload<...>` for API, `Character`/`StoryEntry` for web). Never cast fixture data with `as any`.
+
+---
+
 ## Current Milestone
 
-**Milestone 1 — Scaffolding.** See `C:\Vault\Henc\obsidian\Projects\Tavern Log\Sprint.md` for active tasks.
+**Milestone 2 — Public Character Pages.** See `$OBSIDIAN_VAULT/Projects/Tavern Log/Sprint.md` for active tasks.
 
-Goal: monorepo foundation, both apps scaffolded, Docker Postgres, Prisma schema + seed, CI passing. No UI or routes yet.
+Goal: Fastify character routes, TanStack Query setup, landing page, per-character themed profile pages, all content tabs, OpenGraph metadata, and testing infrastructure.
