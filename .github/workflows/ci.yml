@@ -13,10 +13,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '20'
           cache: 'npm'
@@ -37,4 +37,4 @@ jobs:
         run: npm run lint --workspace=apps/api
 
       - name: Prisma validate
-        run: npx prisma validate --schema=apps/api/prisma/schema.prisma
+        run: npm exec --workspace=apps/api -- prisma validate
