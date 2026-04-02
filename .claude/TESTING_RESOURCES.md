@@ -127,10 +127,10 @@ mockUsePathname.mockReturnValue('/characters/mira-ashveil')
 | Export | Type | Description |
 |---|---|---|
 | `mockCharacter` | `Character` | Mira — full detail, use for `['character', 'mira-ashveil']` cache |
-| `mockCharacterListItem` | `{ id, slug, name, system, thumbnailUrl, tags }` | Mira — slim list item, use for `['characters']` cache |
+| `mockCharacterListItem` | `CharacterPreview` | Mira — slim list item, use for `['characters']` or `['admin-characters']` cache |
 | `mockStory` | `StoryEntry` | Mira's published story (`isDraft: false`), slug `the-last-spell` |
 | `naraCharacter` | `Character` | Nara Solis — Blades in the Dark, full detail, use for `['character', 'nara-solis']` cache |
-| `naraCharacterListItem` | `{ id, slug, name, system, thumbnailUrl, tags }` | Nara — slim list item; different system/tags from Mira, use for filter tests |
+| `naraCharacterListItem` | `CharacterPreview` | Nara — slim list item; different system/tags from Mira, use for filter tests |
 
 All fixtures typed with `Character` / `StoryEntry` from `@/lib/types` — **no `as any`**.
 

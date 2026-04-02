@@ -1,16 +1,8 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import type { CharacterPreview } from '@/lib/types'
 
-type CharacterCardProps = {
-  id: string
-  slug: string
-  name: string
-  system: string
-  thumbnailUrl: string | null
-  tags: string[]
-}
-
-export function CharacterCard({ slug, name, system, thumbnailUrl, tags }: CharacterCardProps) {
+export function CharacterCard({ slug, name, system, thumbnailUrl, tags }: CharacterPreview) {
   return (
     <Link href={`/characters/${slug}`} className="group block rounded-lg overflow-hidden border border-white/10 bg-white/5 hover:bg-white/10 transition-colors">
       <div className="relative aspect-square bg-white/10">

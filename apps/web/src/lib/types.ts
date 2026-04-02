@@ -12,6 +12,15 @@ export type CharacterTheme = {
   transition?: string
 }
 
+export type CharacterPreview = {
+  id: string
+  slug: string
+  name: string
+  system: string
+  thumbnailUrl: string | null
+  tags: string[]
+}
+
 export type StoryEntry = {
   id: string
   slug: string

@@ -32,11 +32,12 @@ interface UpdateCharacterBody {
 
 export async function adminCharacterRoutes(app: FastifyInstance) {
   app.get('/characters', { preHandler: authenticate }, async (request) => {
-    return prisma.character.findMany({
+    const characters = await prisma.character.findMany({
       where: { createdById: request.user.userId },
       include: { tags: { select: { tag: true } } },
       orderBy: { name: 'asc' },
     })
+    return characters.map(c => ({ ...c, tags: c.tags.map(t => t.tag) }))
   })
 
   app.post<{ Body: CreateCharacterBody }>(

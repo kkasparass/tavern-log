@@ -1,6 +1,6 @@
 // Fixture data mirrors apps/api/prisma/seed.ts — keep in sync when seed changes
 import { CharacterStatus } from '@/lib/types'
-import type { Character, StoryEntry } from '@/lib/types'
+import type { Character, CharacterPreview, StoryEntry } from '@/lib/types'
 
 export const mockCharacter: Character = {
   id: 'cuid-mira',
@@ -90,7 +90,7 @@ export const mockStory: StoryEntry = {
   updatedAt: '2024-11-10T00:00:00.000Z',
 }
 
-export const mockCharacterListItem = {
+export const mockCharacterListItem: CharacterPreview = {
   id: mockCharacter.id,
   slug: mockCharacter.slug,
   name: mockCharacter.name,
@@ -174,7 +174,7 @@ export const naraCharacter: Character = {
   ],
 }
 
-export const naraCharacterListItem = {
+export const naraCharacterListItem: CharacterPreview = {
   id: naraCharacter.id,
   slug: naraCharacter.slug,
   name: naraCharacter.name,

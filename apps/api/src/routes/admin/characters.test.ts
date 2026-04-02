@@ -32,7 +32,7 @@ async function setup() {
 const otherUserCharacter = { ...miraCharacterListItem, createdById: 'user-2' }
 
 describe('GET /admin/characters', () => {
-  it('returns 200 with character list', async () => {
+  it('returns 200 with character list and normalised tags', async () => {
     vi.mocked(prisma.character.findMany).mockResolvedValue([miraCharacterListItem])
     const { app, authCookie } = await setup()
     const res = await app.inject({
@@ -42,6 +42,7 @@ describe('GET /admin/characters', () => {
     })
     expect(res.statusCode).toBe(200)
     expect(res.json()).toHaveLength(1)
+    expect(res.json()[0].tags).toEqual(['mage', 'D&D 5e', 'retired'])
   })
 
   it('filters by createdById', async () => {
