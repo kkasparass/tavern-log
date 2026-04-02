@@ -95,6 +95,35 @@ mockUsePathname.mockReturnValue('/characters/mira-ashveil')
 
 All fixtures typed with `Character` / `StoryEntry` from `@/lib/types` — **no `as any`**.
 
-> **Keep in sync:** Both apps' `fixtures.ts` files are built from `apps/api/prisma/seed.ts`. Update both when the seed changes.
+### Special mocking patterns
+
+**`HTMLMediaElement.play/pause`** — not implemented in jsdom. Stub in `beforeAll`:
+```ts
+beforeAll(() => {
+  window.HTMLMediaElement.prototype.play = vi.fn().mockResolvedValue(undefined)
+  window.HTMLMediaElement.prototype.pause = vi.fn()
+})
+```
+
+**Child component isolation** — mock leaf components that cause media/canvas issues (e.g. mock `./AudioPlayer` in `VoiceLinesList.test.tsx`):
+```ts
+vi.mock('./AudioPlayer', () => ({
+  AudioPlayer: ({ audioUrl }: { audioUrl: string }) => (
+    <div data-testid="audio-player" data-url={audioUrl} />
+  ),
+}))
+```
+
+**Lightbox isolation** — mock `./Lightbox` in `GalleryGrid.test.tsx` to test open/close state without full Lightbox rendering:
+```ts
+vi.mock('./Lightbox', () => ({
+  Lightbox: ({ index, artworks, onClose }) => (
+    <div data-testid="lightbox" data-index={index}>
+      <button onClick={onClose} aria-label="Close" />
+      <span>{artworks[index]?.title}</span>
+    </div>
+  ),
+}))
+```
 
 > **Keep in sync:** Both apps' `fixtures.ts` files are built from `apps/api/prisma/seed.ts`. Update both when the seed changes.
