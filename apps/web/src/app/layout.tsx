@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { Providers } from './providers';
+import { Header } from '@/components/layout/Header';
 
 export const metadata: Metadata = {
   title: 'Tavern Log',
@@ -14,7 +15,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body><Providers>{children}</Providers></body>
+      <body><Header /><Providers>{children}</Providers></body>
     </html>
   );
 }
