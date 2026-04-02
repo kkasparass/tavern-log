@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 export function Header() {
   return (
-    <header className="flex items-center justify-between px-8 py-4 border-b border-white/10 bg-black/20">
+    <header className="flex items-center justify-between px-8 py-4 border-b border-white/10 bg-gray-900">
       <Link href="/" className="text-lg font-semibold text-white hover:text-white/80 transition-colors">
         Tavern Log
       </Link>

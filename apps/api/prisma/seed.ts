@@ -16,7 +16,7 @@ async function main() {
   const user = await prisma.user.create({
     data: {
       email: 'admin@tavernlog.dev',
-      passwordHash: 'placeholder',
+      passwordHash: '$2b$10$1nHaaPovzdVS2pqOrme92.J1S9mmECCW5yw3s.AvRdWqxnyq.a8Ui', // "placeholder"
     },
   })
 
