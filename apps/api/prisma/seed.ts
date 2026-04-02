@@ -1,76 +1,73 @@
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from "@prisma/client";
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
 async function main() {
   // Clean slate on each run
-  await prisma.timelineEvent.deleteMany()
-  await prisma.artwork.deleteMany()
-  await prisma.voiceLine.deleteMany()
-  await prisma.story.deleteMany()
-  await prisma.characterTag.deleteMany()
-  await prisma.character.deleteMany()
-  await prisma.user.deleteMany()
+  await prisma.timelineEvent.deleteMany();
+  await prisma.artwork.deleteMany();
+  await prisma.voiceLine.deleteMany();
+  await prisma.story.deleteMany();
+  await prisma.characterTag.deleteMany();
+  await prisma.character.deleteMany();
+  await prisma.user.deleteMany();
 
   // Seed user (placeholder — real bcrypt hash added in Milestone 3)
   const user = await prisma.user.create({
     data: {
-      email: 'admin@tavernlog.dev',
-      passwordHash: '$2b$10$1nHaaPovzdVS2pqOrme92.J1S9mmECCW5yw3s.AvRdWqxnyq.a8Ui', // "placeholder"
+      email: "admin@tavernlog.dev",
+      passwordHash: "$2b$10$1nHaaPovzdVS2pqOrme92.J1S9mmECCW5yw3s.AvRdWqxnyq.a8Ui", // "placeholder"
     },
-  })
+  });
 
   // Seed character
   const character = await prisma.character.create({
     data: {
       createdById: user.id,
-      slug: 'mira-ashveil',
-      name: 'Mira Ashveil',
-      system: 'D&D 5e',
-      campaign: 'The Shattered Crown',
-      status: 'RETIRED',
-      bio: 'A former court mage who walked away from power after the Siege of Valdenmoor. She now wanders the Ashwood, collecting debts and forgetting names.',
-      personality: 'Dry wit, deeply loyal to a very short list of people. Distrusts institutions. Excellent at leaving before things get complicated.',
+      slug: "mira-ashveil",
+      name: "Mira Ashveil",
+      system: "D&D 5e",
+      campaign: "The Shattered Crown",
+      status: "RETIRED",
+      bio: "A former court mage who walked away from power after the Siege of Valdenmoor. She now wanders the Ashwood, collecting debts and forgetting names.",
+      personality:
+        "Dry wit, deeply loyal to a very short list of people. Distrusts institutions. Excellent at leaving before things get complicated.",
       isPublic: true,
       theme: {
-        bgColor: '#1a1a2e',
-        textColor: '#e0e0e0',
-        accentColor: '#7c3aed',
+        bgColor: "#1a1a2e",
+        textColor: "#e0e0e0",
+        accentColor: "#7c3aed",
       },
       tags: {
-        create: [
-          { tag: 'mage' },
-          { tag: 'D&D 5e' },
-          { tag: 'retired' },
-        ],
+        create: [{ tag: "mage" }, { tag: "D&D 5e" }, { tag: "retired" }],
       },
       stories: {
         create: [
           {
-            title: 'The Last Spell',
-            slug: 'the-last-spell',
+            title: "The Last Spell",
+            slug: "the-last-spell",
             content:
-              '<p>The tower was already burning when Mira climbed the final stair.</p>' +
-              '<p>She had told herself she was only going back for the grimoire. That was the lie she needed to believe long enough to get there. The truth was simpler and harder: she was going back for Emric, because she always went back for Emric, even when she swore she would not.</p>' +
-              '<p>He was unconscious on the observatory floor, one arm flung over his eyes as if sleeping. The fire had not reached him yet. She had perhaps four minutes.</p>',
+              "<p>The tower was already burning when Mira climbed the final stair.</p>" +
+              "<p>She had told herself she was only going back for the grimoire. That was the lie she needed to believe long enough to get there. The truth was simpler and harder: she was going back for Emric, because she always went back for Emric, even when she swore she would not.</p>" +
+              "<p>He was unconscious on the observatory floor, one arm flung over his eyes as if sleeping. The fire had not reached him yet. She had perhaps four minutes.</p>",
             isDraft: false,
-            publishedAt: new Date('2024-11-10'),
+            publishedAt: new Date("2024-11-10"),
           },
         ],
       },
       voiceLines: {
         create: [
           {
-            audioUrl: 'https://example.com/audio/mira-placeholder-1.mp3',
+            audioUrl: "https://example.com/audio/mira-placeholder-1.mp3",
             transcript: "I don't do quests. I do favours, and favours have a price.",
-            context: 'When first approached by the party in the Ashwood tavern.',
+            context: "When first approached by the party in the Ashwood tavern.",
             order: 0,
           },
           {
-            audioUrl: 'https://example.com/audio/mira-placeholder-2.mp3',
+            audioUrl: "https://example.com/audio/mira-placeholder-2.mp3",
             transcript:
-              'The thing about fire spells is that everyone expects you to feel bad about them afterward. I stopped feeling bad about things that needed doing a long time ago.',
-            context: 'After the ambush at the Crossing.',
+              "The thing about fire spells is that everyone expects you to feel bad about them afterward. I stopped feeling bad about things that needed doing a long time ago.",
+            context: "After the ambush at the Crossing.",
             order: 1,
           },
         ],
@@ -78,15 +75,15 @@ async function main() {
       artworks: {
         create: [
           {
-            imageUrl: 'https://placehold.co/800x1000/1a1a2e/e0e0e0?text=Mira+Ashveil',
-            title: 'Mira in the Ashwood',
-            caption: 'Portrait commission for The Shattered Crown campaign.',
-            artistCredit: 'Placeholder Artist',
+            imageUrl: "https://placehold.co/800x1000/1a1a2e/e0e0e0?text=Mira+Ashveil",
+            title: "Mira in the Ashwood",
+            caption: "Portrait commission for The Shattered Crown campaign.",
+            artistCredit: "Placeholder Artist",
             order: 0,
           },
           {
-            imageUrl: 'https://placehold.co/800x800/1a1a2e/7c3aed?text=The+Last+Spell',
-            title: 'The Tower Burning',
+            imageUrl: "https://placehold.co/800x800/1a1a2e/7c3aed?text=The+Last+Spell",
+            title: "The Tower Burning",
             caption: 'Scene from "The Last Spell".',
             order: 1,
           },
@@ -95,83 +92,81 @@ async function main() {
       timeline: {
         create: [
           {
-            title: 'Appointed Court Mage of Valdenmoor',
+            title: "Appointed Court Mage of Valdenmoor",
             description:
-              'At 24, Mira accepted the appointment she had spent six years working toward. She lasted three years before the Siege made the position meaningless.',
-            dateLabel: 'Year 412 of the Compact',
+              "At 24, Mira accepted the appointment she had spent six years working toward. She lasted three years before the Siege made the position meaningless.",
+            dateLabel: "Year 412 of the Compact",
             order: 0,
           },
           {
-            title: 'The Siege of Valdenmoor',
+            title: "The Siege of Valdenmoor",
             description:
-              'The city fell in nine days. Mira held the eastern gate for seven of them. She does not speak about the other two.',
-            dateLabel: 'Year 415 of the Compact',
+              "The city fell in nine days. Mira held the eastern gate for seven of them. She does not speak about the other two.",
+            dateLabel: "Year 415 of the Compact",
             order: 1,
           },
           {
-            title: 'Retired to the Ashwood',
+            title: "Retired to the Ashwood",
             description:
-              'Left the capital without notice. Took the grimoire, her travel cloak, and nothing that reminded her of the court.',
-            dateLabel: 'Year 415 of the Compact, late autumn',
+              "Left the capital without notice. Took the grimoire, her travel cloak, and nothing that reminded her of the court.",
+            dateLabel: "Year 415 of the Compact, late autumn",
             order: 2,
           },
         ],
       },
     },
-  })
+  });
 
-  console.log(`Seeded character: ${character.name} (${character.slug})`)
+  console.log(`Seeded character: ${character.name} (${character.slug})`);
 
   // Seed second character
   const nara = await prisma.character.create({
     data: {
       createdById: user.id,
-      slug: 'nara-solis',
-      name: 'Nara Solis',
-      system: 'Blades in the Dark',
-      campaign: 'Shadows of Doskvol',
-      status: 'ACTIVE',
+      slug: "nara-solis",
+      name: "Nara Solis",
+      system: "Blades in the Dark",
+      campaign: "Shadows of Doskvol",
+      status: "ACTIVE",
       bio: "Former dockworker turned enforcer for the Red Sashes. She cut ties with the crew after a job went sideways in the Dusk ward and now runs her own small operation out of Crow's Foot.",
-      personality: "Pragmatic to a fault. Doesn't enjoy violence but is very good at it. Has a reputation for honoring her word — which in Doskvol is either an asset or a liability depending on who's asking.",
+      personality:
+        "Pragmatic to a fault. Doesn't enjoy violence but is very good at it. Has a reputation for honoring her word — which in Doskvol is either an asset or a liability depending on who's asking.",
       isPublic: true,
       theme: {
-        bgColor: '#1c1408',
-        textColor: '#e8d5b0',
-        accentColor: '#d4901a',
+        bgColor: "#1c1408",
+        textColor: "#e8d5b0",
+        accentColor: "#d4901a",
       },
       tags: {
-        create: [
-          { tag: 'scoundrel' },
-          { tag: 'Blades in the Dark' },
-          { tag: 'active' },
-        ],
+        create: [{ tag: "scoundrel" }, { tag: "Blades in the Dark" }, { tag: "active" }],
       },
       stories: {
         create: [
           {
             title: "The Crow's Foot Job",
-            slug: 'the-crows-foot-job',
+            slug: "the-crows-foot-job",
             content:
               "<p>The job was supposed to take twenty minutes. It took three days and cost Nara two ribs and a contact she'd spent years cultivating.</p>" +
               "<p>She'd do it again. The Red Sashes had been charging their cut on every shipment through the Dusk ward for six years. Someone had to make that stop.</p>" +
-              '<p>She told herself it was business. That was the lie she needed long enough to get it done.</p>',
+              "<p>She told herself it was business. That was the lie she needed long enough to get it done.</p>",
             isDraft: false,
-            publishedAt: new Date('2025-02-14'),
+            publishedAt: new Date("2025-02-14"),
           },
         ],
       },
       voiceLines: {
         create: [
           {
-            audioUrl: 'https://example.com/audio/nara-placeholder-1.mp3',
+            audioUrl: "https://example.com/audio/nara-placeholder-1.mp3",
             transcript: "I don't take jobs I can't finish. Problem is, I always finish them.",
-            context: 'Before agreeing to work with the party.',
+            context: "Before agreeing to work with the party.",
             order: 0,
           },
           {
-            audioUrl: 'https://example.com/audio/nara-placeholder-2.mp3',
-            transcript: 'Doskvol teaches you two things: how to disappear, and how to hit before they see you coming.',
-            context: 'During a tense standoff in the Dusk ward.',
+            audioUrl: "https://example.com/audio/nara-placeholder-2.mp3",
+            transcript:
+              "Doskvol teaches you two things: how to disappear, and how to hit before they see you coming.",
+            context: "During a tense standoff in the Dusk ward.",
             order: 1,
           },
         ],
@@ -179,15 +174,15 @@ async function main() {
       artworks: {
         create: [
           {
-            imageUrl: 'https://placehold.co/800x1000/1c1408/e8d5b0?text=Nara+Solis',
+            imageUrl: "https://placehold.co/800x1000/1c1408/e8d5b0?text=Nara+Solis",
             title: "Nara in Crow's Foot",
-            caption: 'Portrait commission for Shadows of Doskvol.',
-            artistCredit: 'Placeholder Artist',
+            caption: "Portrait commission for Shadows of Doskvol.",
+            artistCredit: "Placeholder Artist",
             order: 0,
           },
           {
-            imageUrl: 'https://placehold.co/800x800/1c1408/d4901a?text=The+Job',
-            title: 'The Dusk Ward Job',
+            imageUrl: "https://placehold.co/800x800/1c1408/d4901a?text=The+Job",
+            title: "The Dusk Ward Job",
             caption: 'Scene from "The Crow\'s Foot Job".',
             order: 1,
           },
@@ -196,36 +191,38 @@ async function main() {
       timeline: {
         create: [
           {
-            title: 'Joined the Red Sashes',
-            description: 'Took the enforcer contract at 19. She told herself it was temporary.',
-            dateLabel: 'Year 847 of the Imperial Calendar',
+            title: "Joined the Red Sashes",
+            description: "Took the enforcer contract at 19. She told herself it was temporary.",
+            dateLabel: "Year 847 of the Imperial Calendar",
             order: 0,
           },
           {
-            title: 'The Dusk Ward Incident',
-            description: 'A routine collection turned into a three-day standoff. She walked out; most of the Red Sashes in the ward did not.',
-            dateLabel: 'Year 849 of the Imperial Calendar',
+            title: "The Dusk Ward Incident",
+            description:
+              "A routine collection turned into a three-day standoff. She walked out; most of the Red Sashes in the ward did not.",
+            dateLabel: "Year 849 of the Imperial Calendar",
             order: 1,
           },
           {
             title: "Established her crew in Crow's Foot",
-            description: 'Took on two associates and a leaky safehouse off Tanners Alley. Called it an upgrade.',
-            dateLabel: 'Year 849 of the Imperial Calendar, late winter',
+            description:
+              "Took on two associates and a leaky safehouse off Tanners Alley. Called it an upgrade.",
+            dateLabel: "Year 849 of the Imperial Calendar, late winter",
             order: 2,
           },
         ],
       },
     },
-  })
+  });
 
-  console.log(`Seeded character: ${nara.name} (${nara.slug})`)
+  console.log(`Seeded character: ${nara.name} (${nara.slug})`);
 }
 
 main()
   .catch((e) => {
-    console.error(e)
-    process.exit(1)
+    console.error(e);
+    process.exit(1);
   })
   .finally(async () => {
-    await prisma.$disconnect()
-  })
+    await prisma.$disconnect();
+  });

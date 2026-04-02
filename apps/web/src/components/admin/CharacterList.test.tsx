@@ -5,19 +5,39 @@ import { mockCharacterListItem, naraCharacterListItem } from "@/test/fixtures";
 import { CharacterList } from "./CharacterList";
 
 vi.mock("next/link");
-vi.mock("next/image");
 
 beforeEach(() => {
   vi.stubGlobal("fetch", vi.fn());
 });
 
 describe("CharacterList", () => {
-  it("renders a card for each character", () => {
+  it("renders a row for each character with name and system", () => {
     renderWithQuery(<CharacterList />, [
       [["admin-characters"], [mockCharacterListItem, naraCharacterListItem]],
     ]);
     expect(screen.getByText("Mira Ashveil")).toBeInTheDocument();
     expect(screen.getByText("Nara Solis")).toBeInTheDocument();
+  });
+
+  it("renders content section links per character", () => {
+    renderWithQuery(<CharacterList />, [[["admin-characters"], [mockCharacterListItem]]]);
+    const id = mockCharacterListItem.id;
+    expect(screen.getByRole("link", { name: "Stories" })).toHaveAttribute(
+      "href",
+      `/admin/characters/${id}/stories`
+    );
+    expect(screen.getByRole("link", { name: "Voice Lines" })).toHaveAttribute(
+      "href",
+      `/admin/characters/${id}/voice-lines`
+    );
+    expect(screen.getByRole("link", { name: "Gallery" })).toHaveAttribute(
+      "href",
+      `/admin/characters/${id}/gallery`
+    );
+    expect(screen.getByRole("link", { name: "Timeline" })).toHaveAttribute(
+      "href",
+      `/admin/characters/${id}/timeline`
+    );
   });
 
   it("renders an Edit link per character pointing to the edit page", () => {

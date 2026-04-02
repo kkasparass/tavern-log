@@ -25,7 +25,11 @@ export function StoriesList({ slug }: { slug: string }) {
             <h2 className="font-semibold">{story.title}</h2>
             {story.publishedAt && (
               <time className="text-sm opacity-50">
-                {new Date(story.publishedAt).toLocaleDateString()}
+                {new Date(story.publishedAt).toLocaleDateString("en-GB", {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                })}
               </time>
             )}
           </Link>

@@ -20,7 +20,11 @@ export function StoryContent({ slug, storySlug }: { slug: string; storySlug: str
         <h1 className="text-2xl font-bold">{story.title}</h1>
         {story.publishedAt && (
           <time className="text-sm opacity-50">
-            {new Date(story.publishedAt).toLocaleDateString()}
+            {new Date(story.publishedAt).toLocaleDateString("en-GB", {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+            })}
           </time>
         )}
       </header>

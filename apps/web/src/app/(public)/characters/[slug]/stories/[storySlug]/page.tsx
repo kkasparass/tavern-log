@@ -10,9 +10,9 @@ export default async function StoryPage({
   await queryClient.prefetchQuery({
     queryKey: ["story", params.slug, params.storySlug],
     queryFn: () =>
-      fetch(`${process.env.API_URL}/characters/${params.slug}/stories/${params.storySlug}`).then(
-        (r) => r.json()
-      ),
+      fetch(`${process.env.API_URL}/characters/${params.slug}/stories/${params.storySlug}`, {
+        cache: "no-store",
+      }).then((r) => r.json()),
   });
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

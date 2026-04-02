@@ -3,9 +3,13 @@ const Link = ({
   href,
   className,
 }: {
-  children: React.ReactNode
-  href: string
-  className?: string
-}) => <a href={href} className={className}>{children}</a>
+  children: React.ReactNode;
+  href: string;
+  className?: string;
+}) => (
+  <a href={href} className={className}>
+    {children}
+  </a>
+);
 
-export default Link
+export default Link;

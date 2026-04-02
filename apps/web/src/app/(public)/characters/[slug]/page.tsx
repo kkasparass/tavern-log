@@ -8,7 +8,9 @@ export async function generateMetadata({
 }: {
   params: { slug: string };
 }): Promise<Metadata> {
-  const res = await fetch(`${process.env.API_URL}/characters/${params.slug}`);
+  const res = await fetch(`${process.env.API_URL}/characters/${params.slug}`, {
+    cache: "no-store",
+  });
   if (!res.ok) return {};
   const character: Character = await res.json();
 
@@ -27,7 +29,10 @@ export default async function CharacterPage({ params }: { params: { slug: string
   const queryClient = new QueryClient();
   await queryClient.prefetchQuery({
     queryKey: ["character", params.slug],
-    queryFn: () => fetch(`${process.env.API_URL}/characters/${params.slug}`).then((r) => r.json()),
+    queryFn: () =>
+      fetch(`${process.env.API_URL}/characters/${params.slug}`, { cache: "no-store" }).then((r) =>
+        r.json()
+      ),
   });
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

@@ -1,7 +1,6 @@
 "use client";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
-import { CharacterCard } from "@/components/character/CharacterCard";
 import type { CharacterPreview } from "@/lib/types";
 
 async function fetchAdminCharacters(): Promise<CharacterPreview[]> {
@@ -43,18 +42,48 @@ export function CharacterList() {
   }
 
   return (
-    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+    <ul className="divide-y divide-white/10 rounded border border-white/10">
       {characters.map((c) => (
-        <div key={c.id} className="flex flex-col gap-2">
-          <CharacterCard {...c} />
-          <Link
-            href={`/admin/characters/${c.id}/edit`}
-            className="text-center text-sm text-white/50 transition-colors hover:text-white"
-          >
-            Edit
-          </Link>
-        </div>
+        <li key={c.id} className="flex items-center justify-between px-4 py-3">
+          <div>
+            <span className="font-medium text-white">{c.name}</span>
+            <span className="ml-2 text-sm text-white/40">{c.system}</span>
+          </div>
+          <div className="flex items-center gap-1 text-sm">
+            <Link
+              href={`/admin/characters/${c.id}/edit`}
+              className="rounded px-3 py-1 text-white/60 transition-colors hover:bg-white/10 hover:text-white"
+            >
+              Edit
+            </Link>
+            <span className="text-white/20">·</span>
+            <Link
+              href={`/admin/characters/${c.id}/stories`}
+              className="rounded px-3 py-1 text-white/60 transition-colors hover:bg-white/10 hover:text-white"
+            >
+              Stories
+            </Link>
+            <Link
+              href={`/admin/characters/${c.id}/voice-lines`}
+              className="rounded px-3 py-1 text-white/60 transition-colors hover:bg-white/10 hover:text-white"
+            >
+              Voice Lines
+            </Link>
+            <Link
+              href={`/admin/characters/${c.id}/gallery`}
+              className="rounded px-3 py-1 text-white/60 transition-colors hover:bg-white/10 hover:text-white"
+            >
+              Gallery
+            </Link>
+            <Link
+              href={`/admin/characters/${c.id}/timeline`}
+              className="rounded px-3 py-1 text-white/60 transition-colors hover:bg-white/10 hover:text-white"
+            >
+              Timeline
+            </Link>
+          </div>
+        </li>
       ))}
-    </div>
+    </ul>
   );
 }

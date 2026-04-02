@@ -10,7 +10,9 @@ export default async function CharacterLayout({
   children: React.ReactNode;
   params: { slug: string };
 }) {
-  const res = await fetch(`${process.env.API_URL}/characters/${params.slug}`);
+  const res = await fetch(`${process.env.API_URL}/characters/${params.slug}`, {
+    cache: "no-store",
+  });
   if (!res.ok) notFound();
   const character: Character = await res.json();
 
