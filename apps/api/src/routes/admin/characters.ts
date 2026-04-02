@@ -1,108 +1,111 @@
-import { FastifyInstance } from 'fastify'
-import { CharacterStatus, Prisma } from '@prisma/client'
-import { prisma } from '../../lib/prisma'
-import { authenticate } from '../../plugins/auth'
-import { toSlug } from '../../utils/slug'
+import { FastifyInstance } from "fastify";
+import { CharacterStatus, Prisma } from "@prisma/client";
+import { prisma } from "../../lib/prisma";
+import { authenticate } from "../../plugins/auth";
+import { toSlug } from "../../utils/slug";
 
 interface CreateCharacterBody {
-  name: string
-  system: string
-  campaign?: string
-  status?: CharacterStatus
-  bio?: string
-  personality?: string
-  thumbnailUrl?: string
-  isPublic?: boolean
-  theme?: Prisma.InputJsonValue
-  tags?: string[]
+  name: string;
+  system: string;
+  campaign?: string;
+  status?: CharacterStatus;
+  bio?: string;
+  personality?: string;
+  thumbnailUrl?: string;
+  isPublic?: boolean;
+  theme?: Prisma.InputJsonValue;
+  tags?: string[];
 }
 
 interface UpdateCharacterBody {
-  name?: string
-  system?: string
-  campaign?: string
-  status?: CharacterStatus
-  bio?: string
-  personality?: string
-  thumbnailUrl?: string
-  isPublic?: boolean
-  theme?: Prisma.InputJsonValue
-  tags?: string[]
+  name?: string;
+  system?: string;
+  campaign?: string;
+  status?: CharacterStatus;
+  bio?: string;
+  personality?: string;
+  thumbnailUrl?: string;
+  isPublic?: boolean;
+  theme?: Prisma.InputJsonValue;
+  tags?: string[];
 }
 
 export async function adminCharacterRoutes(app: FastifyInstance) {
-  app.get('/characters', { preHandler: authenticate }, async (request) => {
+  app.get("/characters", { preHandler: authenticate }, async (request) => {
     const characters = await prisma.character.findMany({
       where: { createdById: request.user.userId },
       include: { tags: { select: { tag: true } } },
-      orderBy: { name: 'asc' },
-    })
-    return characters.map(c => ({ ...c, tags: c.tags.map(t => t.tag) }))
-  })
+      orderBy: { name: "asc" },
+    });
+    return characters.map((c) => ({ ...c, tags: c.tags.map((t) => t.tag) }));
+  });
 
   app.post<{ Body: CreateCharacterBody }>(
-    '/characters',
+    "/characters",
     {
       preHandler: authenticate,
       schema: {
         body: {
-          type: 'object',
-          required: ['name', 'system'],
+          type: "object",
+          required: ["name", "system"],
           properties: {
-            name: { type: 'string' },
-            system: { type: 'string' },
+            name: { type: "string" },
+            system: { type: "string" },
           },
         },
       },
     },
     async (request, reply) => {
-      const { tags, ...rest } = request.body
+      const { tags, ...rest } = request.body;
       const character = await prisma.character.create({
         data: {
           ...rest,
           createdById: request.user.userId,
           slug: toSlug(rest.name),
-          ...(tags && tags.length > 0 && {
-            tags: { create: tags.map((tag) => ({ tag })) },
-          }),
+          ...(tags &&
+            tags.length > 0 && {
+              tags: { create: tags.map((tag) => ({ tag })) },
+            }),
         },
         include: { tags: { select: { tag: true } } },
-      })
-      return reply.code(201).send(character)
+      });
+      return reply.code(201).send(character);
     }
-  )
+  );
 
   app.get<{ Params: { id: string } }>(
-    '/characters/:id',
+    "/characters/:id",
     { preHandler: authenticate },
     async (request, reply) => {
       const character = await prisma.character.findUnique({
         where: { id: request.params.id },
         include: { tags: { select: { tag: true } } },
-      })
-      if (!character) return reply.code(404).send({ error: 'Not found' })
-      if (character.createdById !== request.user.userId) return reply.code(403).send({ error: 'Forbidden' })
-      return { ...character, tags: character.tags.map(t => t.tag) }
+      });
+      if (!character) return reply.code(404).send({ error: "Not found" });
+      if (character.createdById !== request.user.userId)
+        return reply.code(403).send({ error: "Forbidden" });
+      return { ...character, tags: character.tags.map((t) => t.tag) };
     }
-  )
+  );
 
   app.put<{ Params: { id: string }; Body: UpdateCharacterBody }>(
-    '/characters/:id',
+    "/characters/:id",
     { preHandler: authenticate },
     async (request, reply) => {
-      const { id } = request.params
-      const { tags, ...rest } = request.body
+      const { id } = request.params;
+      const { tags, ...rest } = request.body;
 
-      const existing = await prisma.character.findUnique({ where: { id } })
-      if (!existing) return reply.code(404).send({ error: 'Not found' })
-      if (existing.createdById !== request.user.userId) return reply.code(403).send({ error: 'Forbidden' })
+      const existing = await prisma.character.findUnique({ where: { id } });
+      if (!existing) return reply.code(404).send({ error: "Not found" });
+      if (existing.createdById !== request.user.userId)
+        return reply.code(403).send({ error: "Forbidden" });
 
       if (tags !== undefined) {
-        await prisma.characterTag.deleteMany({ where: { characterId: id } })
+        await prisma.characterTag.deleteMany({ where: { characterId: id } });
         if (tags.length > 0) {
           await prisma.characterTag.createMany({
             data: tags.map((tag) => ({ characterId: id, tag })),
-          })
+          });
         }
       }
 
@@ -110,21 +113,22 @@ export async function adminCharacterRoutes(app: FastifyInstance) {
         where: { id },
         data: rest,
         include: { tags: { select: { tag: true } } },
-      })
-      return character
+      });
+      return character;
     }
-  )
+  );
 
   app.delete<{ Params: { id: string } }>(
-    '/characters/:id',
+    "/characters/:id",
     { preHandler: authenticate },
     async (request, reply) => {
-      const { id } = request.params
-      const existing = await prisma.character.findUnique({ where: { id } })
-      if (!existing) return reply.code(404).send({ error: 'Not found' })
-      if (existing.createdById !== request.user.userId) return reply.code(403).send({ error: 'Forbidden' })
-      await prisma.character.delete({ where: { id } })
-      return reply.code(204).send()
+      const { id } = request.params;
+      const existing = await prisma.character.findUnique({ where: { id } });
+      if (!existing) return reply.code(404).send({ error: "Not found" });
+      if (existing.createdById !== request.user.userId)
+        return reply.code(403).send({ error: "Forbidden" });
+      await prisma.character.delete({ where: { id } });
+      return reply.code(204).send();
     }
-  )
+  );
 }

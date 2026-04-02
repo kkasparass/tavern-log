@@ -1,10 +1,10 @@
-import { buildApp } from './app'
+import { buildApp } from "./app";
 
-const app = buildApp()
+const app = buildApp();
 
-app.listen({ port: 3001, host: '0.0.0.0' }, (err) => {
+app.listen({ port: 3001, host: "0.0.0.0" }, (err) => {
   if (err) {
-    app.log.error(err)
-    process.exit(1)
+    app.log.error(err);
+    process.exit(1);
   }
-})
+});

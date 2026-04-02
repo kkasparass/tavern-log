@@ -1,5 +1,5 @@
-'use client'
-import { motion } from 'framer-motion'
+"use client";
+import { motion } from "framer-motion";
 
 export function PageTransition({ children }: { children: React.ReactNode }) {
   return (
@@ -10,5 +10,5 @@ export function PageTransition({ children }: { children: React.ReactNode }) {
     >
       {children}
     </motion.div>
-  )
+  );
 }

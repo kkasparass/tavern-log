@@ -46,7 +46,7 @@ export async function authRoutes(app: FastifyInstance) {
       });
 
       return { ok: true };
-    },
+    }
   );
 
   app.post("/logout", async (_request, reply) => {

@@ -1,99 +1,99 @@
 export enum CharacterStatus {
-  ACTIVE = 'ACTIVE',
-  RETIRED = 'RETIRED',
-  DECEASED = 'DECEASED',
+  ACTIVE = "ACTIVE",
+  RETIRED = "RETIRED",
+  DECEASED = "DECEASED",
 }
 
 export type CharacterTheme = {
-  bgColor?: string
-  textColor?: string
-  accentColor?: string
-  bgPattern?: string
-  transition?: string
-}
+  bgColor?: string;
+  textColor?: string;
+  accentColor?: string;
+  bgPattern?: string;
+  transition?: string;
+};
 
 export type CharacterPreview = {
-  id: string
-  slug: string
-  name: string
-  system: string
-  thumbnailUrl: string | null
-  tags: string[]
-}
+  id: string;
+  slug: string;
+  name: string;
+  system: string;
+  thumbnailUrl: string | null;
+  tags: string[];
+};
 
 export type AdminCharacterDetail = {
-  id: string
-  slug: string
-  name: string
-  system: string
-  campaign: string | null
-  status: CharacterStatus
-  bio: string | null
-  personality: string | null
-  thumbnailUrl: string | null
-  isPublic: boolean
-  theme: CharacterTheme
-  tags: string[]
-}
+  id: string;
+  slug: string;
+  name: string;
+  system: string;
+  campaign: string | null;
+  status: CharacterStatus;
+  bio: string | null;
+  personality: string | null;
+  thumbnailUrl: string | null;
+  isPublic: boolean;
+  theme: CharacterTheme;
+  tags: string[];
+};
 
 export type StoryEntry = {
-  id: string
-  slug: string
-  title: string
-  content: string
-  isDraft: boolean
-  publishedAt: string | null
-  createdAt: string
-  updatedAt: string
-}
+  id: string;
+  slug: string;
+  title: string;
+  content: string;
+  isDraft: boolean;
+  publishedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
 
 export type CharacterStory = {
-  id: string
-  slug: string
-  title: string
-  publishedAt: string | null
-}
+  id: string;
+  slug: string;
+  title: string;
+  publishedAt: string | null;
+};
 
 export type CharacterVoiceLine = {
-  id: string
-  audioUrl: string
-  transcript: string
-  context: string | null
-  order: number
-}
+  id: string;
+  audioUrl: string;
+  transcript: string;
+  context: string | null;
+  order: number;
+};
 
 export type CharacterArtwork = {
-  id: string
-  imageUrl: string
-  title: string | null
-  caption: string | null
-  artistCredit: string | null
-  order: number
-}
+  id: string;
+  imageUrl: string;
+  title: string | null;
+  caption: string | null;
+  artistCredit: string | null;
+  order: number;
+};
 
 export type CharacterTimelineEvent = {
-  id: string
-  title: string
-  description: string | null
-  dateLabel: string | null
-  order: number
-}
+  id: string;
+  title: string;
+  description: string | null;
+  dateLabel: string | null;
+  order: number;
+};
 
 export type Character = {
-  id: string
-  createdById: string
-  slug: string
-  name: string
-  system: string
-  campaign: string | null
-  status: CharacterStatus
-  bio: string | null
-  personality: string | null
-  thumbnailUrl: string | null
-  theme: CharacterTheme
-  tags: string[]
-  stories: CharacterStory[]
-  voiceLines: CharacterVoiceLine[]
-  artworks: CharacterArtwork[]
-  timeline: CharacterTimelineEvent[]
-}
+  id: string;
+  createdById: string;
+  slug: string;
+  name: string;
+  system: string;
+  campaign: string | null;
+  status: CharacterStatus;
+  bio: string | null;
+  personality: string | null;
+  thumbnailUrl: string | null;
+  theme: CharacterTheme;
+  tags: string[];
+  stories: CharacterStory[];
+  voiceLines: CharacterVoiceLine[];
+  artworks: CharacterArtwork[];
+  timeline: CharacterTimelineEvent[];
+};

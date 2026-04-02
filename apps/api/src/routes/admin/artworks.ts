@@ -33,7 +33,7 @@ export async function adminArtworkRoutes(app: FastifyInstance) {
         where: { characterId: request.params.id },
         orderBy: { order: "asc" },
       });
-    },
+    }
   );
 
   app.post<{ Params: { id: string }; Body: CreateArtworkBody }>(
@@ -59,7 +59,7 @@ export async function adminArtworkRoutes(app: FastifyInstance) {
         data: { ...request.body, characterId: request.params.id },
       });
       return reply.code(201).send(artwork);
-    },
+    }
   );
 
   app.put<{ Params: { artworkId: string }; Body: UpdateArtworkBody }>(
@@ -79,7 +79,7 @@ export async function adminArtworkRoutes(app: FastifyInstance) {
         data: request.body,
       });
       return artwork;
-    },
+    }
   );
 
   app.delete<{ Params: { artworkId: string } }>(
@@ -96,6 +96,6 @@ export async function adminArtworkRoutes(app: FastifyInstance) {
         return reply.code(403).send({ error: "Forbidden" });
       await prisma.artwork.delete({ where: { id: artworkId } });
       return reply.code(204).send();
-    },
+    }
   );
 }

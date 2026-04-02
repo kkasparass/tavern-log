@@ -3,8 +3,8 @@ import { describe, it, expect, vi } from "vitest";
 import { CharacterCard } from "./CharacterCard";
 import { mockCharacterListItem } from "@/test/fixtures";
 
-vi.mock("next/link")
-vi.mock("next/image")
+vi.mock("next/link");
+vi.mock("next/image");
 
 describe("CharacterCard", () => {
   it("renders name and system", () => {
@@ -22,9 +22,6 @@ describe("CharacterCard", () => {
 
   it("links to the character page", () => {
     render(<CharacterCard {...mockCharacterListItem} />);
-    expect(screen.getByRole("link")).toHaveAttribute(
-      "href",
-      "/characters/mira-ashveil",
-    );
+    expect(screen.getByRole("link")).toHaveAttribute("href", "/characters/mira-ashveil");
   });
 });

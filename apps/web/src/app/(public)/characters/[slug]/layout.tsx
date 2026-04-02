@@ -14,11 +14,7 @@ export default async function CharacterLayout({
   if (!res.ok) notFound();
   const character: Character = await res.json();
 
-  const {
-    bgColor = "#1a1a2e",
-    textColor = "#e0e0e0",
-    accentColor = "#7c3aed",
-  } = character.theme;
+  const { bgColor = "#1a1a2e", textColor = "#e0e0e0", accentColor = "#7c3aed" } = character.theme;
 
   return (
     <div
@@ -35,11 +31,11 @@ export default async function CharacterLayout({
     >
       <header className="px-8 pt-8">
         <h1 className="text-3xl font-bold">{character.name}</h1>
-        <p className="text-sm opacity-60 mt-1">
+        <p className="mt-1 text-sm opacity-60">
           {character.system}
           {character.campaign ? ` · ${character.campaign}` : ""}
         </p>
-        <span className="inline-block mt-2 text-xs px-2 py-0.5 rounded-full bg-white/10 opacity-70">
+        <span className="mt-2 inline-block rounded-full bg-white/10 px-2 py-0.5 text-xs opacity-70">
           {character.status}
         </span>
       </header>

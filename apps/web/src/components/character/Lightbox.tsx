@@ -1,42 +1,42 @@
-'use client'
-import { useEffect } from 'react'
-import type { CharacterArtwork } from '@/lib/types'
+"use client";
+import { useEffect } from "react";
+import type { CharacterArtwork } from "@/lib/types";
 
 type LightboxProps = {
-  artworks: CharacterArtwork[]
-  index: number
-  onClose: () => void
-  onNavigate: (index: number) => void
-}
+  artworks: CharacterArtwork[];
+  index: number;
+  onClose: () => void;
+  onNavigate: (index: number) => void;
+};
 
 export function Lightbox({ artworks, index, onClose, onNavigate }: LightboxProps) {
-  const artwork = artworks[index]
-  const hasPrev = index > 0
-  const hasNext = index < artworks.length - 1
+  const artwork = artworks[index];
+  const hasPrev = index > 0;
+  const hasNext = index < artworks.length - 1;
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-      if (e.key === 'ArrowLeft' && hasPrev) onNavigate(index - 1)
-      if (e.key === 'ArrowRight' && hasNext) onNavigate(index + 1)
-    }
-    window.addEventListener('keydown', onKeyDown)
-    return () => window.removeEventListener('keydown', onKeyDown)
-  }, [index, hasPrev, hasNext, onClose, onNavigate])
+      if (e.key === "Escape") onClose();
+      if (e.key === "ArrowLeft" && hasPrev) onNavigate(index - 1);
+      if (e.key === "ArrowRight" && hasNext) onNavigate(index + 1);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [index, hasPrev, hasNext, onClose, onNavigate]);
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/90"
       onClick={onClose}
     >
       <div
-        className="relative max-w-4xl w-full mx-4 flex flex-col items-center gap-4"
-        onClick={e => e.stopPropagation()}
+        className="relative mx-4 flex w-full max-w-4xl flex-col items-center gap-4"
+        onClick={(e) => e.stopPropagation()}
       >
         {/* Close */}
         <button
           onClick={onClose}
-          className="absolute -top-10 right-0 text-white/60 hover:text-white text-sm"
+          className="absolute -top-10 right-0 text-sm text-white/60 hover:text-white"
           aria-label="Close"
         >
           ✕ Close
@@ -46,13 +46,13 @@ export function Lightbox({ artworks, index, onClose, onNavigate }: LightboxProps
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={artwork.imageUrl}
-          alt={artwork.title ?? ''}
-          className="max-h-[75vh] w-auto mx-auto object-contain rounded"
+          alt={artwork.title ?? ""}
+          className="mx-auto max-h-[75vh] w-auto rounded object-contain"
         />
 
         {/* Metadata */}
         {(artwork.title || artwork.caption || artwork.artistCredit) && (
-          <div className="text-center space-y-1">
+          <div className="space-y-1 text-center">
             {artwork.title && <p className="font-semibold text-white">{artwork.title}</p>}
             {artwork.caption && <p className="text-sm text-white/60">{artwork.caption}</p>}
             {artwork.artistCredit && (
@@ -66,18 +66,18 @@ export function Lightbox({ artworks, index, onClose, onNavigate }: LightboxProps
           <button
             onClick={() => onNavigate(index - 1)}
             disabled={!hasPrev}
-            className="px-4 py-2 text-sm text-white/60 hover:text-white disabled:opacity-20 disabled:cursor-not-allowed"
+            className="px-4 py-2 text-sm text-white/60 hover:text-white disabled:cursor-not-allowed disabled:opacity-20"
             aria-label="Previous"
           >
             ← Prev
           </button>
-          <span className="text-white/30 text-sm self-center">
+          <span className="self-center text-sm text-white/30">
             {index + 1} / {artworks.length}
           </span>
           <button
             onClick={() => onNavigate(index + 1)}
             disabled={!hasNext}
-            className="px-4 py-2 text-sm text-white/60 hover:text-white disabled:opacity-20 disabled:cursor-not-allowed"
+            className="px-4 py-2 text-sm text-white/60 hover:text-white disabled:cursor-not-allowed disabled:opacity-20"
             aria-label="Next"
           >
             Next →
@@ -85,5 +85,5 @@ export function Lightbox({ artworks, index, onClose, onNavigate }: LightboxProps
         </div>
       </div>
     </div>
-  )
+  );
 }

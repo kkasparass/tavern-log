@@ -18,17 +18,16 @@ export function CharacterGrid() {
 
   const filtered = characters.filter(
     (c) =>
-      (!systemFilter || c.system === systemFilter) &&
-      (!tagFilter || c.tags.includes(tagFilter)),
+      (!systemFilter || c.system === systemFilter) && (!tagFilter || c.tags.includes(tagFilter))
   );
 
   return (
     <div>
-      <div className="flex gap-3 mb-6">
+      <div className="mb-6 flex gap-3">
         <select
           value={systemFilter}
           onChange={(e) => setSystemFilter(e.target.value)}
-          className="bg-white/10 text-white rounded px-3 py-1.5 text-sm"
+          className="rounded bg-white/10 px-3 py-1.5 text-sm text-white"
         >
           <option value="">All systems</option>
           {systems.map((s) => (
@@ -40,7 +39,7 @@ export function CharacterGrid() {
         <select
           value={tagFilter}
           onChange={(e) => setTagFilter(e.target.value)}
-          className="bg-white/10 text-white rounded px-3 py-1.5 text-sm"
+          className="rounded bg-white/10 px-3 py-1.5 text-sm text-white"
         >
           <option value="">All tags</option>
           {tags.map((t) => (
@@ -50,7 +49,7 @@ export function CharacterGrid() {
           ))}
         </select>
       </div>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
         {filtered.map((c) => (
           <CharacterCard key={c.id} {...c} />
         ))}

@@ -14,15 +14,13 @@ export function CharacterOverview({ slug }: { slug: string }) {
     <div className="max-w-2xl space-y-6">
       {character.bio && (
         <section>
-          <h2 className="text-xs font-semibold uppercase tracking-widest opacity-40 mb-2">
-            Bio
-          </h2>
+          <h2 className="mb-2 text-xs font-semibold uppercase tracking-widest opacity-40">Bio</h2>
           <p className="leading-relaxed opacity-80">{character.bio}</p>
         </section>
       )}
       {character.personality && (
         <section>
-          <h2 className="text-xs font-semibold uppercase tracking-widest opacity-40 mb-2">
+          <h2 className="mb-2 text-xs font-semibold uppercase tracking-widest opacity-40">
             Personality
           </h2>
           <p className="leading-relaxed opacity-80">{character.personality}</p>
@@ -30,15 +28,10 @@ export function CharacterOverview({ slug }: { slug: string }) {
       )}
       {character.tags.length > 0 && (
         <section>
-          <h2 className="text-xs font-semibold uppercase tracking-widest opacity-40 mb-2">
-            Tags
-          </h2>
+          <h2 className="mb-2 text-xs font-semibold uppercase tracking-widest opacity-40">Tags</h2>
           <ul className="flex flex-wrap gap-2">
             {character.tags.map((tag) => (
-              <li
-                key={tag}
-                className="text-xs px-2 py-0.5 rounded-full bg-white/10 opacity-70"
-              >
+              <li key={tag} className="rounded-full bg-white/10 px-2 py-0.5 text-xs opacity-70">
                 {tag}
               </li>
             ))}
