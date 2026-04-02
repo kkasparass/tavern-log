@@ -1,0 +1,76 @@
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { describe, it, expect, vi } from "vitest";
+import { VoiceLineForm } from "./VoiceLineForm";
+
+const defaultProps = {
+  onSubmit: vi.fn(),
+  onCancel: vi.fn(),
+  nextOrder: 2,
+  isPending: false,
+  isError: false,
+};
+
+describe("VoiceLineForm", () => {
+  it("renders Audio URL, Transcript, and Context fields", () => {
+    render(<VoiceLineForm {...defaultProps} />);
+    expect(screen.getByPlaceholderText("https://...")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("What is said in this voice line")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("e.g. Battle cry, greeting, etc.")).toBeInTheDocument();
+  });
+
+  it("disables Save when required fields are empty", () => {
+    render(<VoiceLineForm {...defaultProps} />);
+    expect(screen.getByRole("button", { name: "Save" })).toBeDisabled();
+  });
+
+  it("calls onSubmit with correct data including nextOrder", async () => {
+    const onSubmit = vi.fn();
+    render(<VoiceLineForm {...defaultProps} onSubmit={onSubmit} nextOrder={3} />);
+    await userEvent.type(screen.getByPlaceholderText("https://..."), "https://audio.mp3");
+    await userEvent.type(
+      screen.getByPlaceholderText("What is said in this voice line"),
+      "Hello world"
+    );
+    await userEvent.type(
+      screen.getByPlaceholderText("e.g. Battle cry, greeting, etc."),
+      "Greeting"
+    );
+    await userEvent.click(screen.getByRole("button", { name: "Save" }));
+    expect(onSubmit).toHaveBeenCalledWith({
+      audioUrl: "https://audio.mp3",
+      transcript: "Hello world",
+      context: "Greeting",
+      order: 3,
+    });
+  });
+
+  it("omits context from payload when left empty", async () => {
+    const onSubmit = vi.fn();
+    render(<VoiceLineForm {...defaultProps} onSubmit={onSubmit} />);
+    await userEvent.type(screen.getByPlaceholderText("https://..."), "https://audio.mp3");
+    await userEvent.type(
+      screen.getByPlaceholderText("What is said in this voice line"),
+      "Hello world"
+    );
+    await userEvent.click(screen.getByRole("button", { name: "Save" }));
+    expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({ context: undefined }));
+  });
+
+  it("shows Saving… and disables Save when isPending", () => {
+    render(<VoiceLineForm {...defaultProps} isPending />);
+    expect(screen.getByRole("button", { name: "Saving…" })).toBeDisabled();
+  });
+
+  it("calls onCancel when Cancel is clicked", async () => {
+    const onCancel = vi.fn();
+    render(<VoiceLineForm {...defaultProps} onCancel={onCancel} />);
+    await userEvent.click(screen.getByRole("button", { name: "Cancel" }));
+    expect(onCancel).toHaveBeenCalled();
+  });
+
+  it("shows error message when isError is true", () => {
+    render(<VoiceLineForm {...defaultProps} isError />);
+    expect(screen.getByText("Failed to create voice line.")).toBeInTheDocument();
+  });
+});

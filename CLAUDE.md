@@ -5,6 +5,7 @@
 A character archive and showcase platform for TTRPG players. Each character gets a dedicated profile page with short stories, voice lines, an art gallery, a timeline, and per-character theming. Phase 1 is a single-user personal archive. Phase 2 adds multi-user accounts and a social layer.
 
 **Vault planning notes:** `$OBSIDIAN_VAULT/Projects/Tavern Log/`
+
 - `Plan.md` — full milestone plan, schema, dependencies, architectural decisions
 - `Sprint.md` — current active tasks
 - `Decisions.md` — decision log with rationale for all major architectural choices
@@ -48,6 +49,7 @@ tavern-log/
 ```
 
 ### Key rules
+
 - `apps/api` owns **all database access** — Prisma lives here only
 - `apps/web` is a pure frontend — fetches all data from the Fastify API via `API_URL`
 - Never add Prisma or database logic to `apps/web` unless explicitly instructed
@@ -57,6 +59,7 @@ tavern-log/
 ## Tech Stack
 
 ### `apps/web`
+
 - **Framework:** Next.js 14, App Router, React Server Components
 - **Styling:** Tailwind CSS with CSS custom properties for per-character theming
 - **Data fetching:** TanStack Query v5 — RSC prefetch + HydrationBoundary for public pages, `useMutation` / `useQuery` for admin
@@ -64,6 +67,7 @@ tavern-log/
 - **Rich text:** Tiptap (admin editor), DOMPurify (render sanitisation)
 
 ### `apps/api`
+
 - **Framework:** Fastify (TypeScript)
 - **Database:** Prisma ORM → Postgres (Docker locally, Neon in production)
 - **Auth:** `@fastify/jwt` + `@fastify/cookie` + `@fastify/csrf-protection`
@@ -98,11 +102,13 @@ npx prisma studio
 ## Environment Variables
 
 ### `apps/web/.env.local`
+
 ```
 API_URL=http://localhost:3001
 ```
 
 ### `apps/api/.env`
+
 ```
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/tavernlog
 DATABASE_URL_UNPOOLED=postgresql://postgres:postgres@localhost:5432/tavernlog
@@ -118,59 +124,67 @@ S3_BUCKET_NAME=tavernlog-uploads
 ## Key Patterns
 
 ### Data fetching — RSC prefetch + HydrationBoundary
+
 Public pages fetch on the server and seed the client cache. Client components find data already present — no loading flash.
 
 ```tsx
 // Server Component (RSC)
 export default async function CharacterPage({ params }) {
-  const queryClient = new QueryClient()
+  const queryClient = new QueryClient();
   await queryClient.prefetchQuery({
-    queryKey: ['character', params.slug],
-    queryFn: () => fetch(`${process.env.API_URL}/characters/${params.slug}`).then(r => r.json())
-  })
+    queryKey: ["character", params.slug],
+    queryFn: () => fetch(`${process.env.API_URL}/characters/${params.slug}`).then((r) => r.json()),
+  });
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <CharacterProfile slug={params.slug} />
     </HydrationBoundary>
-  )
+  );
 }
 
 // Client Component
-'use client'
+("use client");
 export function CharacterProfile({ slug }) {
   const { data } = useQuery({
-    queryKey: ['character', slug],
-    queryFn: () => fetch(`/api/characters/${slug}`).then(r => r.json()),
-    staleTime: 5 * 60 * 1000
-  })
+    queryKey: ["character", slug],
+    queryFn: () => fetch(`/api/characters/${slug}`).then((r) => r.json()),
+    staleTime: 5 * 60 * 1000,
+  });
 }
 ```
 
 ### Auth — Fastify JWT + httpOnly cookie
+
 - `POST /auth/login` validates credentials (bcrypt), issues JWT as httpOnly cookie
 - `POST /auth/logout` clears the cookie
 - Protected Fastify routes use an `authenticate` prehandler that verifies the JWT
 - Next.js `middleware.ts` checks for the cookie and redirects unauthenticated requests away from `/admin/*`
 
 ### Admin mutations — TanStack Query
+
 ```tsx
 const deleteMutation = useMutation({
   mutationFn: (id: string) =>
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/stories/${id}`, { method: 'DELETE' }),
-  onSuccess: () => queryClient.invalidateQueries({ queryKey: ['stories', characterId] })
-})
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/stories/${id}`, { method: "DELETE" }),
+  onSuccess: () => queryClient.invalidateQueries({ queryKey: ["stories", characterId] }),
+});
 ```
 
 ### Per-character theming — CSS variables
+
 Tailwind is configured to use CSS custom properties. The character layout injects theme values via `style` prop — Tailwind classes stay static, only variable values change at runtime.
 
 ```tsx
 // Character layout
-<div style={{
-  '--theme-bg':     character.theme.bgColor     ?? '#1a1a2e',
-  '--theme-text':   character.theme.textColor   ?? '#e0e0e0',
-  '--theme-accent': character.theme.accentColor ?? '#7c3aed',
-} as React.CSSProperties}>
+<div
+  style={
+    {
+      "--theme-bg": character.theme.bgColor ?? "#1a1a2e",
+      "--theme-text": character.theme.textColor ?? "#e0e0e0",
+      "--theme-accent": character.theme.accentColor ?? "#7c3aed",
+    } as React.CSSProperties
+  }
+>
   {children}
 </div>
 ```
@@ -187,12 +201,14 @@ colors: {
 Phase 1: 3–5 preset themes selectable in admin. No free colour picker until Phase 2.
 
 ### File uploads — presigned S3 URLs
+
 1. Admin client calls `POST /admin/upload/presign` with `{ filename, contentType }`
 2. Fastify returns a presigned PUT URL + final object URL
 3. Client PUTs the file directly to S3 — neither server handles the binary
 4. Client saves the returned object URL to the form
 
 ### Fastify route structure
+
 ```
 apps/api/src/
   index.ts          — server entry, listens on 0.0.0.0:3001
@@ -224,6 +240,7 @@ apps/api/src/
 `apps/api/prisma/schema.prisma`
 
 Key model notes:
+
 - `Character.theme` is `Json @default("{}")` — stores `{ bgColor, textColor, accentColor, bgPattern, transition }`
 - `Character.slug` is generated on create, never regenerated — changing it breaks URLs
 - `Character.createdById` links each character to the `User` who created it — used to enforce ownership on all admin routes
@@ -234,12 +251,12 @@ Key model notes:
 
 ## Deployment
 
-| App | Platform | Domain |
-|---|---|---|
-| `apps/web` | Vercel | `tavernlog.kasparas.dev` |
-| `apps/api` | Koyeb | `api.tavernlog.kasparas.dev` |
-| Database | Neon (serverless Postgres) | — |
-| File storage | AWS S3 (`eu-west-1`) | — |
+| App          | Platform                   | Domain                       |
+| ------------ | -------------------------- | ---------------------------- |
+| `apps/web`   | Vercel                     | `tavernlog.kasparas.dev`     |
+| `apps/api`   | Koyeb                      | `api.tavernlog.kasparas.dev` |
+| Database     | Neon (serverless Postgres) | —                            |
+| File storage | AWS S3 (`eu-west-1`)       | —                            |
 
 ---
 
@@ -259,20 +276,24 @@ npm test --workspace=apps/web    # web component tests
 ```
 
 ### `apps/api` — route integration tests
+
 - Uses Fastify `app.inject()` — no real server or network
 - Prisma is mocked via `vi.mock('../lib/prisma')` — no database connection
 - Fixtures in `src/test/fixtures.ts` are typed with `Prisma.CharacterGetPayload<...>` to match exact route query shapes — no `as any`
 
 ### `apps/web` — component tests
+
 - jsdom environment, React Testing Library
 - `next/link` and `next/image` have shared mocks in `apps/web/__mocks__/` — use `vi.mock('next/link')` with no factory
 - `src/test/utils.tsx` exports `renderWithQuery(ui, data)` for components that use TanStack Query
 - Fixtures in `src/test/fixtures.ts` are typed with `Character` / `StoryEntry` from `@/lib/types`
 
 ### Shared fixture data
+
 Both apps have their own `src/test/fixtures.ts` built from Mira Ashveil's seed data (`apps/api/prisma/seed.ts`). They are separate files with different type systems (Prisma types vs API response types) — **keep them in sync when the seed changes**.
 
 ### No `as any` in tests
+
 Fixture types must be derived from the actual types used by the code under test (`Prisma.CharacterGetPayload<...>` for API, `Character`/`StoryEntry` for web). Never cast fixture data with `as any`.
 
 ---
