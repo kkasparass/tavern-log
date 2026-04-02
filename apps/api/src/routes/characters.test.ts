@@ -31,6 +31,16 @@ describe('GET /characters', () => {
     const call = vi.mocked(prisma.character.findMany).mock.calls[0]![0]!
     expect(call.where).toMatchObject({ system: { equals: 'D&D 5e', mode: 'insensitive' } })
   })
+
+  it('supports ?tag= filter', async () => {
+    vi.mocked(prisma.character.findMany).mockResolvedValue([])
+    const app = buildApp()
+    await app.inject({ method: 'GET', url: '/characters?tag=mage' })
+    const call = vi.mocked(prisma.character.findMany).mock.calls[0]![0]!
+    expect(call.where).toMatchObject({
+      tags: { some: { tag: { equals: 'mage', mode: 'insensitive' } } },
+    })
+  })
 })
 
 describe('GET /characters/:slug', () => {
@@ -41,6 +51,15 @@ describe('GET /characters/:slug', () => {
     const app = buildApp()
     const res = await app.inject({ method: 'GET', url: '/characters/unknown' })
     expect(res.statusCode).toBe(404)
+  })
+
+  it('returns 404 for a non-public character', async () => {
+    vi.mocked(prisma.character.findFirst).mockResolvedValue(null)
+    const app = buildApp()
+    const res = await app.inject({ method: 'GET', url: '/characters/mira-ashveil' })
+    expect(res.statusCode).toBe(404)
+    const call = vi.mocked(prisma.character.findFirst).mock.calls[0]![0]!
+    expect(call.where).toMatchObject({ isPublic: true })
   })
 
   it('returns character with tags flattened', async () => {
@@ -61,6 +80,15 @@ describe('GET /characters/:slug/stories/:storySlug', () => {
     const app = buildApp()
     const res = await app.inject({ method: 'GET', url: '/characters/mira-ashveil/stories/unknown' })
     expect(res.statusCode).toBe(404)
+  })
+
+  it('returns 404 for a draft story', async () => {
+    vi.mocked(prisma.story.findFirst).mockResolvedValue(null)
+    const app = buildApp()
+    const res = await app.inject({ method: 'GET', url: '/characters/mira-ashveil/stories/the-last-spell' })
+    expect(res.statusCode).toBe(404)
+    const call = vi.mocked(prisma.story.findFirst).mock.calls[0]![0]!
+    expect(call.where).toMatchObject({ isDraft: false })
   })
 
   it('returns the story', async () => {
