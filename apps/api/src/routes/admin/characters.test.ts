@@ -1,0 +1,191 @@
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { buildApp } from '../../app'
+import { miraCharacterListItem } from '../../test/fixtures'
+
+vi.mock('../../lib/prisma', () => ({
+  prisma: {
+    character: {
+      findMany: vi.fn(),
+      findUnique: vi.fn(),
+      create: vi.fn(),
+      update: vi.fn(),
+      delete: vi.fn(),
+    },
+    characterTag: {
+      deleteMany: vi.fn(),
+      createMany: vi.fn(),
+    },
+  },
+}))
+
+import { prisma } from '../../lib/prisma'
+
+beforeEach(() => vi.clearAllMocks())
+
+async function setup() {
+  const app = buildApp()
+  await app.ready()
+  const token = app.jwt.sign({ userId: 'user-1', email: 'admin@example.com' })
+  return { app, authCookie: `token=${token}` }
+}
+
+describe('GET /admin/characters', () => {
+  it('returns 200 with character list', async () => {
+    vi.mocked(prisma.character.findMany).mockResolvedValue([miraCharacterListItem])
+    const { app, authCookie } = await setup()
+    const res = await app.inject({
+      method: 'GET',
+      url: '/admin/characters',
+      headers: { cookie: authCookie },
+    })
+    expect(res.statusCode).toBe(200)
+    expect(res.json()).toHaveLength(1)
+  })
+
+  it('returns 401 when unauthenticated', async () => {
+    const { app } = await setup()
+    const res = await app.inject({ method: 'GET', url: '/admin/characters' })
+    expect(res.statusCode).toBe(401)
+  })
+})
+
+describe('POST /admin/characters', () => {
+  it('creates character and returns 201', async () => {
+    vi.mocked(prisma.character.create).mockResolvedValue(miraCharacterListItem)
+    const { app, authCookie } = await setup()
+    const res = await app.inject({
+      method: 'POST',
+      url: '/admin/characters',
+      headers: { cookie: authCookie },
+      payload: { name: 'Mira Ashveil', system: 'D&D 5e' },
+    })
+    expect(res.statusCode).toBe(201)
+    expect(res.json().name).toBe('Mira Ashveil')
+  })
+
+  it('returns 401 when unauthenticated', async () => {
+    const { app } = await setup()
+    const res = await app.inject({
+      method: 'POST',
+      url: '/admin/characters',
+      payload: { name: 'Test', system: 'D&D 5e' },
+    })
+    expect(res.statusCode).toBe(401)
+  })
+})
+
+describe('GET /admin/characters/:id', () => {
+  it('returns 200 with character', async () => {
+    vi.mocked(prisma.character.findUnique).mockResolvedValue(miraCharacterListItem)
+    const { app, authCookie } = await setup()
+    const res = await app.inject({
+      method: 'GET',
+      url: '/admin/characters/cuid-mira',
+      headers: { cookie: authCookie },
+    })
+    expect(res.statusCode).toBe(200)
+    expect(res.json().slug).toBe('mira-ashveil')
+  })
+
+  it('returns 404 when not found', async () => {
+    vi.mocked(prisma.character.findUnique).mockResolvedValue(null)
+    const { app, authCookie } = await setup()
+    const res = await app.inject({
+      method: 'GET',
+      url: '/admin/characters/unknown',
+      headers: { cookie: authCookie },
+    })
+    expect(res.statusCode).toBe(404)
+  })
+})
+
+describe('PUT /admin/characters/:id', () => {
+  it('updates character and returns 200', async () => {
+    vi.mocked(prisma.character.findUnique).mockResolvedValue(miraCharacterListItem)
+    vi.mocked(prisma.character.update).mockResolvedValue({
+      ...miraCharacterListItem,
+      name: 'Mira Updated',
+    })
+    const { app, authCookie } = await setup()
+    const res = await app.inject({
+      method: 'PUT',
+      url: '/admin/characters/cuid-mira',
+      headers: { cookie: authCookie },
+      payload: { name: 'Mira Updated' },
+    })
+    expect(res.statusCode).toBe(200)
+    expect(res.json().name).toBe('Mira Updated')
+  })
+
+  it('replaces tags when tags provided', async () => {
+    vi.mocked(prisma.character.findUnique).mockResolvedValue(miraCharacterListItem)
+    vi.mocked(prisma.characterTag.deleteMany).mockResolvedValue({ count: 3 })
+    vi.mocked(prisma.characterTag.createMany).mockResolvedValue({ count: 2 })
+    vi.mocked(prisma.character.update).mockResolvedValue(miraCharacterListItem)
+    const { app, authCookie } = await setup()
+    const res = await app.inject({
+      method: 'PUT',
+      url: '/admin/characters/cuid-mira',
+      headers: { cookie: authCookie },
+      payload: { tags: ['mage', 'retired'] },
+    })
+    expect(res.statusCode).toBe(200)
+    expect(vi.mocked(prisma.characterTag.deleteMany)).toHaveBeenCalledWith({
+      where: { characterId: 'cuid-mira' },
+    })
+    expect(vi.mocked(prisma.characterTag.createMany)).toHaveBeenCalled()
+  })
+
+  it('returns 404 when character not found', async () => {
+    vi.mocked(prisma.character.findUnique).mockResolvedValue(null)
+    const { app, authCookie } = await setup()
+    const res = await app.inject({
+      method: 'PUT',
+      url: '/admin/characters/unknown',
+      headers: { cookie: authCookie },
+      payload: { name: 'Updated' },
+    })
+    expect(res.statusCode).toBe(404)
+  })
+
+  it('returns 401 when unauthenticated', async () => {
+    const { app } = await setup()
+    const res = await app.inject({
+      method: 'PUT',
+      url: '/admin/characters/cuid-mira',
+      payload: { name: 'Updated' },
+    })
+    expect(res.statusCode).toBe(401)
+  })
+})
+
+describe('DELETE /admin/characters/:id', () => {
+  it('deletes character and returns 204', async () => {
+    vi.mocked(prisma.character.findUnique).mockResolvedValue(miraCharacterListItem)
+    vi.mocked(prisma.character.delete).mockResolvedValue(miraCharacterListItem)
+    const { app, authCookie } = await setup()
+    const res = await app.inject({
+      method: 'DELETE',
+      url: '/admin/characters/cuid-mira',
+      headers: { cookie: authCookie },
+    })
+    expect(res.statusCode).toBe(204)
+  })
+
+  it('returns 404 when character not found', async () => {
+    vi.mocked(prisma.character.findUnique).mockResolvedValue(null)
+    const { app, authCookie } = await setup()
+    const res = await app.inject({
+      method: 'DELETE',
+      url: '/admin/characters/unknown',
+      headers: { cookie: authCookie },
+    })
+    expect(res.statusCode).toBe(404)
+  })
+
+  it('returns 401 when unauthenticated', async () => {
+    const { app } = await setup()
+    const res = await app.inject({ method: 'DELETE', url: '/admin/characters/cuid-mira' })
+    expect(res.statusCode).toBe(401)
+  })
+})

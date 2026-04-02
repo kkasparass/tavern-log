@@ -26,6 +26,30 @@ const app = buildApp()
 const res = await app.inject({ method: 'GET', url: '/characters' })
 ```
 
+### Auth cookie for admin route tests
+
+Admin routes require a JWT cookie. Use `app.jwt.sign()` directly — no login call needed:
+
+```ts
+async function setup() {
+  const app = buildApp()
+  await app.ready()  // required before calling app.jwt.sign()
+  const token = app.jwt.sign({ userId: 'user-1', email: 'admin@example.com' })
+  return { app, authCookie: `token=${token}` }
+}
+
+// In each test:
+const res = await app.inject({
+  method: 'GET',
+  url: '/admin/characters',
+  headers: { cookie: authCookie },
+})
+
+// Unauthenticated (expect 401): omit the headers.cookie field
+```
+
+Admin test files live in `src/routes/admin/` — mock path is `../../lib/prisma`.
+
 ### Mocking bcryptjs
 
 Auth route tests stub `bcrypt.compare` to avoid real hashing:
