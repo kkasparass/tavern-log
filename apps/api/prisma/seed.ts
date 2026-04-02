@@ -13,7 +13,7 @@ async function main() {
   await prisma.user.deleteMany()
 
   // Seed user (placeholder — real bcrypt hash added in Milestone 3)
-  await prisma.user.create({
+  const user = await prisma.user.create({
     data: {
       email: 'admin@tavernlog.dev',
       passwordHash: 'placeholder',
@@ -23,6 +23,7 @@ async function main() {
   // Seed character
   const character = await prisma.character.create({
     data: {
+      createdById: user.id,
       slug: 'mira-ashveil',
       name: 'Mira Ashveil',
       system: 'D&D 5e',
@@ -124,6 +125,7 @@ async function main() {
   // Seed second character
   const nara = await prisma.character.create({
     data: {
+      createdById: user.id,
       slug: 'nara-solis',
       name: 'Nara Solis',
       system: 'Blades in the Dark',

@@ -58,6 +58,7 @@ export async function adminCharacterRoutes(app: FastifyInstance) {
       const character = await prisma.character.create({
         data: {
           ...rest,
+          createdById: request.user.userId,
           slug: toSlug(rest.name),
           ...(tags && tags.length > 0 && {
             tags: { create: tags.map((tag) => ({ tag })) },

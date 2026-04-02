@@ -4,6 +4,7 @@ import type { Character, StoryEntry } from '@/lib/types'
 
 export const mockCharacter: Character = {
   id: 'cuid-mira',
+  createdById: 'user-1',
   slug: 'mira-ashveil',
   name: 'Mira Ashveil',
   system: 'D&D 5e',
@@ -100,6 +101,7 @@ export const mockCharacterListItem = {
 
 export const naraCharacter: Character = {
   id: 'cuid-nara',
+  createdById: 'user-1',
   slug: 'nara-solis',
   name: 'Nara Solis',
   system: 'Blades in the Dark',

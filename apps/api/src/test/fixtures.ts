@@ -19,6 +19,7 @@ type CharacterDetail = Prisma.CharacterGetPayload<{
 
 export const miraCharacterListItem: CharacterListItem = {
   id: 'cuid-mira',
+  createdById: 'user-1',
   slug: 'mira-ashveil',
   name: 'Mira Ashveil',
   system: 'D&D 5e',
@@ -138,6 +139,7 @@ export const naraStory: Story = {
 
 export const naraCharacterListItem: CharacterListItem = {
   id: 'cuid-nara',
+  createdById: 'user-1',
   slug: 'nara-solis',
   name: 'Nara Solis',
   system: 'Blades in the Dark',

@@ -61,6 +61,8 @@ describe('POST /admin/characters', () => {
     })
     expect(res.statusCode).toBe(201)
     expect(res.json().name).toBe('Mira Ashveil')
+    const call = vi.mocked(prisma.character.create).mock.calls[0]![0]!
+    expect(call.data).toMatchObject({ createdById: 'user-1' })
   })
 
   it('returns 401 when unauthenticated', async () => {

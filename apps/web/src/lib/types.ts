@@ -57,6 +57,7 @@ export type CharacterTimelineEvent = {
 
 export type Character = {
   id: string
+  createdById: string
   slug: string
   name: string
   system: string
