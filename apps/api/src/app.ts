@@ -1,4 +1,5 @@
 import Fastify from 'fastify'
+import { authPlugin } from './plugins/auth'
 import { registerRoutes } from './routes'
 
 export function buildApp() {
@@ -18,6 +19,7 @@ export function buildApp() {
     return { status: 'ok' }
   })
 
+  app.register(authPlugin)
   registerRoutes(app)
 
   return app

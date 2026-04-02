@@ -9,6 +9,8 @@ Always read this file before writing tests. It lists every shared fixture, utili
 ### Pattern
 Route integration tests use Fastify `app.inject()` — no real server or network. Prisma is mocked at the module level via `vi.mock('../lib/prisma')`.
 
+`JWT_SECRET` is set globally in `src/test/setup.ts` (loaded via `setupFiles` in `vitest.config.ts`) — no `beforeAll` needed in individual test files.
+
 ```ts
 vi.mock('../lib/prisma', () => ({
   prisma: {
@@ -22,6 +24,19 @@ import { prisma } from '../lib/prisma'
 vi.mocked(prisma.character.findMany).mockResolvedValue([miraCharacterListItem])
 const app = buildApp()
 const res = await app.inject({ method: 'GET', url: '/characters' })
+```
+
+### Mocking bcryptjs
+
+Auth route tests stub `bcrypt.compare` to avoid real hashing:
+
+```ts
+vi.mock('bcryptjs')
+import bcrypt from 'bcryptjs'
+
+// In each test:
+vi.mocked(bcrypt.compare).mockResolvedValue(true as never)  // valid password
+vi.mocked(bcrypt.compare).mockResolvedValue(false as never) // wrong password
 ```
 
 ### Fixtures — `src/test/fixtures.ts`

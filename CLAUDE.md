@@ -276,6 +276,6 @@ Fixture types must be derived from the actual types used by the code under test 
 
 ## Current Milestone
 
-**Milestone 2 — Public Character Pages.** See `$OBSIDIAN_VAULT/Projects/Tavern Log/Sprint.md` for active tasks.
+**Milestone 3 — Auth & Admin Interface.** See `$OBSIDIAN_VAULT/Projects/Tavern Log/Sprint.md` for active tasks.
 
-Goal: Fastify character routes, TanStack Query setup, landing page, per-character themed profile pages, all content tabs, OpenGraph metadata, and testing infrastructure.
+Goal: Fastify JWT auth, httpOnly cookie session, CSRF protection, Next.js middleware for route protection, full admin CRUD for all content types, Tiptap rich text editor, site-wide header, and testing coverage for all new routes and components.
