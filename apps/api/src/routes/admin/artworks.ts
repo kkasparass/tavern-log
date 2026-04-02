@@ -22,7 +22,13 @@ export async function adminArtworkRoutes(app: FastifyInstance) {
   app.get<{ Params: { id: string } }>(
     "/characters/:id/artworks",
     { preHandler: authenticate },
-    async (request) => {
+    async (request, reply) => {
+      const character = await prisma.character.findUnique({
+        where: { id: request.params.id },
+      });
+      if (!character) return reply.code(404).send({ error: "Not found" });
+      if (character.createdById !== request.user.userId)
+        return reply.code(403).send({ error: "Forbidden" });
       return prisma.artwork.findMany({
         where: { characterId: request.params.id },
         orderBy: { order: "asc" },
@@ -43,6 +49,12 @@ export async function adminArtworkRoutes(app: FastifyInstance) {
       },
     },
     async (request, reply) => {
+      const character = await prisma.character.findUnique({
+        where: { id: request.params.id },
+      });
+      if (!character) return reply.code(404).send({ error: "Not found" });
+      if (character.createdById !== request.user.userId)
+        return reply.code(403).send({ error: "Forbidden" });
       const artwork = await prisma.artwork.create({
         data: { ...request.body, characterId: request.params.id },
       });
@@ -57,8 +69,11 @@ export async function adminArtworkRoutes(app: FastifyInstance) {
       const { artworkId } = request.params;
       const existing = await prisma.artwork.findUnique({
         where: { id: artworkId },
+        include: { character: { select: { createdById: true } } },
       });
       if (!existing) return reply.code(404).send({ error: "Not found" });
+      if (existing.character.createdById !== request.user.userId)
+        return reply.code(403).send({ error: "Forbidden" });
       const artwork = await prisma.artwork.update({
         where: { id: artworkId },
         data: request.body,
@@ -74,8 +89,11 @@ export async function adminArtworkRoutes(app: FastifyInstance) {
       const { artworkId } = request.params;
       const existing = await prisma.artwork.findUnique({
         where: { id: artworkId },
+        include: { character: { select: { createdById: true } } },
       });
       if (!existing) return reply.code(404).send({ error: "Not found" });
+      if (existing.character.createdById !== request.user.userId)
+        return reply.code(403).send({ error: "Forbidden" });
       await prisma.artwork.delete({ where: { id: artworkId } });
       return reply.code(204).send();
     },

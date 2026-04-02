@@ -20,7 +20,10 @@ export async function adminTimelineRoutes(app: FastifyInstance) {
   app.get<{ Params: { id: string } }>(
     '/characters/:id/timeline',
     { preHandler: authenticate },
-    async (request) => {
+    async (request, reply) => {
+      const character = await prisma.character.findUnique({ where: { id: request.params.id } })
+      if (!character) return reply.code(404).send({ error: 'Not found' })
+      if (character.createdById !== request.user.userId) return reply.code(403).send({ error: 'Forbidden' })
       return prisma.timelineEvent.findMany({
         where: { characterId: request.params.id },
         orderBy: { order: 'asc' },
@@ -41,6 +44,9 @@ export async function adminTimelineRoutes(app: FastifyInstance) {
       },
     },
     async (request, reply) => {
+      const character = await prisma.character.findUnique({ where: { id: request.params.id } })
+      if (!character) return reply.code(404).send({ error: 'Not found' })
+      if (character.createdById !== request.user.userId) return reply.code(403).send({ error: 'Forbidden' })
       const event = await prisma.timelineEvent.create({
         data: { ...request.body, characterId: request.params.id },
       })
@@ -53,8 +59,12 @@ export async function adminTimelineRoutes(app: FastifyInstance) {
     { preHandler: authenticate },
     async (request, reply) => {
       const { eventId } = request.params
-      const existing = await prisma.timelineEvent.findUnique({ where: { id: eventId } })
+      const existing = await prisma.timelineEvent.findUnique({
+        where: { id: eventId },
+        include: { character: { select: { createdById: true } } },
+      })
       if (!existing) return reply.code(404).send({ error: 'Not found' })
+      if (existing.character.createdById !== request.user.userId) return reply.code(403).send({ error: 'Forbidden' })
       const event = await prisma.timelineEvent.update({
         where: { id: eventId },
         data: request.body,
@@ -68,8 +78,12 @@ export async function adminTimelineRoutes(app: FastifyInstance) {
     { preHandler: authenticate },
     async (request, reply) => {
       const { eventId } = request.params
-      const existing = await prisma.timelineEvent.findUnique({ where: { id: eventId } })
+      const existing = await prisma.timelineEvent.findUnique({
+        where: { id: eventId },
+        include: { character: { select: { createdById: true } } },
+      })
       if (!existing) return reply.code(404).send({ error: 'Not found' })
+      if (existing.character.createdById !== request.user.userId) return reply.code(403).send({ error: 'Forbidden' })
       await prisma.timelineEvent.delete({ where: { id: eventId } })
       return reply.code(204).send()
     }

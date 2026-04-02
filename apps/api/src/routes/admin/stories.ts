@@ -18,7 +18,10 @@ export async function adminStoryRoutes(app: FastifyInstance) {
   app.get<{ Params: { id: string } }>(
     '/characters/:id/stories',
     { preHandler: authenticate },
-    async (request) => {
+    async (request, reply) => {
+      const character = await prisma.character.findUnique({ where: { id: request.params.id } })
+      if (!character) return reply.code(404).send({ error: 'Not found' })
+      if (character.createdById !== request.user.userId) return reply.code(403).send({ error: 'Forbidden' })
       return prisma.story.findMany({
         where: { characterId: request.params.id },
         orderBy: { createdAt: 'desc' },
@@ -39,6 +42,9 @@ export async function adminStoryRoutes(app: FastifyInstance) {
       },
     },
     async (request, reply) => {
+      const character = await prisma.character.findUnique({ where: { id: request.params.id } })
+      if (!character) return reply.code(404).send({ error: 'Not found' })
+      if (character.createdById !== request.user.userId) return reply.code(403).send({ error: 'Forbidden' })
       const story = await prisma.story.create({
         data: {
           characterId: request.params.id,
@@ -59,8 +65,12 @@ export async function adminStoryRoutes(app: FastifyInstance) {
       const { storyId } = request.params
       const { isDraft, ...rest } = request.body
 
-      const existing = await prisma.story.findUnique({ where: { id: storyId } })
+      const existing = await prisma.story.findUnique({
+        where: { id: storyId },
+        include: { character: { select: { createdById: true } } },
+      })
       if (!existing) return reply.code(404).send({ error: 'Not found' })
+      if (existing.character.createdById !== request.user.userId) return reply.code(403).send({ error: 'Forbidden' })
 
       const publishedAt =
         isDraft === false && existing.isDraft === true
@@ -86,8 +96,12 @@ export async function adminStoryRoutes(app: FastifyInstance) {
     { preHandler: authenticate },
     async (request, reply) => {
       const { storyId } = request.params
-      const existing = await prisma.story.findUnique({ where: { id: storyId } })
+      const existing = await prisma.story.findUnique({
+        where: { id: storyId },
+        include: { character: { select: { createdById: true } } },
+      })
       if (!existing) return reply.code(404).send({ error: 'Not found' })
+      if (existing.character.createdById !== request.user.userId) return reply.code(403).send({ error: 'Forbidden' })
       await prisma.story.delete({ where: { id: storyId } })
       return reply.code(204).send()
     }

@@ -31,8 +31,9 @@ interface UpdateCharacterBody {
 }
 
 export async function adminCharacterRoutes(app: FastifyInstance) {
-  app.get('/characters', { preHandler: authenticate }, async () => {
+  app.get('/characters', { preHandler: authenticate }, async (request) => {
     return prisma.character.findMany({
+      where: { createdById: request.user.userId },
       include: { tags: { select: { tag: true } } },
       orderBy: { name: 'asc' },
     })
@@ -79,6 +80,7 @@ export async function adminCharacterRoutes(app: FastifyInstance) {
         include: { tags: { select: { tag: true } } },
       })
       if (!character) return reply.code(404).send({ error: 'Not found' })
+      if (character.createdById !== request.user.userId) return reply.code(403).send({ error: 'Forbidden' })
       return character
     }
   )
@@ -92,6 +94,7 @@ export async function adminCharacterRoutes(app: FastifyInstance) {
 
       const existing = await prisma.character.findUnique({ where: { id } })
       if (!existing) return reply.code(404).send({ error: 'Not found' })
+      if (existing.createdById !== request.user.userId) return reply.code(403).send({ error: 'Forbidden' })
 
       if (tags !== undefined) {
         await prisma.characterTag.deleteMany({ where: { characterId: id } })
@@ -118,6 +121,7 @@ export async function adminCharacterRoutes(app: FastifyInstance) {
       const { id } = request.params
       const existing = await prisma.character.findUnique({ where: { id } })
       if (!existing) return reply.code(404).send({ error: 'Not found' })
+      if (existing.createdById !== request.user.userId) return reply.code(403).send({ error: 'Forbidden' })
       await prisma.character.delete({ where: { id } })
       return reply.code(204).send()
     }

@@ -1,9 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { buildApp } from '../../app'
-import { miraCharacterDetail } from '../../test/fixtures'
+import { miraCharacterDetail, miraCharacterListItem } from '../../test/fixtures'
 
 vi.mock('../../lib/prisma', () => ({
   prisma: {
+    character: { findUnique: vi.fn() },
     timelineEvent: {
       findMany: vi.fn(),
       findUnique: vi.fn(),
@@ -17,6 +18,9 @@ vi.mock('../../lib/prisma', () => ({
 import { prisma } from '../../lib/prisma'
 
 const mockEvent = miraCharacterDetail.timeline[0]!
+const otherUserCharacter = { ...miraCharacterListItem, createdById: 'user-2' }
+const eventWithCharacter = { ...mockEvent, character: { createdById: 'user-1' } }
+const eventWithOtherCharacter = { ...mockEvent, character: { createdById: 'user-2' } }
 
 beforeEach(() => vi.clearAllMocks())
 
@@ -29,6 +33,7 @@ async function setup() {
 
 describe('GET /admin/characters/:id/timeline', () => {
   it('returns 200 with timeline event list', async () => {
+    vi.mocked(prisma.character.findUnique).mockResolvedValue(miraCharacterListItem)
     vi.mocked(prisma.timelineEvent.findMany).mockResolvedValue([mockEvent])
     const { app, authCookie } = await setup()
     const res = await app.inject({
@@ -38,6 +43,17 @@ describe('GET /admin/characters/:id/timeline', () => {
     })
     expect(res.statusCode).toBe(200)
     expect(res.json()).toHaveLength(1)
+  })
+
+  it('returns 403 when character belongs to another user', async () => {
+    vi.mocked(prisma.character.findUnique).mockResolvedValue(otherUserCharacter)
+    const { app, authCookie } = await setup()
+    const res = await app.inject({
+      method: 'GET',
+      url: '/admin/characters/cuid-mira/timeline',
+      headers: { cookie: authCookie },
+    })
+    expect(res.statusCode).toBe(403)
   })
 
   it('returns 401 when unauthenticated', async () => {
@@ -52,6 +68,7 @@ describe('GET /admin/characters/:id/timeline', () => {
 
 describe('POST /admin/characters/:id/timeline', () => {
   it('creates timeline event and returns 201', async () => {
+    vi.mocked(prisma.character.findUnique).mockResolvedValue(miraCharacterListItem)
     vi.mocked(prisma.timelineEvent.create).mockResolvedValue(mockEvent)
     const { app, authCookie } = await setup()
     const res = await app.inject({
@@ -63,6 +80,18 @@ describe('POST /admin/characters/:id/timeline', () => {
     expect(res.statusCode).toBe(201)
     const call = vi.mocked(prisma.timelineEvent.create).mock.calls[0]![0]!
     expect(call.data.characterId).toBe('cuid-mira')
+  })
+
+  it('returns 403 when character belongs to another user', async () => {
+    vi.mocked(prisma.character.findUnique).mockResolvedValue(otherUserCharacter)
+    const { app, authCookie } = await setup()
+    const res = await app.inject({
+      method: 'POST',
+      url: '/admin/characters/cuid-mira/timeline',
+      headers: { cookie: authCookie },
+      payload: { title: 'New Event' },
+    })
+    expect(res.statusCode).toBe(403)
   })
 
   it('returns 401 when unauthenticated', async () => {
@@ -78,7 +107,7 @@ describe('POST /admin/characters/:id/timeline', () => {
 
 describe('PUT /admin/timeline/:eventId', () => {
   it('updates timeline event and returns 200', async () => {
-    vi.mocked(prisma.timelineEvent.findUnique).mockResolvedValue(mockEvent)
+    vi.mocked(prisma.timelineEvent.findUnique).mockResolvedValue(eventWithCharacter)
     vi.mocked(prisma.timelineEvent.update).mockResolvedValue({ ...mockEvent, order: 1 })
     const { app, authCookie } = await setup()
     const res = await app.inject({
@@ -103,6 +132,18 @@ describe('PUT /admin/timeline/:eventId', () => {
     expect(res.statusCode).toBe(404)
   })
 
+  it('returns 403 when event belongs to another user', async () => {
+    vi.mocked(prisma.timelineEvent.findUnique).mockResolvedValue(eventWithOtherCharacter)
+    const { app, authCookie } = await setup()
+    const res = await app.inject({
+      method: 'PUT',
+      url: '/admin/timeline/cuid-tl-1',
+      headers: { cookie: authCookie },
+      payload: { order: 1 },
+    })
+    expect(res.statusCode).toBe(403)
+  })
+
   it('returns 401 when unauthenticated', async () => {
     const { app } = await setup()
     const res = await app.inject({
@@ -116,7 +157,7 @@ describe('PUT /admin/timeline/:eventId', () => {
 
 describe('DELETE /admin/timeline/:eventId', () => {
   it('deletes timeline event and returns 204', async () => {
-    vi.mocked(prisma.timelineEvent.findUnique).mockResolvedValue(mockEvent)
+    vi.mocked(prisma.timelineEvent.findUnique).mockResolvedValue(eventWithCharacter)
     vi.mocked(prisma.timelineEvent.delete).mockResolvedValue(mockEvent)
     const { app, authCookie } = await setup()
     const res = await app.inject({
@@ -136,6 +177,17 @@ describe('DELETE /admin/timeline/:eventId', () => {
       headers: { cookie: authCookie },
     })
     expect(res.statusCode).toBe(404)
+  })
+
+  it('returns 403 when event belongs to another user', async () => {
+    vi.mocked(prisma.timelineEvent.findUnique).mockResolvedValue(eventWithOtherCharacter)
+    const { app, authCookie } = await setup()
+    const res = await app.inject({
+      method: 'DELETE',
+      url: '/admin/timeline/cuid-tl-1',
+      headers: { cookie: authCookie },
+    })
+    expect(res.statusCode).toBe(403)
   })
 
   it('returns 401 when unauthenticated', async () => {

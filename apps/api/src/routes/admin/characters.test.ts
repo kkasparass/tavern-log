@@ -29,6 +29,8 @@ async function setup() {
   return { app, authCookie: `token=${token}` }
 }
 
+const otherUserCharacter = { ...miraCharacterListItem, createdById: 'user-2' }
+
 describe('GET /admin/characters', () => {
   it('returns 200 with character list', async () => {
     vi.mocked(prisma.character.findMany).mockResolvedValue([miraCharacterListItem])
@@ -40,6 +42,14 @@ describe('GET /admin/characters', () => {
     })
     expect(res.statusCode).toBe(200)
     expect(res.json()).toHaveLength(1)
+  })
+
+  it('filters by createdById', async () => {
+    vi.mocked(prisma.character.findMany).mockResolvedValue([miraCharacterListItem])
+    const { app, authCookie } = await setup()
+    await app.inject({ method: 'GET', url: '/admin/characters', headers: { cookie: authCookie } })
+    const call = vi.mocked(prisma.character.findMany).mock.calls[0]![0]!
+    expect(call.where).toMatchObject({ createdById: 'user-1' })
   })
 
   it('returns 401 when unauthenticated', async () => {
@@ -99,6 +109,17 @@ describe('GET /admin/characters/:id', () => {
     })
     expect(res.statusCode).toBe(404)
   })
+
+  it('returns 403 when character belongs to another user', async () => {
+    vi.mocked(prisma.character.findUnique).mockResolvedValue(otherUserCharacter)
+    const { app, authCookie } = await setup()
+    const res = await app.inject({
+      method: 'GET',
+      url: '/admin/characters/cuid-mira',
+      headers: { cookie: authCookie },
+    })
+    expect(res.statusCode).toBe(403)
+  })
 })
 
 describe('PUT /admin/characters/:id', () => {
@@ -150,6 +171,18 @@ describe('PUT /admin/characters/:id', () => {
     expect(res.statusCode).toBe(404)
   })
 
+  it('returns 403 when character belongs to another user', async () => {
+    vi.mocked(prisma.character.findUnique).mockResolvedValue(otherUserCharacter)
+    const { app, authCookie } = await setup()
+    const res = await app.inject({
+      method: 'PUT',
+      url: '/admin/characters/cuid-mira',
+      headers: { cookie: authCookie },
+      payload: { name: 'Updated' },
+    })
+    expect(res.statusCode).toBe(403)
+  })
+
   it('returns 401 when unauthenticated', async () => {
     const { app } = await setup()
     const res = await app.inject({
@@ -183,6 +216,17 @@ describe('DELETE /admin/characters/:id', () => {
       headers: { cookie: authCookie },
     })
     expect(res.statusCode).toBe(404)
+  })
+
+  it('returns 403 when character belongs to another user', async () => {
+    vi.mocked(prisma.character.findUnique).mockResolvedValue(otherUserCharacter)
+    const { app, authCookie } = await setup()
+    const res = await app.inject({
+      method: 'DELETE',
+      url: '/admin/characters/cuid-mira',
+      headers: { cookie: authCookie },
+    })
+    expect(res.statusCode).toBe(403)
   })
 
   it('returns 401 when unauthenticated', async () => {
