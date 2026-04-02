@@ -88,7 +88,7 @@ describe('POST /admin/characters', () => {
 })
 
 describe('GET /admin/characters/:id', () => {
-  it('returns 200 with character', async () => {
+  it('returns 200 with character and normalised tags', async () => {
     vi.mocked(prisma.character.findUnique).mockResolvedValue(miraCharacterListItem)
     const { app, authCookie } = await setup()
     const res = await app.inject({
@@ -98,6 +98,7 @@ describe('GET /admin/characters/:id', () => {
     })
     expect(res.statusCode).toBe(200)
     expect(res.json().slug).toBe('mira-ashveil')
+    expect(res.json().tags).toEqual(['mage', 'D&D 5e', 'retired'])
   })
 
   it('returns 404 when not found', async () => {

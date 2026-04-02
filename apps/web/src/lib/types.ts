@@ -21,6 +21,21 @@ export type CharacterPreview = {
   tags: string[]
 }
 
+export type AdminCharacterDetail = {
+  id: string
+  slug: string
+  name: string
+  system: string
+  campaign: string | null
+  status: CharacterStatus
+  bio: string | null
+  personality: string | null
+  thumbnailUrl: string | null
+  isPublic: boolean
+  theme: CharacterTheme
+  tags: string[]
+}
+
 export type StoryEntry = {
   id: string
   slug: string

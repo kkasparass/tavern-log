@@ -82,7 +82,7 @@ export async function adminCharacterRoutes(app: FastifyInstance) {
       })
       if (!character) return reply.code(404).send({ error: 'Not found' })
       if (character.createdById !== request.user.userId) return reply.code(403).send({ error: 'Forbidden' })
-      return character
+      return { ...character, tags: character.tags.map(t => t.tag) }
     }
   )
 
