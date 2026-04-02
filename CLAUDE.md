@@ -67,7 +67,7 @@ tavern-log/
 - **Framework:** Fastify (TypeScript)
 - **Database:** Prisma ORM → Postgres (Docker locally, Neon in production)
 - **Auth:** `@fastify/jwt` + `@fastify/cookie` + `@fastify/csrf-protection`
-- **Validation:** Zod for request bodies
+- **Validation:** Fastify built-in JSON schema (ajv)
 - **File storage:** AWS S3 presigned PUT URLs via `@aws-sdk/client-s3`
 - **CORS:** `@fastify/cors` — allows `localhost:3000` (dev) and `tavernlog.kasparas.dev` (production)
 
@@ -213,6 +213,8 @@ apps/api/src/
   lib/
     prisma.ts       — Prisma client singleton
     s3.ts           — S3 client + presign helper
+  utils/
+    slug.ts         — toSlug helper (shared by characters and stories routes)
 ```
 
 ---
@@ -224,6 +226,7 @@ apps/api/src/
 Key model notes:
 - `Character.theme` is `Json @default("{}")` — stores `{ bgColor, textColor, accentColor, bgPattern, transition }`
 - `Character.slug` is generated on create, never regenerated — changing it breaks URLs
+- `Character.createdById` links each character to the `User` who created it — used to enforce ownership on all admin routes
 - `Story.isDraft` defaults to `true` — never expose draft stories on public routes
 - `VoiceLine`, `Artwork`, `TimelineEvent` all carry an `order Int` for manual ordering
 
