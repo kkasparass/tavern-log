@@ -244,11 +244,15 @@ Key model notes:
 
 Both apps use **Vitest**. No database needed — tests run fully offline.
 
+**Before writing any tests, read `.claude/TESTING_RESOURCES.md`** — it lists all available fixtures, utilities, and mocks for both apps.
+
+**After adding any new fixture, shared mock, or test utility, update `.claude/TESTING_RESOURCES.md`** to reflect the addition.
+
 ### Running tests
 
 ```bash
-npm test --workspace=apps/api    # 6 route tests
-npm test --workspace=apps/web    # 3 component tests
+npm test --workspace=apps/api    # API route tests
+npm test --workspace=apps/web    # web component tests
 ```
 
 ### `apps/api` — route integration tests
@@ -258,7 +262,8 @@ npm test --workspace=apps/web    # 3 component tests
 
 ### `apps/web` — component tests
 - jsdom environment, React Testing Library
-- `next/link` and `next/image` are mocked in test files — standard pattern for Next.js components
+- `next/link` and `next/image` have shared mocks in `apps/web/__mocks__/` — use `vi.mock('next/link')` with no factory
+- `src/test/utils.tsx` exports `renderWithQuery(ui, data)` for components that use TanStack Query
 - Fixtures in `src/test/fixtures.ts` are typed with `Character` / `StoryEntry` from `@/lib/types`
 
 ### Shared fixture data

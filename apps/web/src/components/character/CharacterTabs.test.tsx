@@ -2,11 +2,7 @@ import { render, screen } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { CharacterTabs } from './CharacterTabs'
 
-vi.mock('next/link', () => ({
-  default: ({ children, href, className }: { children: React.ReactNode; href: string; className?: string }) => (
-    <a href={href} className={className}>{children}</a>
-  ),
-}))
+vi.mock('next/link')
 
 const mockUsePathname = vi.fn()
 vi.mock('next/navigation', () => ({

@@ -3,19 +3,8 @@ import { describe, it, expect, vi } from "vitest";
 import { CharacterCard } from "./CharacterCard";
 import { mockCharacterListItem } from "@/test/fixtures";
 
-vi.mock("next/link", () => ({
-  default: ({
-    children,
-    href,
-  }: {
-    children: React.ReactNode;
-    href: string;
-  }) => <a href={href}>{children}</a>,
-}));
-vi.mock("next/image", () => ({
-  // eslint-disable-next-line @next/next/no-img-element -- intentional plain <img> in mock, next/image not needed in tests
-  default: ({ alt }: { alt: string }) => <img alt={alt} />,
-}));
+vi.mock("next/link")
+vi.mock("next/image")
 
 describe("CharacterCard", () => {
   it("renders name and system", () => {

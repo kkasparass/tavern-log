@@ -120,6 +120,103 @@ async function main() {
   })
 
   console.log(`Seeded character: ${character.name} (${character.slug})`)
+
+  // Seed second character
+  const nara = await prisma.character.create({
+    data: {
+      slug: 'nara-solis',
+      name: 'Nara Solis',
+      system: 'Blades in the Dark',
+      campaign: 'Shadows of Doskvol',
+      status: 'ACTIVE',
+      bio: "Former dockworker turned enforcer for the Red Sashes. She cut ties with the crew after a job went sideways in the Dusk ward and now runs her own small operation out of Crow's Foot.",
+      personality: "Pragmatic to a fault. Doesn't enjoy violence but is very good at it. Has a reputation for honoring her word — which in Doskvol is either an asset or a liability depending on who's asking.",
+      isPublic: true,
+      theme: {
+        bgColor: '#1c1408',
+        textColor: '#e8d5b0',
+        accentColor: '#d4901a',
+      },
+      tags: {
+        create: [
+          { tag: 'scoundrel' },
+          { tag: 'Blades in the Dark' },
+          { tag: 'active' },
+        ],
+      },
+      stories: {
+        create: [
+          {
+            title: "The Crow's Foot Job",
+            slug: 'the-crows-foot-job',
+            content:
+              "<p>The job was supposed to take twenty minutes. It took three days and cost Nara two ribs and a contact she'd spent years cultivating.</p>" +
+              "<p>She'd do it again. The Red Sashes had been charging their cut on every shipment through the Dusk ward for six years. Someone had to make that stop.</p>" +
+              '<p>She told herself it was business. That was the lie she needed long enough to get it done.</p>',
+            isDraft: false,
+            publishedAt: new Date('2025-02-14'),
+          },
+        ],
+      },
+      voiceLines: {
+        create: [
+          {
+            audioUrl: 'https://example.com/audio/nara-placeholder-1.mp3',
+            transcript: "I don't take jobs I can't finish. Problem is, I always finish them.",
+            context: 'Before agreeing to work with the party.',
+            order: 0,
+          },
+          {
+            audioUrl: 'https://example.com/audio/nara-placeholder-2.mp3',
+            transcript: 'Doskvol teaches you two things: how to disappear, and how to hit before they see you coming.',
+            context: 'During a tense standoff in the Dusk ward.',
+            order: 1,
+          },
+        ],
+      },
+      artworks: {
+        create: [
+          {
+            imageUrl: 'https://placehold.co/800x1000/1c1408/e8d5b0?text=Nara+Solis',
+            title: "Nara in Crow's Foot",
+            caption: 'Portrait commission for Shadows of Doskvol.',
+            artistCredit: 'Placeholder Artist',
+            order: 0,
+          },
+          {
+            imageUrl: 'https://placehold.co/800x800/1c1408/d4901a?text=The+Job',
+            title: 'The Dusk Ward Job',
+            caption: 'Scene from "The Crow\'s Foot Job".',
+            order: 1,
+          },
+        ],
+      },
+      timeline: {
+        create: [
+          {
+            title: 'Joined the Red Sashes',
+            description: 'Took the enforcer contract at 19. She told herself it was temporary.',
+            dateLabel: 'Year 847 of the Imperial Calendar',
+            order: 0,
+          },
+          {
+            title: 'The Dusk Ward Incident',
+            description: 'A routine collection turned into a three-day standoff. She walked out; most of the Red Sashes in the ward did not.',
+            dateLabel: 'Year 849 of the Imperial Calendar',
+            order: 1,
+          },
+          {
+            title: "Established her crew in Crow's Foot",
+            description: 'Took on two associates and a leaky safehouse off Tanners Alley. Called it an upgrade.',
+            dateLabel: 'Year 849 of the Imperial Calendar, late winter',
+            order: 2,
+          },
+        ],
+      },
+    },
+  })
+
+  console.log(`Seeded character: ${nara.name} (${nara.slug})`)
 }
 
 main()
