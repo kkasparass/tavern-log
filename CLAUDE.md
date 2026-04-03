@@ -113,10 +113,10 @@ API_URL=http://localhost:3001
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/tavernlog
 DATABASE_URL_UNPOOLED=postgresql://postgres:postgres@localhost:5432/tavernlog
 JWT_SECRET=<openssl rand -base64 32>
-AWS_REGION=eu-west-1
+AWS_REGION=eu-south-2
 AWS_ACCESS_KEY_ID=
 AWS_SECRET_ACCESS_KEY=
-S3_BUCKET_NAME=tavernlog-uploads
+S3_BUCKET_NAME=tavernlog-upload
 ```
 
 ---
@@ -256,7 +256,7 @@ Key model notes:
 | `apps/web`   | Vercel                     | `tavernlog.kasparas.dev`     |
 | `apps/api`   | Koyeb                      | `api.tavernlog.kasparas.dev` |
 | Database     | Neon (serverless Postgres) | —                            |
-| File storage | AWS S3 (`eu-west-1`)       | —                            |
+| File storage | AWS S3 (`eu-south-2`)       | —                            |
 
 ---
 

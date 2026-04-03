@@ -6,6 +6,7 @@ import { adminStoryRoutes } from "./admin/stories";
 import { adminVoiceLineRoutes } from "./admin/voice-lines";
 import { adminArtworkRoutes } from "./admin/artworks";
 import { adminTimelineRoutes } from "./admin/timeline";
+import { adminUploadRoutes } from "./admin/upload";
 
 export async function registerRoutes(app: FastifyInstance) {
   await app.register(authRoutes, { prefix: "/auth" });
@@ -15,4 +16,5 @@ export async function registerRoutes(app: FastifyInstance) {
   await app.register(adminVoiceLineRoutes, { prefix: "/admin" });
   await app.register(adminArtworkRoutes, { prefix: "/admin" });
   await app.register(adminTimelineRoutes, { prefix: "/admin" });
+  await app.register(adminUploadRoutes, { prefix: "/admin" });
 }
