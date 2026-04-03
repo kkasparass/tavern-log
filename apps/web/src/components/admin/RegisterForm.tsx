@@ -2,30 +2,37 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 
-async function login(body: { email: string; password: string }) {
-  const res = await fetch("/api/auth/login", {
+async function register(body: { email: string; password: string }) {
+  const res = await fetch("/api/auth/register", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
-  if (!res.ok) throw new Error("Invalid credentials");
+  if (res.status === 409) throw new Error("Email already registered");
+  if (!res.ok) throw new Error("Registration failed");
   return res.json();
 }
 
-export function LoginForm() {
+export function RegisterForm() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
 
   const mutation = useMutation({
-    mutationFn: login,
+    mutationFn: register,
     onSuccess: () => router.push("/admin"),
   });
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (password !== confirmPassword) {
+      setPasswordError("Passwords do not match");
+      return;
+    }
+    setPasswordError("");
     mutation.mutate({ email, password });
   }
 
@@ -57,20 +64,28 @@ export function LoginForm() {
           className="rounded border border-white/10 bg-gray-800 px-3 py-2 text-white focus:border-white/30 focus:outline-none"
         />
       </div>
+      <div className="flex flex-col gap-1">
+        <label htmlFor="confirmPassword" className="text-sm text-white/70">
+          Confirm password
+        </label>
+        <input
+          id="confirmPassword"
+          type="password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          required
+          className="rounded border border-white/10 bg-gray-800 px-3 py-2 text-white focus:border-white/30 focus:outline-none"
+        />
+      </div>
+      {passwordError && <p className="text-sm text-red-400">{passwordError}</p>}
       {mutation.isError && <p className="text-sm text-red-400">{mutation.error.message}</p>}
       <button
         type="submit"
         disabled={mutation.isPending}
         className="rounded bg-white px-4 py-2 font-semibold text-gray-950 transition-colors hover:bg-white/90 disabled:opacity-50"
       >
-        {mutation.isPending ? "Signing in…" : "Sign in"}
+        {mutation.isPending ? "Creating account…" : "Create account"}
       </button>
-      <p className="text-center text-sm text-white/50">
-        No account?{" "}
-        <Link href="/admin/register" className="text-white/70 underline hover:text-white">
-          Create one
-        </Link>
-      </p>
     </form>
   );
 }
