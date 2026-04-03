@@ -4,7 +4,7 @@ import { useMutation } from "@tanstack/react-query";
 export function LogoutButton() {
   const mutation = useMutation({
     mutationFn: () => fetch("/api/auth/logout", { method: "POST" }),
-    onSuccess: () => window.location.assign("/admin/login"),
+    onSuccess: () => window.location.reload(),
   });
 
   return (

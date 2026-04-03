@@ -1,7 +1,10 @@
-"use client";
 import Link from "next/link";
+import { cookies } from "next/headers";
+import { LogoutButton } from "@/components/admin/LogoutButton";
 
-export function Header() {
+export async function Header() {
+  const isLoggedIn = !!(await cookies()).get("token");
+
   return (
     <header className="flex items-center justify-between border-b border-white/10 bg-gray-900 px-8 py-4">
       <Link
@@ -10,9 +13,12 @@ export function Header() {
       >
         Tavern Log
       </Link>
-      <Link href="/admin" className="text-sm text-white/60 transition-colors hover:text-white/90">
-        Admin
-      </Link>
+      <div className="flex items-center gap-6">
+        <Link href="/admin" className="text-sm text-white/60 transition-colors hover:text-white/90">
+          Admin
+        </Link>
+        {isLoggedIn && <LogoutButton />}
+      </div>
     </header>
   );
 }
