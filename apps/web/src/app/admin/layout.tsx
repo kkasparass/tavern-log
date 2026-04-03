@@ -3,7 +3,7 @@ import { LogoutButton } from "@/components/admin/LogoutButton";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-screen bg-gray-950">
+    <div className="flex min-h-full bg-gray-950">
       <aside className="flex w-56 shrink-0 flex-col border-r border-white/10 bg-gray-900">
         <div className="border-b border-white/10 px-6 py-5">
           <Link
