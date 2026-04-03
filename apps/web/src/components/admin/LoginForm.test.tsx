@@ -4,14 +4,12 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderWithQuery } from "@/test/utils";
 import { LoginForm } from "./LoginForm";
 
-const mockPush = vi.fn();
-vi.mock("next/navigation", () => ({
-  useRouter: () => ({ push: mockPush }),
-}));
+const mockAssign = vi.fn();
 
 beforeEach(() => {
   vi.clearAllMocks();
   vi.stubGlobal("fetch", vi.fn());
+  vi.stubGlobal("location", { assign: mockAssign });
 });
 
 describe("LoginForm", () => {
@@ -49,7 +47,7 @@ describe("LoginForm", () => {
     await userEvent.type(screen.getByLabelText("Password"), "password123");
     await userEvent.click(screen.getByRole("button", { name: "Sign in" }));
 
-    await waitFor(() => expect(mockPush).toHaveBeenCalledWith("/admin"));
+    await waitFor(() => expect(mockAssign).toHaveBeenCalledWith("/admin"));
   });
 
   it("shows error message on failed login", async () => {
