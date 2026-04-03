@@ -44,12 +44,15 @@ export function CharacterList() {
   return (
     <ul className="divide-y divide-white/10 rounded border border-white/10">
       {characters.map((c) => (
-        <li key={c.id} className="flex items-center justify-between px-4 py-3">
+        <li
+          key={c.id}
+          className="flex flex-col px-4 py-3 md:flex-row md:items-center md:justify-between"
+        >
           <div>
             <span className="font-medium text-white">{c.name}</span>
             <span className="ml-2 text-sm text-white/40">{c.system}</span>
           </div>
-          <div className="flex items-center gap-1 text-sm">
+          <div className="ml-3 flex flex-wrap items-center gap-1 text-sm sm:ml-0">
             <Link
               href={`/admin/characters/${c.id}/edit`}
               className="rounded px-3 py-1 text-white/60 transition-colors hover:bg-white/10 hover:text-white"

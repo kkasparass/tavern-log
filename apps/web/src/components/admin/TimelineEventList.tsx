@@ -23,7 +23,7 @@ export function TimelineEventList({
       {events.map((event, index) => (
         <li
           key={event.id}
-          className="flex items-start justify-between rounded border border-white/10 bg-gray-900 px-4 py-3"
+          className="flex flex-col rounded border border-white/10 bg-gray-900 px-4 py-3 sm:flex-row sm:items-start sm:justify-between"
         >
           <div className="min-w-0 flex-1">
             {event.dateLabel && <p className="text-sm text-white/40">{event.dateLabel}</p>}
@@ -32,11 +32,11 @@ export function TimelineEventList({
               <p className="mt-0.5 text-sm text-white/60">{event.description}</p>
             )}
           </div>
-          <div className="ml-4 flex shrink-0 items-center gap-1">
+          <div className="mt-2 flex shrink-0 items-center gap-1 sm:ml-4 sm:mt-0">
             <button
               onClick={() => onMoveUp(index)}
               disabled={index === 0}
-              className="rounded px-2 py-1 text-sm text-white/40 hover:bg-white/10 hover:text-white disabled:opacity-20"
+              className="rounded bg-white/5 px-2 py-1 text-sm text-white/40 hover:bg-white/10 hover:text-white disabled:opacity-20"
               aria-label="Move up"
             >
               ↑
@@ -44,7 +44,7 @@ export function TimelineEventList({
             <button
               onClick={() => onMoveDown(index)}
               disabled={index === events.length - 1}
-              className="rounded px-2 py-1 text-sm text-white/40 hover:bg-white/10 hover:text-white disabled:opacity-20"
+              className="rounded bg-white/5 px-2 py-1 text-sm text-white/40 hover:bg-white/10 hover:text-white disabled:opacity-20"
               aria-label="Move down"
             >
               ↓

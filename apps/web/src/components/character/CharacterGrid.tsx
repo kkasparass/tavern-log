@@ -24,21 +24,23 @@ export function CharacterGrid() {
 
   return (
     <div>
-      <div className="mb-6 flex gap-3">
+      <div className="mb-6 flex max-w-full gap-3 sm:max-w-xl">
         <Select
           value={systemFilter}
           onChange={setSystemFilter}
           placeholder="All systems"
           options={systems.map((s) => ({ value: s, label: s }))}
+          className="flex-1"
         />
         <Select
           value={tagFilter}
           onChange={setTagFilter}
           placeholder="All tags"
           options={tags.map((t) => ({ value: t, label: t }))}
+          className="flex-1"
         />
       </div>
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
         {filtered.map((c) => (
           <CharacterCard key={c.id} {...c} />
         ))}

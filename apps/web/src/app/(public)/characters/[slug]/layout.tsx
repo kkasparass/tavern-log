@@ -31,7 +31,7 @@ export default async function CharacterLayout({
         } as React.CSSProperties
       }
     >
-      <header className="px-8 pt-8">
+      <header className="px-4 pt-4 sm:px-8 sm:pt-8">
         <h1 className="text-3xl font-bold">{character.name}</h1>
         <p className="mt-1 text-sm opacity-60">
           {character.system}
@@ -44,7 +44,7 @@ export default async function CharacterLayout({
 
       <CharacterTabs slug={params.slug} />
 
-      <main className="p-8">
+      <main className="p-4 sm:p-8">
         <PageTransition>{children}</PageTransition>
       </main>
     </div>

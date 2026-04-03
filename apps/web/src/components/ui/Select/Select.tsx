@@ -9,9 +9,16 @@ interface SelectProps {
   onChange: (value: string) => void;
   options: SelectOption[];
   placeholder?: string;
+  className?: string;
 }
 
-export function Select({ value, onChange, options, placeholder = "Select..." }: SelectProps) {
+export function Select({
+  value,
+  onChange,
+  options,
+  placeholder = "Select...",
+  className,
+}: SelectProps) {
   const { open, setOpen, containerRef, handleKeyDown, selectOption, selectedLabel } = useSelect({
     value,
     onChange,
@@ -20,7 +27,7 @@ export function Select({ value, onChange, options, placeholder = "Select..." }: 
   });
 
   return (
-    <div ref={containerRef} className="relative">
+    <div ref={containerRef} className={`relative min-w-0${className ? ` ${className}` : ""}`}>
       <SelectTrigger
         selectedLabel={selectedLabel}
         hasValue={!!value}
