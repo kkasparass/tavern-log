@@ -3,6 +3,12 @@ import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi } from "vitest";
 import { ArtworkForm } from "./ArtworkForm";
 
+vi.mock("./FileUpload", () => ({
+  FileUpload: ({ onUpload, label }: { onUpload: (url: string) => void; label?: string }) => (
+    <button onClick={() => onUpload("https://img.png")}>{label ?? "Upload file"}</button>
+  ),
+}));
+
 const defaultProps = {
   onSubmit: vi.fn(),
   onCancel: vi.fn(),
@@ -12,9 +18,9 @@ const defaultProps = {
 };
 
 describe("ArtworkForm", () => {
-  it("renders Image URL, Title, Caption, and Artist Credit fields", () => {
+  it("renders Image, Title, Caption, and Artist Credit fields", () => {
     render(<ArtworkForm {...defaultProps} />);
-    expect(screen.getByPlaceholderText("https://...")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Image" })).toBeInTheDocument();
     expect(screen.getByPlaceholderText("Artwork title")).toBeInTheDocument();
     expect(screen.getByPlaceholderText("Short description")).toBeInTheDocument();
     expect(screen.getByPlaceholderText("Artist name or link")).toBeInTheDocument();
@@ -28,7 +34,7 @@ describe("ArtworkForm", () => {
   it("calls onSubmit with correct data including nextOrder", async () => {
     const onSubmit = vi.fn();
     render(<ArtworkForm {...defaultProps} onSubmit={onSubmit} nextOrder={2} />);
-    await userEvent.type(screen.getByPlaceholderText("https://..."), "https://img.png");
+    await userEvent.click(screen.getByRole("button", { name: "Image" }));
     await userEvent.type(screen.getByPlaceholderText("Artwork title"), "My Art");
     await userEvent.type(screen.getByPlaceholderText("Short description"), "A caption");
     await userEvent.type(screen.getByPlaceholderText("Artist name or link"), "Artist");
@@ -45,10 +51,10 @@ describe("ArtworkForm", () => {
   it("omits optional fields from payload when left empty", async () => {
     const onSubmit = vi.fn();
     render(<ArtworkForm {...defaultProps} onSubmit={onSubmit} />);
-    await userEvent.type(screen.getByPlaceholderText("https://..."), "https://img.png");
+    await userEvent.click(screen.getByRole("button", { name: "Image" }));
     await userEvent.click(screen.getByRole("button", { name: "Save" }));
     expect(onSubmit).toHaveBeenCalledWith(
-      expect.objectContaining({ title: undefined, caption: undefined, artistCredit: undefined })
+      expect.objectContaining({ title: undefined, caption: undefined, artistCredit: undefined }),
     );
   });
 

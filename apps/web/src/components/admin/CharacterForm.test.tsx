@@ -8,6 +8,12 @@ import { THEME_PRESETS } from "@/lib/constants";
 
 vi.mock("next/link");
 
+vi.mock("./FileUpload", () => ({
+  FileUpload: ({ label }: { onUpload: (url: string) => void; label?: string }) => (
+    <div>{label ?? "Upload file"}</div>
+  ),
+}));
+
 function renderForm(props: Partial<React.ComponentProps<typeof CharacterForm>> = {}) {
   const onSubmit = vi.fn();
   render(<CharacterForm onSubmit={onSubmit} isPending={false} submitLabel="Save" {...props} />);
@@ -23,7 +29,7 @@ describe("CharacterForm", () => {
     expect(screen.getByLabelText("Status")).toBeInTheDocument();
     expect(screen.getByLabelText("Bio")).toBeInTheDocument();
     expect(screen.getByLabelText("Personality")).toBeInTheDocument();
-    expect(screen.getByLabelText("Thumbnail URL")).toBeInTheDocument();
+    expect(screen.getByText("Thumbnail")).toBeInTheDocument();
     expect(screen.getByLabelText("Public")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Save" })).toBeInTheDocument();
     for (const preset of THEME_PRESETS) {

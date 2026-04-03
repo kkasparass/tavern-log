@@ -3,6 +3,12 @@ import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi } from "vitest";
 import { VoiceLineForm } from "./VoiceLineForm";
 
+vi.mock("./FileUpload", () => ({
+  FileUpload: ({ onUpload, label }: { onUpload: (url: string) => void; label?: string }) => (
+    <button onClick={() => onUpload("https://audio.mp3")}>{label ?? "Upload file"}</button>
+  ),
+}));
+
 const defaultProps = {
   onSubmit: vi.fn(),
   onCancel: vi.fn(),
@@ -12,9 +18,9 @@ const defaultProps = {
 };
 
 describe("VoiceLineForm", () => {
-  it("renders Audio URL, Transcript, and Context fields", () => {
+  it("renders Audio, Transcript, and Context fields", () => {
     render(<VoiceLineForm {...defaultProps} />);
-    expect(screen.getByPlaceholderText("https://...")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Audio" })).toBeInTheDocument();
     expect(screen.getByPlaceholderText("What is said in this voice line")).toBeInTheDocument();
     expect(screen.getByPlaceholderText("e.g. Battle cry, greeting, etc.")).toBeInTheDocument();
   });
@@ -27,14 +33,14 @@ describe("VoiceLineForm", () => {
   it("calls onSubmit with correct data including nextOrder", async () => {
     const onSubmit = vi.fn();
     render(<VoiceLineForm {...defaultProps} onSubmit={onSubmit} nextOrder={3} />);
-    await userEvent.type(screen.getByPlaceholderText("https://..."), "https://audio.mp3");
+    await userEvent.click(screen.getByRole("button", { name: "Audio" }));
     await userEvent.type(
       screen.getByPlaceholderText("What is said in this voice line"),
-      "Hello world"
+      "Hello world",
     );
     await userEvent.type(
       screen.getByPlaceholderText("e.g. Battle cry, greeting, etc."),
-      "Greeting"
+      "Greeting",
     );
     await userEvent.click(screen.getByRole("button", { name: "Save" }));
     expect(onSubmit).toHaveBeenCalledWith({
@@ -48,10 +54,10 @@ describe("VoiceLineForm", () => {
   it("omits context from payload when left empty", async () => {
     const onSubmit = vi.fn();
     render(<VoiceLineForm {...defaultProps} onSubmit={onSubmit} />);
-    await userEvent.type(screen.getByPlaceholderText("https://..."), "https://audio.mp3");
+    await userEvent.click(screen.getByRole("button", { name: "Audio" }));
     await userEvent.type(
       screen.getByPlaceholderText("What is said in this voice line"),
-      "Hello world"
+      "Hello world",
     );
     await userEvent.click(screen.getByRole("button", { name: "Save" }));
     expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({ context: undefined }));

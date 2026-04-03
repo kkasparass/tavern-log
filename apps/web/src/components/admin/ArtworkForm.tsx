@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { FileUpload } from "./FileUpload";
 
 interface ArtworkFormProps {
   onSubmit: (data: {
@@ -42,13 +43,10 @@ export function ArtworkForm({
     <div className="mb-6 rounded border border-white/10 bg-gray-900 p-4">
       <h2 className="mb-4 text-sm font-semibold text-white/70">New Artwork</h2>
       <div className="mb-3">
-        <label className="mb-1 block text-sm text-white/70">Image URL</label>
-        <input
-          type="text"
-          value={imageUrl}
-          onChange={(e) => setImageUrl(e.target.value)}
-          className="w-full rounded border border-white/10 bg-gray-800 px-3 py-2 text-white"
-          placeholder="https://..."
+        <FileUpload
+          accept="image/jpeg,image/png,image/webp,image/gif"
+          onUpload={(url) => setImageUrl(url)}
+          label="Image"
         />
       </div>
       <div className="mb-3">

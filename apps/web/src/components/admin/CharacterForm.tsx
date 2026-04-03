@@ -2,6 +2,7 @@
 import { CharacterStatus, type CharacterTheme } from "@/lib/types";
 import { characterStatusLabel, THEME_PRESETS } from "@/lib/constants";
 import { useCharacterForm } from "./useCharacterForm";
+import { FileUpload } from "./FileUpload";
 
 export type CharacterFormData = {
   name: string;
@@ -44,7 +45,6 @@ export function CharacterForm({
     setBio,
     personality,
     setPersonality,
-    thumbnailUrl,
     setThumbnailUrl,
     isPublic,
     setIsPublic,
@@ -158,16 +158,10 @@ export function CharacterForm({
       </div>
 
       <div className="flex flex-col gap-1">
-        <label htmlFor="thumbnailUrl" className={labelClass}>
-          Thumbnail URL
-        </label>
-        <input
-          id="thumbnailUrl"
-          type="url"
-          value={thumbnailUrl}
-          onChange={(e) => setThumbnailUrl(e.target.value)}
-          className={inputClass}
-          placeholder="https://..."
+        <FileUpload
+          accept="image/jpeg,image/png,image/webp,image/gif"
+          onUpload={(url) => setThumbnailUrl(url)}
+          label="Thumbnail"
         />
       </div>
 

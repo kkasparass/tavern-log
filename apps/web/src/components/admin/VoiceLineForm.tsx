@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { FileUpload } from "./FileUpload";
 
 interface VoiceLineFormProps {
   onSubmit: (data: {
@@ -34,13 +35,10 @@ export function VoiceLineForm({
     <div className="mb-6 rounded border border-white/10 bg-gray-900 p-4">
       <h2 className="mb-4 text-sm font-semibold text-white/70">New Voice Line</h2>
       <div className="mb-3">
-        <label className="mb-1 block text-sm text-white/70">Audio URL</label>
-        <input
-          type="text"
-          value={audioUrl}
-          onChange={(e) => setAudioUrl(e.target.value)}
-          className="w-full rounded border border-white/10 bg-gray-800 px-3 py-2 text-white"
-          placeholder="https://..."
+        <FileUpload
+          accept="audio/mpeg,audio/wav,audio/ogg,audio/aac"
+          onUpload={(url) => setAudioUrl(url)}
+          label="Audio"
         />
       </div>
       <div className="mb-3">
