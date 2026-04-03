@@ -25,8 +25,8 @@ export function VoiceLineList({
           key={vl.id}
           className="flex items-start justify-between rounded border border-white/10 bg-gray-900 px-4 py-3"
         >
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-sm text-white/50">{vl.audioUrl}</p>
+          <div className="min-w-0 flex-1 overflow-hidden">
+            <p className="truncate text-sm text-white/50">{vl.audioUrl.split("/").pop()}</p>
             <p className="mt-0.5 text-white">{vl.transcript}</p>
             {vl.context && <p className="mt-0.5 text-sm text-white/50">{vl.context}</p>}
           </div>

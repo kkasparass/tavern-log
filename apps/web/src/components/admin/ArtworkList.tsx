@@ -25,8 +25,8 @@ export function ArtworkList({
           key={artwork.id}
           className="flex items-start justify-between rounded border border-white/10 bg-gray-900 px-4 py-3"
         >
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-sm text-white/50">{artwork.imageUrl}</p>
+          <div className="min-w-0 flex-1 overflow-hidden">
+            <p className="truncate text-sm text-white/50">{artwork.imageUrl.split("/").pop()}</p>
             {artwork.title && <p className="mt-0.5 font-medium text-white">{artwork.title}</p>}
             {artwork.caption && <p className="mt-0.5 text-sm text-white/50">{artwork.caption}</p>}
             {artwork.artistCredit && (
