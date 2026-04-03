@@ -1,5 +1,6 @@
 import Fastify from "fastify";
 import { authPlugin } from "./plugins/auth";
+import { corsPlugin } from "./plugins/cors";
 import { registerRoutes } from "./routes";
 
 export function buildApp() {
@@ -19,6 +20,7 @@ export function buildApp() {
     return { status: "ok" };
   });
 
+  app.register(corsPlugin);
   app.register(authPlugin);
   registerRoutes(app);
 
