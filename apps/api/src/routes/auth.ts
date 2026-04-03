@@ -7,6 +7,11 @@ interface LoginBody {
   password: string;
 }
 
+interface RegisterBody {
+  email: string;
+  password: string;
+}
+
 export async function authRoutes(app: FastifyInstance) {
   app.post<{ Body: LoginBody }>(
     "/login",
@@ -44,6 +49,45 @@ export async function authRoutes(app: FastifyInstance) {
       });
 
       return { ok: true };
+    }
+  );
+
+  app.post<{ Body: RegisterBody }>(
+    "/register",
+    {
+      schema: {
+        body: {
+          type: "object",
+          required: ["email", "password"],
+          properties: {
+            email: { type: "string", format: "email" },
+            password: { type: "string", minLength: 8 },
+          },
+        },
+      },
+    },
+    async (request, reply) => {
+      const { email, password } = request.body;
+
+      const existing = await prisma.user.findUnique({ where: { email } });
+      if (existing) {
+        return reply.code(409).send({ error: "Email already registered" });
+      }
+
+      const passwordHash = await bcrypt.hash(password, 10);
+      const user = await prisma.user.create({
+        data: { email, passwordHash },
+      });
+
+      const token = app.jwt.sign({ userId: user.id, email: user.email });
+      reply.setCookie("token", token, {
+        httpOnly: true,
+        path: "/",
+        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production",
+      });
+
+      return reply.code(201).send({ ok: true });
     }
   );
 

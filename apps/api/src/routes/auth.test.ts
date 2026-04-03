@@ -3,7 +3,7 @@ import { buildApp } from "../app";
 
 vi.mock("../lib/prisma", () => ({
   prisma: {
-    user: { findUnique: vi.fn() },
+    user: { findUnique: vi.fn(), create: vi.fn() },
   },
 }));
 
@@ -62,6 +62,59 @@ describe("POST /auth/login", () => {
     });
 
     expect(res.statusCode).toBe(401);
+  });
+});
+
+describe("POST /auth/register", () => {
+  it("returns 201 and sets token cookie on successful registration", async () => {
+    vi.mocked(prisma.user.findUnique).mockResolvedValue(null);
+    vi.mocked(prisma.user.create).mockResolvedValue(mockUser);
+    vi.mocked(bcrypt.hash).mockResolvedValue("$2a$10$hashedpassword" as never);
+
+    const app = buildApp();
+    const res = await app.inject({
+      method: "POST",
+      url: "/auth/register",
+      payload: { email: "new@example.com", password: "password123" },
+    });
+
+    expect(res.statusCode).toBe(201);
+    expect(res.headers["set-cookie"]).toMatch(/token=/);
+  });
+
+  it("returns 409 when email is already registered", async () => {
+    vi.mocked(prisma.user.findUnique).mockResolvedValue(mockUser);
+
+    const app = buildApp();
+    const res = await app.inject({
+      method: "POST",
+      url: "/auth/register",
+      payload: { email: "admin@example.com", password: "password123" },
+    });
+
+    expect(res.statusCode).toBe(409);
+  });
+
+  it("returns 400 when email is missing", async () => {
+    const app = buildApp();
+    const res = await app.inject({
+      method: "POST",
+      url: "/auth/register",
+      payload: { password: "password123" },
+    });
+
+    expect(res.statusCode).toBe(400);
+  });
+
+  it("returns 400 when password is too short", async () => {
+    const app = buildApp();
+    const res = await app.inject({
+      method: "POST",
+      url: "/auth/register",
+      payload: { email: "new@example.com", password: "short" },
+    });
+
+    expect(res.statusCode).toBe(400);
   });
 });
 
