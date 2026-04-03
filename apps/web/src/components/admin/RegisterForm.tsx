@@ -1,8 +1,6 @@
 "use client";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
-
 async function register(body: { email: string; password: string }) {
   const res = await fetch("/api/auth/register", {
     method: "POST",
@@ -15,7 +13,6 @@ async function register(body: { email: string; password: string }) {
 }
 
 export function RegisterForm() {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -23,7 +20,7 @@ export function RegisterForm() {
 
   const mutation = useMutation({
     mutationFn: register,
-    onSuccess: () => router.push("/admin"),
+    onSuccess: () => window.location.assign("/admin"),
   });
 
   function handleSubmit(e: React.FormEvent) {

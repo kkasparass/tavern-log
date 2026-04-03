@@ -1,12 +1,10 @@
 "use client";
 import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
 
 export function LogoutButton() {
-  const router = useRouter();
   const mutation = useMutation({
     mutationFn: () => fetch("/api/auth/logout", { method: "POST" }),
-    onSuccess: () => router.push("/admin/login"),
+    onSuccess: () => window.location.assign("/admin/login"),
   });
 
   return (
