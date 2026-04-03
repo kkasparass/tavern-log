@@ -36,11 +36,11 @@ describe("VoiceLineForm", () => {
     await userEvent.click(screen.getByRole("button", { name: "Audio" }));
     await userEvent.type(
       screen.getByPlaceholderText("What is said in this voice line"),
-      "Hello world",
+      "Hello world"
     );
     await userEvent.type(
       screen.getByPlaceholderText("e.g. Battle cry, greeting, etc."),
-      "Greeting",
+      "Greeting"
     );
     await userEvent.click(screen.getByRole("button", { name: "Save" }));
     expect(onSubmit).toHaveBeenCalledWith({
@@ -57,7 +57,7 @@ describe("VoiceLineForm", () => {
     await userEvent.click(screen.getByRole("button", { name: "Audio" }));
     await userEvent.type(
       screen.getByPlaceholderText("What is said in this voice line"),
-      "Hello world",
+      "Hello world"
     );
     await userEvent.click(screen.getByRole("button", { name: "Save" }));
     expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({ context: undefined }));

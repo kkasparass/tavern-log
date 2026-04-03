@@ -46,9 +46,7 @@ describe("RegisterForm", () => {
     await userEvent.type(screen.getByLabelText("Confirm password"), "password123");
     await userEvent.click(screen.getByRole("button", { name: "Create account" }));
 
-    await waitFor(() =>
-      expect(screen.getByText("Email already registered")).toBeInTheDocument()
-    );
+    await waitFor(() => expect(screen.getByText("Email already registered")).toBeInTheDocument());
   });
 
   it("shows validation error when passwords do not match", async () => {

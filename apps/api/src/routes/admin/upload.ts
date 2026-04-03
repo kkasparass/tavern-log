@@ -49,6 +49,6 @@ export async function adminUploadRoutes(app: FastifyInstance) {
       const { uploadUrl, objectUrl } = await presignPutUrl(key, contentType);
 
       return { uploadUrl, objectUrl };
-    },
+    }
   );
 }

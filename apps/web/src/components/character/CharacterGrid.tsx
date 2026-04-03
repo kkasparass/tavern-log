@@ -2,6 +2,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { CharacterCard } from "./CharacterCard";
+import { Select } from "@/components/ui/Select";
 import type { CharacterPreview } from "@/lib/types";
 
 export function CharacterGrid() {
@@ -24,30 +25,18 @@ export function CharacterGrid() {
   return (
     <div>
       <div className="mb-6 flex gap-3">
-        <select
+        <Select
           value={systemFilter}
-          onChange={(e) => setSystemFilter(e.target.value)}
-          className="rounded bg-white/10 px-3 py-1.5 text-sm text-white"
-        >
-          <option value="">All systems</option>
-          {systems.map((s) => (
-            <option key={s} value={s}>
-              {s}
-            </option>
-          ))}
-        </select>
-        <select
+          onChange={setSystemFilter}
+          placeholder="All systems"
+          options={systems.map((s) => ({ value: s, label: s }))}
+        />
+        <Select
           value={tagFilter}
-          onChange={(e) => setTagFilter(e.target.value)}
-          className="rounded bg-white/10 px-3 py-1.5 text-sm text-white"
-        >
-          <option value="">All tags</option>
-          {tags.map((t) => (
-            <option key={t} value={t}>
-              {t}
-            </option>
-          ))}
-        </select>
+          onChange={setTagFilter}
+          placeholder="All tags"
+          options={tags.map((t) => ({ value: t, label: t }))}
+        />
       </div>
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
         {filtered.map((c) => (

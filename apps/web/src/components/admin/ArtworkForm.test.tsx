@@ -54,7 +54,7 @@ describe("ArtworkForm", () => {
     await userEvent.click(screen.getByRole("button", { name: "Image" }));
     await userEvent.click(screen.getByRole("button", { name: "Save" }));
     expect(onSubmit).toHaveBeenCalledWith(
-      expect.objectContaining({ title: undefined, caption: undefined, artistCredit: undefined }),
+      expect.objectContaining({ title: undefined, caption: undefined, artistCredit: undefined })
     );
   });
 

@@ -19,7 +19,8 @@ describe("CharacterGrid", () => {
   it("filter by system hides non-matching cards", () => {
     renderWithQuery(<CharacterGrid />, [[["characters"], twoCharacters]]);
     const [systemSelect] = screen.getAllByRole("combobox");
-    fireEvent.change(systemSelect, { target: { value: "D&D 5e" } });
+    fireEvent.click(systemSelect);
+    fireEvent.click(screen.getByRole("option", { name: "D&D 5e" }));
     expect(screen.getByText("Mira Ashveil")).toBeInTheDocument();
     expect(screen.queryByText("Nara Solis")).not.toBeInTheDocument();
   });
@@ -27,7 +28,8 @@ describe("CharacterGrid", () => {
   it("filter by tag hides non-matching cards", () => {
     renderWithQuery(<CharacterGrid />, [[["characters"], twoCharacters]]);
     const [, tagSelect] = screen.getAllByRole("combobox");
-    fireEvent.change(tagSelect, { target: { value: "scoundrel" } });
+    fireEvent.click(tagSelect);
+    fireEvent.click(screen.getByRole("option", { name: "scoundrel" }));
     expect(screen.getByText("Nara Solis")).toBeInTheDocument();
     expect(screen.queryByText("Mira Ashveil")).not.toBeInTheDocument();
   });

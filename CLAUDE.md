@@ -256,7 +256,7 @@ Key model notes:
 | `apps/web`   | Vercel                     | `tavernlog.kasparas.dev`     |
 | `apps/api`   | Koyeb                      | `api.tavernlog.kasparas.dev` |
 | Database     | Neon (serverless Postgres) | —                            |
-| File storage | AWS S3 (`eu-south-2`)       | —                            |
+| File storage | AWS S3 (`eu-south-2`)      | —                            |
 
 ---
 

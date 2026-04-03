@@ -37,7 +37,7 @@ describe("FileUpload", () => {
 
     await waitFor(() => {
       expect(onUpload).toHaveBeenCalledWith(
-        "https://tavernlog-upload.s3.eu-south-2.amazonaws.com/uploads/test.jpg",
+        "https://tavernlog-upload.s3.eu-south-2.amazonaws.com/uploads/test.jpg"
       );
     });
     expect(screen.getByText("Uploaded ✓")).toBeInTheDocument();
