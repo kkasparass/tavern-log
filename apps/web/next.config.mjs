@@ -8,6 +8,14 @@ const nextConfig = {
       },
     ];
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "tavernlog-upload.s3.eu-south-2.amazonaws.com",
+      },
+    ],
+  },
 };
 
 export default nextConfig;

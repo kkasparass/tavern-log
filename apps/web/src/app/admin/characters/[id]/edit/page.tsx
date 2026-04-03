@@ -71,7 +71,6 @@ export default function EditCharacterPage({ params }: { params: { id: string } }
         defaultValues={defaultValues}
         submitLabel="Save changes"
         onSubmit={(data) => {
-          console.log("Submitting data", data);
           mutation.mutate(data);
         }}
         isPending={mutation.isPending}

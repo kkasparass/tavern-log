@@ -25,8 +25,6 @@ export async function authRoutes(app: FastifyInstance) {
     async (request, reply) => {
       const { email, password } = request.body;
 
-      console.log(password);
-
       const user = await prisma.user.findUnique({ where: { email } });
       if (!user) {
         return reply.code(401).send({ error: "Invalid credentials" });
