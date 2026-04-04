@@ -25,6 +25,10 @@ type CharacterFormProps = {
   submitLabel: string;
 };
 
+const inputClass =
+  "bg-gray-800 border border-white/10 rounded px-3 py-2 text-white focus:outline-none focus:border-white/30 w-full";
+const labelClass = "text-sm text-white/70";
+
 export function CharacterForm({
   defaultValues,
   onSubmit,
@@ -63,10 +67,6 @@ export function CharacterForm({
     e.preventDefault();
     onSubmit(getFormData());
   }
-
-  const inputClass =
-    "bg-gray-800 border border-white/10 rounded px-3 py-2 text-white focus:outline-none focus:border-white/30 w-full";
-  const labelClass = "text-sm text-white/70";
 
   return (
     <form onSubmit={handleSubmit} className="flex max-w-2xl flex-col gap-6">
@@ -249,7 +249,7 @@ export function CharacterForm({
       <button
         type="submit"
         disabled={isPending}
-        className="self-start rounded bg-white px-4 py-2 font-semibold text-gray-950 transition-colors hover:bg-white/90 disabled:opacity-50"
+        className="rounded bg-white px-4 py-2 font-semibold text-gray-950 transition-colors hover:bg-white/90 disabled:opacity-50"
       >
         {isPending ? "Saving…" : submitLabel}
       </button>
