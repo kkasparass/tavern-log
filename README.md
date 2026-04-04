@@ -138,11 +138,11 @@ npm test --workspace=apps/web   # web component tests
 
 ## Deployment
 
-| Service      | Platform                   | Domain                       |
-| ------------ | -------------------------- | ---------------------------- |
-| Frontend     | Vercel                     | `tavernlog.kasparas.dev`     |
-| Backend API  | Koyeb                      | `api.tavernlog.kasparas.dev` |
-| Database     | Neon (serverless Postgres) | —                            |
-| File storage | AWS S3 (`eu-south-2`)      | —                            |
+| Service      | Platform                   | Domain                   |
+| ------------ | -------------------------- | ------------------------ |
+| Frontend     | Vercel                     | `tavernlog.kasparas.dev` |
+| Backend API  | Render                     | —                        |
+| Database     | Neon (serverless Postgres) | —                        |
+| File storage | AWS S3 (`eu-south-2`)      | —                        |
 
-The GitHub Actions CI pipeline runs typechecks, linting, and `prisma validate` on every pull request. On merge to `master`, it runs `prisma migrate deploy` against the Neon production database and triggers deploys on both Vercel and Koyeb.
+The GitHub Actions CI pipeline runs typechecks, linting, and `prisma validate` on every pull request. On merge to `master`, it runs `prisma migrate deploy` against the Neon production database and triggers deploys on both Vercel and Render.
