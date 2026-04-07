@@ -36,6 +36,17 @@ async function setup() {
 
 const otherUserCharacter = { ...miraCharacterListItem, createdById: "user-2" };
 const characterWithThumbnail = { ...miraCharacterListItem, thumbnailUrl: "https://example.com/old-thumb.jpg" };
+const characterForDelete = {
+  ...miraCharacterListItem,
+  thumbnailUrl: "https://example.com/thumb.jpg",
+  artworks: [
+    { imageUrl: "https://example.com/art-1.jpg" },
+    { imageUrl: "https://example.com/art-2.jpg" },
+  ],
+  voiceLines: [
+    { audioUrl: "https://example.com/audio-1.mp3" },
+  ],
+};
 
 describe("GET /admin/characters", () => {
   it("returns 200 with character list and normalised tags", async () => {
@@ -257,8 +268,11 @@ describe("PUT /admin/characters/:id", () => {
 });
 
 describe("DELETE /admin/characters/:id", () => {
+  const noMedia = { ...miraCharacterListItem, artworks: [], voiceLines: [] };
+  const otherUserWithMedia = { ...characterForDelete, createdById: "user-2" };
+
   it("deletes character and returns 204", async () => {
-    vi.mocked(prisma.character.findUnique).mockResolvedValue(miraCharacterListItem);
+    vi.mocked(prisma.character.findUnique).mockResolvedValue(noMedia);
     vi.mocked(prisma.character.delete).mockResolvedValue(miraCharacterListItem);
     const { app, authCookie } = await setup();
     const res = await app.inject({
@@ -267,6 +281,48 @@ describe("DELETE /admin/characters/:id", () => {
       headers: { cookie: authCookie },
     });
     expect(res.statusCode).toBe(204);
+  });
+
+  it("deletes all S3 objects for thumbnail, artworks and voice lines", async () => {
+    vi.mocked(prisma.character.findUnique).mockResolvedValue(characterForDelete);
+    vi.mocked(prisma.character.delete).mockResolvedValue(miraCharacterListItem);
+    const { app, authCookie } = await setup();
+    await app.inject({
+      method: "DELETE",
+      url: "/admin/characters/cuid-mira",
+      headers: { cookie: authCookie },
+    });
+    expect(vi.mocked(deleteS3Object)).toHaveBeenCalledWith("https://example.com/thumb.jpg");
+    expect(vi.mocked(deleteS3Object)).toHaveBeenCalledWith("https://example.com/art-1.jpg");
+    expect(vi.mocked(deleteS3Object)).toHaveBeenCalledWith("https://example.com/art-2.jpg");
+    expect(vi.mocked(deleteS3Object)).toHaveBeenCalledWith("https://example.com/audio-1.mp3");
+    expect(vi.mocked(deleteS3Object)).toHaveBeenCalledTimes(4);
+  });
+
+  it("skips thumbnail S3 delete when thumbnailUrl is null", async () => {
+    vi.mocked(prisma.character.findUnique).mockResolvedValue(noMedia);
+    vi.mocked(prisma.character.delete).mockResolvedValue(miraCharacterListItem);
+    const { app, authCookie } = await setup();
+    await app.inject({
+      method: "DELETE",
+      url: "/admin/characters/cuid-mira",
+      headers: { cookie: authCookie },
+    });
+    expect(vi.mocked(deleteS3Object)).not.toHaveBeenCalled();
+  });
+
+  it("still returns 204 when some S3 deletes fail", async () => {
+    vi.mocked(prisma.character.findUnique).mockResolvedValue(characterForDelete);
+    vi.mocked(prisma.character.delete).mockResolvedValue(miraCharacterListItem);
+    vi.mocked(deleteS3Object).mockRejectedValue(new Error("S3 error"));
+    const { app, authCookie } = await setup();
+    const res = await app.inject({
+      method: "DELETE",
+      url: "/admin/characters/cuid-mira",
+      headers: { cookie: authCookie },
+    });
+    expect(res.statusCode).toBe(204);
+    expect(vi.mocked(prisma.character.delete)).toHaveBeenCalled();
   });
 
   it("returns 404 when character not found", async () => {
@@ -281,7 +337,7 @@ describe("DELETE /admin/characters/:id", () => {
   });
 
   it("returns 403 when character belongs to another user", async () => {
-    vi.mocked(prisma.character.findUnique).mockResolvedValue(otherUserCharacter);
+    vi.mocked(prisma.character.findUnique).mockResolvedValue(otherUserWithMedia);
     const { app, authCookie } = await setup();
     const res = await app.inject({
       method: "DELETE",

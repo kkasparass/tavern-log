@@ -132,10 +132,29 @@ export async function adminCharacterRoutes(app: FastifyInstance) {
     { preHandler: authenticate },
     async (request, reply) => {
       const { id } = request.params;
-      const existing = await prisma.character.findUnique({ where: { id } });
+      const existing = await prisma.character.findUnique({
+        where: { id },
+        include: {
+          artworks: { select: { imageUrl: true } },
+          voiceLines: { select: { audioUrl: true } },
+        },
+      });
       if (!existing) return reply.code(404).send({ error: "Not found" });
       if (existing.createdById !== request.user.userId)
         return reply.code(403).send({ error: "Forbidden" });
+
+      const s3Urls = [
+        ...(existing.thumbnailUrl ? [existing.thumbnailUrl] : []),
+        ...existing.artworks.map((a) => a.imageUrl),
+        ...existing.voiceLines.map((v) => v.audioUrl),
+      ];
+      const results = await Promise.allSettled(s3Urls.map((url) => deleteS3Object(url)));
+      results.forEach((result, i) => {
+        if (result.status === "rejected") {
+          request.log.warn({ err: result.reason, url: s3Urls[i] }, "S3 delete failed during character deletion");
+        }
+      });
+
       await prisma.character.delete({ where: { id } });
       return reply.code(204).send();
     }
