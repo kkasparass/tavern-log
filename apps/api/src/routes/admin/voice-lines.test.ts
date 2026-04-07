@@ -125,6 +125,47 @@ describe("PUT /admin/voice-lines/:voiceLineId", () => {
     expect(res.json().order).toBe(1);
   });
 
+  it("deletes old S3 audio when audioUrl changes", async () => {
+    vi.mocked(prisma.voiceLine.findUnique).mockResolvedValue(voiceLineWithCharacter);
+    vi.mocked(prisma.voiceLine.update).mockResolvedValue(mockVoiceLine);
+    const { app, authCookie } = await setup();
+    await app.inject({
+      method: "PUT",
+      url: "/admin/voice-lines/cuid-vl-1",
+      headers: { cookie: authCookie },
+      payload: { audioUrl: "https://example.com/new-audio.mp3" },
+    });
+    expect(vi.mocked(deleteS3Object)).toHaveBeenCalledWith(voiceLineWithCharacter.audioUrl);
+  });
+
+  it("does not call deleteS3Object when audioUrl is unchanged", async () => {
+    vi.mocked(prisma.voiceLine.findUnique).mockResolvedValue(voiceLineWithCharacter);
+    vi.mocked(prisma.voiceLine.update).mockResolvedValue(mockVoiceLine);
+    const { app, authCookie } = await setup();
+    await app.inject({
+      method: "PUT",
+      url: "/admin/voice-lines/cuid-vl-1",
+      headers: { cookie: authCookie },
+      payload: { audioUrl: voiceLineWithCharacter.audioUrl },
+    });
+    expect(vi.mocked(deleteS3Object)).not.toHaveBeenCalled();
+  });
+
+  it("still returns 200 when S3 delete of old audio fails", async () => {
+    vi.mocked(prisma.voiceLine.findUnique).mockResolvedValue(voiceLineWithCharacter);
+    vi.mocked(prisma.voiceLine.update).mockResolvedValue(mockVoiceLine);
+    vi.mocked(deleteS3Object).mockRejectedValue(new Error("S3 error"));
+    const { app, authCookie } = await setup();
+    const res = await app.inject({
+      method: "PUT",
+      url: "/admin/voice-lines/cuid-vl-1",
+      headers: { cookie: authCookie },
+      payload: { audioUrl: "https://example.com/new-audio.mp3" },
+    });
+    expect(res.statusCode).toBe(200);
+    expect(vi.mocked(prisma.voiceLine.update)).toHaveBeenCalled();
+  });
+
   it("returns 404 when not found", async () => {
     vi.mocked(prisma.voiceLine.findUnique).mockResolvedValue(null);
     const { app, authCookie } = await setup();

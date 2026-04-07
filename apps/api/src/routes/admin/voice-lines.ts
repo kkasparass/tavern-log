@@ -72,6 +72,13 @@ export async function adminVoiceLineRoutes(app: FastifyInstance) {
       if (!existing) return reply.code(404).send({ error: "Not found" });
       if (existing.character.createdById !== request.user.userId)
         return reply.code(403).send({ error: "Forbidden" });
+      if (request.body.audioUrl && request.body.audioUrl !== existing.audioUrl) {
+        try {
+          await deleteS3Object(existing.audioUrl);
+        } catch (err) {
+          request.log.warn({ err, voiceLineId }, "S3 delete failed for old voice line audio, proceeding with update");
+        }
+      }
       const voiceLine = await prisma.voiceLine.update({
         where: { id: voiceLineId },
         data: request.body,

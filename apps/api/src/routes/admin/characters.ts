@@ -3,6 +3,7 @@ import { CharacterStatus, Prisma } from "@prisma/client";
 import { prisma } from "../../lib/prisma";
 import { authenticate } from "../../plugins/auth";
 import { toSlug } from "../../utils/slug";
+import { deleteS3Object } from "../../lib/s3";
 
 interface CreateCharacterBody {
   name: string;
@@ -99,6 +100,14 @@ export async function adminCharacterRoutes(app: FastifyInstance) {
       if (!existing) return reply.code(404).send({ error: "Not found" });
       if (existing.createdById !== request.user.userId)
         return reply.code(403).send({ error: "Forbidden" });
+
+      if (rest.thumbnailUrl && existing.thumbnailUrl && rest.thumbnailUrl !== existing.thumbnailUrl) {
+        try {
+          await deleteS3Object(existing.thumbnailUrl);
+        } catch (err) {
+          request.log.warn({ err, characterId: id }, "S3 delete failed for old character thumbnail, proceeding with update");
+        }
+      }
 
       if (tags !== undefined) {
         await prisma.characterTag.deleteMany({ where: { characterId: id } });

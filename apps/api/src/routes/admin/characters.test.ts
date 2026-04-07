@@ -18,7 +18,12 @@ vi.mock("../../lib/prisma", () => ({
   },
 }));
 
+vi.mock("../../lib/s3", () => ({
+  deleteS3Object: vi.fn(),
+}));
+
 import { prisma } from "../../lib/prisma";
+import { deleteS3Object } from "../../lib/s3";
 
 beforeEach(() => vi.clearAllMocks());
 
@@ -30,6 +35,7 @@ async function setup() {
 }
 
 const otherUserCharacter = { ...miraCharacterListItem, createdById: "user-2" };
+const characterWithThumbnail = { ...miraCharacterListItem, thumbnailUrl: "https://example.com/old-thumb.jpg" };
 
 describe("GET /admin/characters", () => {
   it("returns 200 with character list and normalised tags", async () => {
@@ -193,6 +199,60 @@ describe("PUT /admin/characters/:id", () => {
       payload: { name: "Updated" },
     });
     expect(res.statusCode).toBe(401);
+  });
+
+  it("deletes old S3 thumbnail when thumbnailUrl changes", async () => {
+    vi.mocked(prisma.character.findUnique).mockResolvedValue(characterWithThumbnail);
+    vi.mocked(prisma.character.update).mockResolvedValue(characterWithThumbnail);
+    const { app, authCookie } = await setup();
+    await app.inject({
+      method: "PUT",
+      url: "/admin/characters/cuid-mira",
+      headers: { cookie: authCookie },
+      payload: { thumbnailUrl: "https://example.com/new-thumb.jpg" },
+    });
+    expect(vi.mocked(deleteS3Object)).toHaveBeenCalledWith("https://example.com/old-thumb.jpg");
+  });
+
+  it("does not call deleteS3Object when thumbnailUrl is unchanged", async () => {
+    vi.mocked(prisma.character.findUnique).mockResolvedValue(characterWithThumbnail);
+    vi.mocked(prisma.character.update).mockResolvedValue(characterWithThumbnail);
+    const { app, authCookie } = await setup();
+    await app.inject({
+      method: "PUT",
+      url: "/admin/characters/cuid-mira",
+      headers: { cookie: authCookie },
+      payload: { thumbnailUrl: "https://example.com/old-thumb.jpg" },
+    });
+    expect(vi.mocked(deleteS3Object)).not.toHaveBeenCalled();
+  });
+
+  it("does not call deleteS3Object when existing thumbnailUrl is null", async () => {
+    vi.mocked(prisma.character.findUnique).mockResolvedValue(miraCharacterListItem);
+    vi.mocked(prisma.character.update).mockResolvedValue(miraCharacterListItem);
+    const { app, authCookie } = await setup();
+    await app.inject({
+      method: "PUT",
+      url: "/admin/characters/cuid-mira",
+      headers: { cookie: authCookie },
+      payload: { thumbnailUrl: "https://example.com/new-thumb.jpg" },
+    });
+    expect(vi.mocked(deleteS3Object)).not.toHaveBeenCalled();
+  });
+
+  it("still returns 200 when S3 delete of old thumbnail fails", async () => {
+    vi.mocked(prisma.character.findUnique).mockResolvedValue(characterWithThumbnail);
+    vi.mocked(prisma.character.update).mockResolvedValue(characterWithThumbnail);
+    vi.mocked(deleteS3Object).mockRejectedValue(new Error("S3 error"));
+    const { app, authCookie } = await setup();
+    const res = await app.inject({
+      method: "PUT",
+      url: "/admin/characters/cuid-mira",
+      headers: { cookie: authCookie },
+      payload: { thumbnailUrl: "https://example.com/new-thumb.jpg" },
+    });
+    expect(res.statusCode).toBe(200);
+    expect(vi.mocked(prisma.character.update)).toHaveBeenCalled();
   });
 });
 

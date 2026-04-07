@@ -125,6 +125,47 @@ describe("PUT /admin/artworks/:artworkId", () => {
     expect(res.json().order).toBe(1);
   });
 
+  it("deletes old S3 image when imageUrl changes", async () => {
+    vi.mocked(prisma.artwork.findUnique).mockResolvedValue(artworkWithCharacter);
+    vi.mocked(prisma.artwork.update).mockResolvedValue(mockArtwork);
+    const { app, authCookie } = await setup();
+    await app.inject({
+      method: "PUT",
+      url: "/admin/artworks/cuid-art-1",
+      headers: { cookie: authCookie },
+      payload: { imageUrl: "https://example.com/new-image.jpg" },
+    });
+    expect(vi.mocked(deleteS3Object)).toHaveBeenCalledWith(artworkWithCharacter.imageUrl);
+  });
+
+  it("does not call deleteS3Object when imageUrl is unchanged", async () => {
+    vi.mocked(prisma.artwork.findUnique).mockResolvedValue(artworkWithCharacter);
+    vi.mocked(prisma.artwork.update).mockResolvedValue(mockArtwork);
+    const { app, authCookie } = await setup();
+    await app.inject({
+      method: "PUT",
+      url: "/admin/artworks/cuid-art-1",
+      headers: { cookie: authCookie },
+      payload: { imageUrl: artworkWithCharacter.imageUrl },
+    });
+    expect(vi.mocked(deleteS3Object)).not.toHaveBeenCalled();
+  });
+
+  it("still returns 200 when S3 delete of old image fails", async () => {
+    vi.mocked(prisma.artwork.findUnique).mockResolvedValue(artworkWithCharacter);
+    vi.mocked(prisma.artwork.update).mockResolvedValue(mockArtwork);
+    vi.mocked(deleteS3Object).mockRejectedValue(new Error("S3 error"));
+    const { app, authCookie } = await setup();
+    const res = await app.inject({
+      method: "PUT",
+      url: "/admin/artworks/cuid-art-1",
+      headers: { cookie: authCookie },
+      payload: { imageUrl: "https://example.com/new-image.jpg" },
+    });
+    expect(res.statusCode).toBe(200);
+    expect(vi.mocked(prisma.artwork.update)).toHaveBeenCalled();
+  });
+
   it("returns 404 when not found", async () => {
     vi.mocked(prisma.artwork.findUnique).mockResolvedValue(null);
     const { app, authCookie } = await setup();

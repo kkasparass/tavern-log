@@ -75,6 +75,13 @@ export async function adminArtworkRoutes(app: FastifyInstance) {
       if (!existing) return reply.code(404).send({ error: "Not found" });
       if (existing.character.createdById !== request.user.userId)
         return reply.code(403).send({ error: "Forbidden" });
+      if (request.body.imageUrl && request.body.imageUrl !== existing.imageUrl) {
+        try {
+          await deleteS3Object(existing.imageUrl);
+        } catch (err) {
+          request.log.warn({ err, artworkId }, "S3 delete failed for old artwork image, proceeding with update");
+        }
+      }
       const artwork = await prisma.artwork.update({
         where: { id: artworkId },
         data: request.body,
