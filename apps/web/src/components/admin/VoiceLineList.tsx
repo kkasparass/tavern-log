@@ -48,13 +48,13 @@ export function VoiceLineList({
               isError={saveEditError}
             />
           ) : (
-            <div className="flex items-start justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between">
               <div className="min-w-0 flex-1 overflow-hidden">
                 <p className="truncate text-sm text-white/50">{vl.audioUrl.split("/").pop()}</p>
                 <p className="mt-0.5 text-white">{vl.transcript}</p>
                 {vl.context && <p className="mt-0.5 text-sm text-white/50">{vl.context}</p>}
               </div>
-              <div className="ml-4 flex shrink-0 items-center gap-1">
+              <div className="mt-2 flex shrink-0 items-center gap-1 sm:ml-4 sm:mt-0">
                 <button
                   onClick={() => onMoveUp(index)}
                   disabled={index === 0}

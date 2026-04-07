@@ -25,7 +25,7 @@ export function StoryList({
       {stories.map((story) => (
         <li
           key={story.id}
-          className="flex items-center justify-between rounded border border-white/10 bg-gray-900 px-4 py-3"
+          className="flex flex-col rounded border border-white/10 bg-gray-900 px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
         >
           <div className="flex items-center gap-3">
             <span className="text-white">{story.title}</span>
@@ -37,7 +37,7 @@ export function StoryList({
               {story.isDraft ? "Draft" : "Published"}
             </span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="mt-2 flex items-center gap-2 sm:mt-0">
             <button
               onClick={() => onEdit(story)}
               className="rounded px-3 py-1 text-sm text-white/60 hover:bg-white/10 hover:text-white"

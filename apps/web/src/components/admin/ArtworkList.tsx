@@ -48,7 +48,7 @@ export function ArtworkList({
               isError={saveEditError}
             />
           ) : (
-            <div className="flex items-start justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between">
               <div className="min-w-0 flex-1 overflow-hidden">
                 <p className="truncate text-sm text-white/50">{artwork.imageUrl.split("/").pop()}</p>
                 {artwork.title && <p className="mt-0.5 font-medium text-white">{artwork.title}</p>}
@@ -57,7 +57,7 @@ export function ArtworkList({
                   <p className="mt-0.5 text-sm text-white/40">Art by {artwork.artistCredit}</p>
                 )}
               </div>
-              <div className="ml-4 flex shrink-0 items-center gap-1">
+              <div className="mt-2 flex shrink-0 items-center gap-1 sm:ml-4 sm:mt-0">
                 <button
                   onClick={() => onMoveUp(index)}
                   disabled={index === 0}
