@@ -24,7 +24,7 @@ describe("Header", () => {
   it("renders home link with correct href", async () => {
     mockCookies.mockResolvedValue(makeCookieStore());
     renderWithQuery(await Header());
-    expect(screen.getByRole("link", { name: "Tavern Log" })).toHaveAttribute("href", "/");
+    expect(screen.getByText("Tavern Log").parentElement).toHaveAttribute("href", "/");
   });
 
   it("renders admin link with correct href", async () => {
