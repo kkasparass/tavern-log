@@ -15,7 +15,12 @@ vi.mock("../../lib/prisma", () => ({
   },
 }));
 
+vi.mock("../../lib/s3", () => ({
+  deleteS3Object: vi.fn(),
+}));
+
 import { prisma } from "../../lib/prisma";
+import { deleteS3Object } from "../../lib/s3";
 
 const mockVoiceLine = miraCharacterDetail.voiceLines[0]!;
 const otherUserCharacter = { ...miraCharacterListItem, createdById: "user-2" };
@@ -166,6 +171,32 @@ describe("DELETE /admin/voice-lines/:voiceLineId", () => {
       headers: { cookie: authCookie },
     });
     expect(res.statusCode).toBe(204);
+  });
+
+  it("calls deleteS3Object with the voice line audioUrl", async () => {
+    vi.mocked(prisma.voiceLine.findUnique).mockResolvedValue(voiceLineWithCharacter);
+    vi.mocked(prisma.voiceLine.delete).mockResolvedValue(mockVoiceLine);
+    const { app, authCookie } = await setup();
+    await app.inject({
+      method: "DELETE",
+      url: "/admin/voice-lines/cuid-vl-1",
+      headers: { cookie: authCookie },
+    });
+    expect(vi.mocked(deleteS3Object)).toHaveBeenCalledWith(voiceLineWithCharacter.audioUrl);
+  });
+
+  it("still returns 204 and deletes from DB when S3 delete fails", async () => {
+    vi.mocked(prisma.voiceLine.findUnique).mockResolvedValue(voiceLineWithCharacter);
+    vi.mocked(prisma.voiceLine.delete).mockResolvedValue(mockVoiceLine);
+    vi.mocked(deleteS3Object).mockRejectedValue(new Error("S3 error"));
+    const { app, authCookie } = await setup();
+    const res = await app.inject({
+      method: "DELETE",
+      url: "/admin/voice-lines/cuid-vl-1",
+      headers: { cookie: authCookie },
+    });
+    expect(res.statusCode).toBe(204);
+    expect(vi.mocked(prisma.voiceLine.delete)).toHaveBeenCalled();
   });
 
   it("returns 404 when not found", async () => {

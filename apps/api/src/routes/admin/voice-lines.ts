@@ -1,6 +1,7 @@
 import { FastifyInstance } from "fastify";
 import { prisma } from "../../lib/prisma";
 import { authenticate } from "../../plugins/auth";
+import { deleteS3Object } from "../../lib/s3";
 
 interface CreateVoiceLineBody {
   audioUrl: string;
@@ -91,6 +92,11 @@ export async function adminVoiceLineRoutes(app: FastifyInstance) {
       if (!existing) return reply.code(404).send({ error: "Not found" });
       if (existing.character.createdById !== request.user.userId)
         return reply.code(403).send({ error: "Forbidden" });
+      try {
+        await deleteS3Object(existing.audioUrl);
+      } catch (err) {
+        request.log.warn({ err, voiceLineId }, "S3 delete failed for voice line, proceeding with DB delete");
+      }
       await prisma.voiceLine.delete({ where: { id: voiceLineId } });
       return reply.code(204).send();
     }

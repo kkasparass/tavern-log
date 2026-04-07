@@ -1,6 +1,7 @@
 import { FastifyInstance } from "fastify";
 import { prisma } from "../../lib/prisma";
 import { authenticate } from "../../plugins/auth";
+import { deleteS3Object } from "../../lib/s3";
 
 interface CreateArtworkBody {
   imageUrl: string;
@@ -94,6 +95,11 @@ export async function adminArtworkRoutes(app: FastifyInstance) {
       if (!existing) return reply.code(404).send({ error: "Not found" });
       if (existing.character.createdById !== request.user.userId)
         return reply.code(403).send({ error: "Forbidden" });
+      try {
+        await deleteS3Object(existing.imageUrl);
+      } catch (err) {
+        request.log.warn({ err, artworkId }, "S3 delete failed for artwork, proceeding with DB delete");
+      }
       await prisma.artwork.delete({ where: { id: artworkId } });
       return reply.code(204).send();
     }

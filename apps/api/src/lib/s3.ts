@@ -1,4 +1,4 @@
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 const region = process.env.AWS_REGION;
@@ -32,4 +32,9 @@ export async function presignPutUrl(
   const objectUrl = `https://${BUCKET}.s3.${region}.amazonaws.com/${key}`;
 
   return { uploadUrl, objectUrl };
+}
+
+export async function deleteS3Object(url: string): Promise<void> {
+  const key = new URL(url).pathname.slice(1);
+  await s3.send(new DeleteObjectCommand({ Bucket: BUCKET, Key: key }));
 }

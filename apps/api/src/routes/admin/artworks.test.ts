@@ -15,7 +15,12 @@ vi.mock("../../lib/prisma", () => ({
   },
 }));
 
+vi.mock("../../lib/s3", () => ({
+  deleteS3Object: vi.fn(),
+}));
+
 import { prisma } from "../../lib/prisma";
+import { deleteS3Object } from "../../lib/s3";
 
 const mockArtwork = miraCharacterDetail.artworks[0]!;
 const otherUserCharacter = { ...miraCharacterListItem, createdById: "user-2" };
@@ -166,6 +171,32 @@ describe("DELETE /admin/artworks/:artworkId", () => {
       headers: { cookie: authCookie },
     });
     expect(res.statusCode).toBe(204);
+  });
+
+  it("calls deleteS3Object with the artwork imageUrl", async () => {
+    vi.mocked(prisma.artwork.findUnique).mockResolvedValue(artworkWithCharacter);
+    vi.mocked(prisma.artwork.delete).mockResolvedValue(mockArtwork);
+    const { app, authCookie } = await setup();
+    await app.inject({
+      method: "DELETE",
+      url: "/admin/artworks/cuid-art-1",
+      headers: { cookie: authCookie },
+    });
+    expect(vi.mocked(deleteS3Object)).toHaveBeenCalledWith(artworkWithCharacter.imageUrl);
+  });
+
+  it("still returns 204 and deletes from DB when S3 delete fails", async () => {
+    vi.mocked(prisma.artwork.findUnique).mockResolvedValue(artworkWithCharacter);
+    vi.mocked(prisma.artwork.delete).mockResolvedValue(mockArtwork);
+    vi.mocked(deleteS3Object).mockRejectedValue(new Error("S3 error"));
+    const { app, authCookie } = await setup();
+    const res = await app.inject({
+      method: "DELETE",
+      url: "/admin/artworks/cuid-art-1",
+      headers: { cookie: authCookie },
+    });
+    expect(res.statusCode).toBe(204);
+    expect(vi.mocked(prisma.artwork.delete)).toHaveBeenCalled();
   });
 
   it("returns 404 when not found", async () => {
