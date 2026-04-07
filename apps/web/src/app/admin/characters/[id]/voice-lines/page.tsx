@@ -1,19 +1,26 @@
 "use client";
-import { useState } from "react";
 import { useVoiceLinesAdmin } from "@/components/admin/useVoiceLinesAdmin";
 import { VoiceLineForm } from "@/components/admin/VoiceLineForm";
 import { VoiceLineList } from "@/components/admin/VoiceLineList";
 
 export default function VoiceLinesPage({ params }: { params: { id: string } }) {
-  const [showForm, setShowForm] = useState(false);
   const {
     voiceLines,
     isPending,
     isError,
+    showCreateForm,
+    editingVoiceLine,
     nextOrder,
+    openCreateForm,
+    cancelCreate,
+    openEditForm,
+    cancelEdit,
     create,
     isCreating,
     createError,
+    edit,
+    isEditing,
+    editError,
     remove,
     isDeleting,
     moveUp,
@@ -24,9 +31,9 @@ export default function VoiceLinesPage({ params }: { params: { id: string } }) {
     <div>
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-xl font-semibold text-white">Voice Lines</h1>
-        {!showForm && (
+        {!showCreateForm && (
           <button
-            onClick={() => setShowForm(true)}
+            onClick={openCreateForm}
             className="rounded bg-white/10 px-4 py-2 text-sm text-white hover:bg-white/20"
           >
             Add Voice Line
@@ -34,14 +41,10 @@ export default function VoiceLinesPage({ params }: { params: { id: string } }) {
         )}
       </div>
 
-      {showForm && (
+      {showCreateForm && (
         <VoiceLineForm
-          onSubmit={(data) => {
-            create(data);
-            setShowForm(false);
-          }}
-          onCancel={() => setShowForm(false)}
-          nextOrder={nextOrder}
+          onSubmit={(data) => create({ ...data, order: nextOrder })}
+          onCancel={cancelCreate}
           isPending={isCreating}
           isError={createError}
         />
@@ -53,6 +56,12 @@ export default function VoiceLinesPage({ params }: { params: { id: string } }) {
       {voiceLines && (
         <VoiceLineList
           voiceLines={voiceLines}
+          editingVoiceLine={editingVoiceLine}
+          onEdit={openEditForm}
+          onSaveEdit={edit}
+          onCancelEdit={cancelEdit}
+          isSavingEdit={isEditing}
+          saveEditError={editError}
           onMoveUp={moveUp}
           onMoveDown={moveDown}
           onDelete={remove}

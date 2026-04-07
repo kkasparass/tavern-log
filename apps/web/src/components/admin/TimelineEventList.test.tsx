@@ -8,6 +8,12 @@ const [first, second, third] = mockCharacter.timeline;
 
 const defaultProps = {
   events: [first, second, third],
+  editingEvent: null,
+  onEdit: vi.fn(),
+  onSaveEdit: vi.fn(),
+  onCancelEdit: vi.fn(),
+  isSavingEdit: false,
+  saveEditError: false,
   onMoveUp: vi.fn(),
   onMoveDown: vi.fn(),
   onDelete: vi.fn(),
@@ -67,5 +73,60 @@ describe("TimelineEventList", () => {
   it("shows empty state when events list is empty", () => {
     render(<TimelineEventList {...defaultProps} events={[]} />);
     expect(screen.getByText("No events yet.")).toBeInTheDocument();
+  });
+
+  it("calls onEdit with the event when Edit is clicked", async () => {
+    const onEdit = vi.fn();
+    render(<TimelineEventList {...defaultProps} onEdit={onEdit} />);
+    await userEvent.click(screen.getAllByRole("button", { name: "Edit" })[0]);
+    expect(onEdit).toHaveBeenCalledWith(first);
+  });
+
+  it("renders inline form in place of the editing event", () => {
+    render(<TimelineEventList {...defaultProps} editingEvent={first} />);
+    expect(screen.getByPlaceholderText("Event title")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Save" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Cancel" })).toBeInTheDocument();
+  });
+
+  it("pre-fills the inline form with the editing event values", () => {
+    render(<TimelineEventList {...defaultProps} editingEvent={first} />);
+    expect(screen.getByPlaceholderText("Event title")).toHaveValue(first.title);
+    expect(screen.getByPlaceholderText("What happened?")).toHaveValue(first.description);
+    expect(screen.getByPlaceholderText("e.g. Year 412, Session 3, Spring")).toHaveValue(first.dateLabel);
+  });
+
+  it("still renders normal view for items not being edited", () => {
+    render(<TimelineEventList {...defaultProps} editingEvent={first} />);
+    expect(screen.getByText(second.title)).toBeInTheDocument();
+    expect(screen.getByText(third.title)).toBeInTheDocument();
+    expect(screen.getAllByRole("button", { name: "Edit" })).toHaveLength(2);
+  });
+
+  it("calls onSaveEdit with the event id and updated data on Save", async () => {
+    const onSaveEdit = vi.fn();
+    render(<TimelineEventList {...defaultProps} editingEvent={first} onSaveEdit={onSaveEdit} />);
+    await userEvent.click(screen.getByRole("button", { name: "Save" }));
+    expect(onSaveEdit).toHaveBeenCalledWith(
+      first.id,
+      expect.objectContaining({ title: first.title, dateLabel: first.dateLabel })
+    );
+  });
+
+  it("calls onCancelEdit when Cancel is clicked in the inline form", async () => {
+    const onCancelEdit = vi.fn();
+    render(<TimelineEventList {...defaultProps} editingEvent={first} onCancelEdit={onCancelEdit} />);
+    await userEvent.click(screen.getByRole("button", { name: "Cancel" }));
+    expect(onCancelEdit).toHaveBeenCalled();
+  });
+
+  it("shows saving state in the inline form when isSavingEdit", () => {
+    render(<TimelineEventList {...defaultProps} editingEvent={first} isSavingEdit />);
+    expect(screen.getByRole("button", { name: "Saving…" })).toBeDisabled();
+  });
+
+  it("shows error in the inline form when saveEditError", () => {
+    render(<TimelineEventList {...defaultProps} editingEvent={first} saveEditError />);
+    expect(screen.getByText("Failed to update event.")).toBeInTheDocument();
   });
 });

@@ -3,30 +3,28 @@ import { useState } from "react";
 import { FileUpload } from "./FileUpload";
 
 interface ArtworkFormProps {
-  onSubmit: (data: {
-    imageUrl: string;
-    title?: string;
-    caption?: string;
-    artistCredit?: string;
-    order: number;
-  }) => void;
+  initialValues?: { imageUrl?: string | null; title?: string | null; caption?: string | null; artistCredit?: string | null };
+  onSubmit: (data: { imageUrl: string; title?: string; caption?: string; artistCredit?: string }) => void;
   onCancel: () => void;
-  nextOrder: number;
   isPending: boolean;
   isError: boolean;
+  inline?: boolean;
 }
 
 export function ArtworkForm({
+  initialValues,
   onSubmit,
   onCancel,
-  nextOrder,
   isPending,
   isError,
+  inline = false,
 }: ArtworkFormProps) {
-  const [imageUrl, setImageUrl] = useState("");
-  const [title, setTitle] = useState("");
-  const [caption, setCaption] = useState("");
-  const [artistCredit, setArtistCredit] = useState("");
+  const [imageUrl, setImageUrl] = useState(initialValues?.imageUrl ?? "");
+  const [title, setTitle] = useState(initialValues?.title ?? "");
+  const [caption, setCaption] = useState(initialValues?.caption ?? "");
+  const [artistCredit, setArtistCredit] = useState(initialValues?.artistCredit ?? "");
+
+  const isEditing = !!initialValues;
 
   function handleSubmit() {
     if (!imageUrl.trim()) return;
@@ -35,18 +33,26 @@ export function ArtworkForm({
       title: title || undefined,
       caption: caption || undefined,
       artistCredit: artistCredit || undefined,
-      order: nextOrder,
     });
   }
 
-  return (
-    <div className="mb-6 rounded border border-white/10 bg-gray-900 p-4">
-      <h2 className="mb-4 text-sm font-semibold text-white/70">New Artwork</h2>
+  const fields = (
+    <>
+      {!inline && (
+        <h2 className="mb-4 text-sm font-semibold text-white/70">
+          {isEditing ? "Edit Artwork" : "New Artwork"}
+        </h2>
+      )}
       <div className="mb-3">
+        {isEditing && initialValues?.imageUrl && (
+          <p className="mb-1 text-xs text-white/40">
+            Current: {initialValues.imageUrl.split("/").pop()}
+          </p>
+        )}
         <FileUpload
           accept="image/jpeg,image/png,image/webp,image/gif"
           onUpload={(url) => setImageUrl(url)}
-          label="Image"
+          label={isEditing ? "Replace Image (optional)" : "Image"}
         />
       </div>
       <div className="mb-3">
@@ -79,7 +85,11 @@ export function ArtworkForm({
           placeholder="Artist name or link"
         />
       </div>
-      {isError && <p className="mb-3 text-sm text-red-400">Failed to create artwork.</p>}
+      {isError && (
+        <p className="mb-3 text-sm text-red-400">
+          Failed to {isEditing ? "update" : "create"} artwork.
+        </p>
+      )}
       <div className="flex gap-2">
         <button
           onClick={handleSubmit}
@@ -95,6 +105,12 @@ export function ArtworkForm({
           Cancel
         </button>
       </div>
-    </div>
+    </>
+  );
+
+  if (inline) return <div className="w-full">{fields}</div>;
+
+  return (
+    <div className="mb-6 rounded border border-white/10 bg-gray-900 p-4">{fields}</div>
   );
 }

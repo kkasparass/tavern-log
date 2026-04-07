@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { CharacterVoiceLine } from "@/lib/types";
 
@@ -21,7 +22,10 @@ async function createVoiceLine(
   return res.json();
 }
 
-async function updateVoiceLine(voiceLineId: string, data: { order?: number }) {
+async function updateVoiceLine(
+  voiceLineId: string,
+  data: { audioUrl?: string; transcript?: string; context?: string; order?: number }
+) {
   const res = await fetch(`/api/admin/voice-lines/${voiceLineId}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
@@ -38,6 +42,8 @@ async function deleteVoiceLine(voiceLineId: string) {
 
 export function useVoiceLinesAdmin(characterId: string) {
   const queryClient = useQueryClient();
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [editingVoiceLine, setEditingVoiceLine] = useState<CharacterVoiceLine | null>(null);
 
   const {
     data: voiceLines,
@@ -58,13 +64,48 @@ export function useVoiceLinesAdmin(characterId: string) {
       context?: string;
       order?: number;
     }) => createVoiceLine(characterId, data),
-    onSuccess: invalidate,
+    onSuccess: () => {
+      invalidate();
+      setShowCreateForm(false);
+    },
+  });
+
+  const editMutation = useMutation({
+    mutationFn: ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: { audioUrl?: string; transcript?: string; context?: string };
+    }) => updateVoiceLine(id, data),
+    onSuccess: () => {
+      invalidate();
+      setEditingVoiceLine(null);
+    },
   });
 
   const deleteMutation = useMutation({
     mutationFn: (voiceLineId: string) => deleteVoiceLine(voiceLineId),
     onSuccess: invalidate,
   });
+
+  function openCreateForm() {
+    setEditingVoiceLine(null);
+    setShowCreateForm(true);
+  }
+
+  function cancelCreate() {
+    setShowCreateForm(false);
+  }
+
+  function openEditForm(voiceLine: CharacterVoiceLine) {
+    setShowCreateForm(false);
+    setEditingVoiceLine(voiceLine);
+  }
+
+  function cancelEdit() {
+    setEditingVoiceLine(null);
+  }
 
   async function moveUp(index: number) {
     if (!voiceLines || index === 0) return;
@@ -88,10 +129,20 @@ export function useVoiceLinesAdmin(characterId: string) {
     voiceLines,
     isPending,
     isError,
+    showCreateForm,
+    editingVoiceLine,
     nextOrder: voiceLines?.length ?? 0,
+    openCreateForm,
+    cancelCreate,
+    openEditForm,
+    cancelEdit,
     create: createMutation.mutate,
     isCreating: createMutation.isPending,
     createError: createMutation.isError,
+    edit: (id: string, data: { audioUrl?: string; transcript?: string; context?: string }) =>
+      editMutation.mutate({ id, data }),
+    isEditing: editMutation.isPending,
+    editError: editMutation.isError,
     remove: deleteMutation.mutate,
     isDeleting: deleteMutation.isPending,
     moveUp,

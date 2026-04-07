@@ -12,7 +12,6 @@ vi.mock("./FileUpload", () => ({
 const defaultProps = {
   onSubmit: vi.fn(),
   onCancel: vi.fn(),
-  nextOrder: 2,
   isPending: false,
   isError: false,
 };
@@ -30,9 +29,9 @@ describe("VoiceLineForm", () => {
     expect(screen.getByRole("button", { name: "Save" })).toBeDisabled();
   });
 
-  it("calls onSubmit with correct data including nextOrder", async () => {
+  it("calls onSubmit with correct data", async () => {
     const onSubmit = vi.fn();
-    render(<VoiceLineForm {...defaultProps} onSubmit={onSubmit} nextOrder={3} />);
+    render(<VoiceLineForm {...defaultProps} onSubmit={onSubmit} />);
     await userEvent.click(screen.getByRole("button", { name: "Audio" }));
     await userEvent.type(
       screen.getByPlaceholderText("What is said in this voice line"),
@@ -47,7 +46,6 @@ describe("VoiceLineForm", () => {
       audioUrl: "https://audio.mp3",
       transcript: "Hello world",
       context: "Greeting",
-      order: 3,
     });
   });
 
@@ -78,5 +76,27 @@ describe("VoiceLineForm", () => {
   it("shows error message when isError is true", () => {
     render(<VoiceLineForm {...defaultProps} isError />);
     expect(screen.getByText("Failed to create voice line.")).toBeInTheDocument();
+  });
+
+  it("pre-populates fields from initialValues", () => {
+    render(
+      <VoiceLineForm
+        {...defaultProps}
+        initialValues={{ audioUrl: "https://audio.mp3", transcript: "Old line", context: "Old context" }}
+      />
+    );
+    expect(screen.getByPlaceholderText("What is said in this voice line")).toHaveValue("Old line");
+    expect(screen.getByPlaceholderText("e.g. Battle cry, greeting, etc.")).toHaveValue("Old context");
+  });
+
+  it("shows 'Failed to update voice line.' error message when editing", () => {
+    render(
+      <VoiceLineForm
+        {...defaultProps}
+        initialValues={{ audioUrl: "https://audio.mp3", transcript: "line" }}
+        isError
+      />
+    );
+    expect(screen.getByText("Failed to update voice line.")).toBeInTheDocument();
   });
 });

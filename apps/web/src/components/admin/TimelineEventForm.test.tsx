@@ -6,7 +6,6 @@ import { TimelineEventForm } from "./TimelineEventForm";
 const defaultProps = {
   onSubmit: vi.fn(),
   onCancel: vi.fn(),
-  nextOrder: 3,
   isPending: false,
   isError: false,
 };
@@ -24,9 +23,9 @@ describe("TimelineEventForm", () => {
     expect(screen.getByRole("button", { name: "Save" })).toBeDisabled();
   });
 
-  it("calls onSubmit with correct data including nextOrder", async () => {
+  it("calls onSubmit with correct data", async () => {
     const onSubmit = vi.fn();
-    render(<TimelineEventForm {...defaultProps} onSubmit={onSubmit} nextOrder={4} />);
+    render(<TimelineEventForm {...defaultProps} onSubmit={onSubmit} />);
     await userEvent.type(screen.getByPlaceholderText("Event title"), "The Battle");
     await userEvent.type(screen.getByPlaceholderText("What happened?"), "It was fierce.");
     await userEvent.type(
@@ -38,7 +37,6 @@ describe("TimelineEventForm", () => {
       title: "The Battle",
       description: "It was fierce.",
       dateLabel: "Year 412",
-      order: 4,
     });
   });
 
@@ -67,5 +65,28 @@ describe("TimelineEventForm", () => {
   it("shows error message when isError is true", () => {
     render(<TimelineEventForm {...defaultProps} isError />);
     expect(screen.getByText("Failed to create event.")).toBeInTheDocument();
+  });
+
+  it("pre-populates fields from initialValues", async () => {
+    render(
+      <TimelineEventForm
+        {...defaultProps}
+        initialValues={{ title: "Old Title", description: "Old desc", dateLabel: "Year 1" }}
+      />
+    );
+    expect(screen.getByPlaceholderText("Event title")).toHaveValue("Old Title");
+    expect(screen.getByPlaceholderText("What happened?")).toHaveValue("Old desc");
+    expect(screen.getByPlaceholderText("e.g. Year 412, Session 3, Spring")).toHaveValue("Year 1");
+  });
+
+  it("shows 'Failed to update event.' error message when editing", () => {
+    render(
+      <TimelineEventForm
+        {...defaultProps}
+        initialValues={{ title: "Some Event" }}
+        isError
+      />
+    );
+    expect(screen.getByText("Failed to update event.")).toBeInTheDocument();
   });
 });

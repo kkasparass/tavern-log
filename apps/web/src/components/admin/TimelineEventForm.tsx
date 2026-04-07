@@ -2,28 +2,27 @@
 import { useState } from "react";
 
 interface TimelineEventFormProps {
-  onSubmit: (data: {
-    title: string;
-    description?: string;
-    dateLabel?: string;
-    order: number;
-  }) => void;
+  initialValues?: { title?: string | null; description?: string | null; dateLabel?: string | null };
+  onSubmit: (data: { title: string; description?: string; dateLabel?: string }) => void;
   onCancel: () => void;
-  nextOrder: number;
   isPending: boolean;
   isError: boolean;
+  inline?: boolean;
 }
 
 export function TimelineEventForm({
+  initialValues,
   onSubmit,
   onCancel,
-  nextOrder,
   isPending,
   isError,
+  inline = false,
 }: TimelineEventFormProps) {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [dateLabel, setDateLabel] = useState("");
+  const [title, setTitle] = useState(initialValues?.title ?? "");
+  const [description, setDescription] = useState(initialValues?.description ?? "");
+  const [dateLabel, setDateLabel] = useState(initialValues?.dateLabel ?? "");
+
+  const isEditing = !!initialValues;
 
   function handleSubmit() {
     if (!title.trim()) return;
@@ -31,13 +30,16 @@ export function TimelineEventForm({
       title,
       description: description || undefined,
       dateLabel: dateLabel || undefined,
-      order: nextOrder,
     });
   }
 
-  return (
-    <div className="mb-6 rounded border border-white/10 bg-gray-900 p-4">
-      <h2 className="mb-4 text-sm font-semibold text-white/70">New Event</h2>
+  const fields = (
+    <>
+      {!inline && (
+        <h2 className="mb-4 text-sm font-semibold text-white/70">
+          {isEditing ? "Edit Event" : "New Event"}
+        </h2>
+      )}
       <div className="mb-3">
         <label className="mb-1 block text-sm text-white/70">Title</label>
         <input
@@ -68,7 +70,11 @@ export function TimelineEventForm({
           placeholder="e.g. Year 412, Session 3, Spring"
         />
       </div>
-      {isError && <p className="mb-3 text-sm text-red-400">Failed to create event.</p>}
+      {isError && (
+        <p className="mb-3 text-sm text-red-400">
+          Failed to {isEditing ? "update" : "create"} event.
+        </p>
+      )}
       <div className="flex gap-2">
         <button
           onClick={handleSubmit}
@@ -84,6 +90,12 @@ export function TimelineEventForm({
           Cancel
         </button>
       </div>
-    </div>
+    </>
+  );
+
+  if (inline) return <div className="w-full">{fields}</div>;
+
+  return (
+    <div className="mb-6 rounded border border-white/10 bg-gray-900 p-4">{fields}</div>
   );
 }

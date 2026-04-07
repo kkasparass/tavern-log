@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { CharacterTimelineEvent } from "@/lib/types";
 
@@ -21,7 +22,10 @@ async function createEvent(
   return res.json();
 }
 
-async function updateEvent(eventId: string, data: { order?: number }) {
+async function updateEvent(
+  eventId: string,
+  data: { title?: string; description?: string; dateLabel?: string; order?: number }
+) {
   const res = await fetch(`/api/admin/timeline/${eventId}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
@@ -38,6 +42,8 @@ async function deleteEvent(eventId: string) {
 
 export function useTimelineAdmin(characterId: string) {
   const queryClient = useQueryClient();
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [editingEvent, setEditingEvent] = useState<CharacterTimelineEvent | null>(null);
 
   const {
     data: events,
@@ -58,13 +64,48 @@ export function useTimelineAdmin(characterId: string) {
       dateLabel?: string;
       order?: number;
     }) => createEvent(characterId, data),
-    onSuccess: invalidate,
+    onSuccess: () => {
+      invalidate();
+      setShowCreateForm(false);
+    },
+  });
+
+  const editMutation = useMutation({
+    mutationFn: ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: { title?: string; description?: string; dateLabel?: string };
+    }) => updateEvent(id, data),
+    onSuccess: () => {
+      invalidate();
+      setEditingEvent(null);
+    },
   });
 
   const deleteMutation = useMutation({
     mutationFn: (eventId: string) => deleteEvent(eventId),
     onSuccess: invalidate,
   });
+
+  function openCreateForm() {
+    setEditingEvent(null);
+    setShowCreateForm(true);
+  }
+
+  function cancelCreate() {
+    setShowCreateForm(false);
+  }
+
+  function openEditForm(event: CharacterTimelineEvent) {
+    setShowCreateForm(false);
+    setEditingEvent(event);
+  }
+
+  function cancelEdit() {
+    setEditingEvent(null);
+  }
 
   async function moveUp(index: number) {
     if (!events || index === 0) return;
@@ -88,10 +129,20 @@ export function useTimelineAdmin(characterId: string) {
     events,
     isPending,
     isError,
+    showCreateForm,
+    editingEvent,
     nextOrder: events?.length ?? 0,
+    openCreateForm,
+    cancelCreate,
+    openEditForm,
+    cancelEdit,
     create: createMutation.mutate,
     isCreating: createMutation.isPending,
     createError: createMutation.isError,
+    edit: (id: string, data: { title?: string; description?: string; dateLabel?: string }) =>
+      editMutation.mutate({ id, data }),
+    isEditing: editMutation.isPending,
+    editError: editMutation.isError,
     remove: deleteMutation.mutate,
     isDeleting: deleteMutation.isPending,
     moveUp,

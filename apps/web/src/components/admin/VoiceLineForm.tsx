@@ -3,42 +3,50 @@ import { useState } from "react";
 import { FileUpload } from "./FileUpload";
 
 interface VoiceLineFormProps {
-  onSubmit: (data: {
-    audioUrl: string;
-    transcript: string;
-    context?: string;
-    order: number;
-  }) => void;
+  initialValues?: { audioUrl?: string | null; transcript?: string | null; context?: string | null };
+  onSubmit: (data: { audioUrl: string; transcript: string; context?: string }) => void;
   onCancel: () => void;
-  nextOrder: number;
   isPending: boolean;
   isError: boolean;
+  inline?: boolean;
 }
 
 export function VoiceLineForm({
+  initialValues,
   onSubmit,
   onCancel,
-  nextOrder,
   isPending,
   isError,
+  inline = false,
 }: VoiceLineFormProps) {
-  const [audioUrl, setAudioUrl] = useState("");
-  const [transcript, setTranscript] = useState("");
-  const [context, setContext] = useState("");
+  const [audioUrl, setAudioUrl] = useState(initialValues?.audioUrl ?? "");
+  const [transcript, setTranscript] = useState(initialValues?.transcript ?? "");
+  const [context, setContext] = useState(initialValues?.context ?? "");
+
+  const isEditing = !!initialValues;
 
   function handleSubmit() {
     if (!audioUrl.trim() || !transcript.trim()) return;
-    onSubmit({ audioUrl, transcript, context: context || undefined, order: nextOrder });
+    onSubmit({ audioUrl, transcript, context: context || undefined });
   }
 
-  return (
-    <div className="mb-6 rounded border border-white/10 bg-gray-900 p-4">
-      <h2 className="mb-4 text-sm font-semibold text-white/70">New Voice Line</h2>
+  const fields = (
+    <>
+      {!inline && (
+        <h2 className="mb-4 text-sm font-semibold text-white/70">
+          {isEditing ? "Edit Voice Line" : "New Voice Line"}
+        </h2>
+      )}
       <div className="mb-3">
+        {isEditing && initialValues?.audioUrl && (
+          <p className="mb-1 text-xs text-white/40">
+            Current: {initialValues.audioUrl.split("/").pop()}
+          </p>
+        )}
         <FileUpload
           accept="audio/mpeg,audio/wav,audio/ogg,audio/aac"
           onUpload={(url) => setAudioUrl(url)}
-          label="Audio"
+          label={isEditing ? "Replace Audio (optional)" : "Audio"}
         />
       </div>
       <div className="mb-3">
@@ -61,7 +69,11 @@ export function VoiceLineForm({
           placeholder="e.g. Battle cry, greeting, etc."
         />
       </div>
-      {isError && <p className="mb-3 text-sm text-red-400">Failed to create voice line.</p>}
+      {isError && (
+        <p className="mb-3 text-sm text-red-400">
+          Failed to {isEditing ? "update" : "create"} voice line.
+        </p>
+      )}
       <div className="flex gap-2">
         <button
           onClick={handleSubmit}
@@ -77,6 +89,12 @@ export function VoiceLineForm({
           Cancel
         </button>
       </div>
-    </div>
+    </>
+  );
+
+  if (inline) return <div className="w-full">{fields}</div>;
+
+  return (
+    <div className="mb-6 rounded border border-white/10 bg-gray-900 p-4">{fields}</div>
   );
 }

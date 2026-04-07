@@ -12,7 +12,6 @@ vi.mock("./FileUpload", () => ({
 const defaultProps = {
   onSubmit: vi.fn(),
   onCancel: vi.fn(),
-  nextOrder: 1,
   isPending: false,
   isError: false,
 };
@@ -31,9 +30,9 @@ describe("ArtworkForm", () => {
     expect(screen.getByRole("button", { name: "Save" })).toBeDisabled();
   });
 
-  it("calls onSubmit with correct data including nextOrder", async () => {
+  it("calls onSubmit with correct data", async () => {
     const onSubmit = vi.fn();
-    render(<ArtworkForm {...defaultProps} onSubmit={onSubmit} nextOrder={2} />);
+    render(<ArtworkForm {...defaultProps} onSubmit={onSubmit} />);
     await userEvent.click(screen.getByRole("button", { name: "Image" }));
     await userEvent.type(screen.getByPlaceholderText("Artwork title"), "My Art");
     await userEvent.type(screen.getByPlaceholderText("Short description"), "A caption");
@@ -44,7 +43,6 @@ describe("ArtworkForm", () => {
       title: "My Art",
       caption: "A caption",
       artistCredit: "Artist",
-      order: 2,
     });
   });
 
@@ -73,5 +71,28 @@ describe("ArtworkForm", () => {
   it("shows error message when isError is true", () => {
     render(<ArtworkForm {...defaultProps} isError />);
     expect(screen.getByText("Failed to create artwork.")).toBeInTheDocument();
+  });
+
+  it("pre-populates fields from initialValues", () => {
+    render(
+      <ArtworkForm
+        {...defaultProps}
+        initialValues={{ imageUrl: "https://img.png", title: "Old Title", caption: "Old caption", artistCredit: "Old Artist" }}
+      />
+    );
+    expect(screen.getByPlaceholderText("Artwork title")).toHaveValue("Old Title");
+    expect(screen.getByPlaceholderText("Short description")).toHaveValue("Old caption");
+    expect(screen.getByPlaceholderText("Artist name or link")).toHaveValue("Old Artist");
+  });
+
+  it("shows 'Failed to update artwork.' error message when editing", () => {
+    render(
+      <ArtworkForm
+        {...defaultProps}
+        initialValues={{ imageUrl: "https://img.png" }}
+        isError
+      />
+    );
+    expect(screen.getByText("Failed to update artwork.")).toBeInTheDocument();
   });
 });

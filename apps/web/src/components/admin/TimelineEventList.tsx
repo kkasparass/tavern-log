@@ -1,8 +1,15 @@
 "use client";
 import type { CharacterTimelineEvent } from "@/lib/types";
+import { TimelineEventForm } from "./TimelineEventForm";
 
 interface TimelineEventListProps {
   events: CharacterTimelineEvent[];
+  editingEvent: CharacterTimelineEvent | null;
+  onEdit: (event: CharacterTimelineEvent) => void;
+  onSaveEdit: (id: string, data: { title?: string; description?: string; dateLabel?: string }) => void;
+  onCancelEdit: () => void;
+  isSavingEdit: boolean;
+  saveEditError: boolean;
   onMoveUp: (index: number) => void;
   onMoveDown: (index: number) => void;
   onDelete: (id: string) => void;
@@ -11,6 +18,12 @@ interface TimelineEventListProps {
 
 export function TimelineEventList({
   events,
+  editingEvent,
+  onEdit,
+  onSaveEdit,
+  onCancelEdit,
+  isSavingEdit,
+  saveEditError,
   onMoveUp,
   onMoveDown,
   onDelete,
@@ -23,40 +36,59 @@ export function TimelineEventList({
       {events.map((event, index) => (
         <li
           key={event.id}
-          className="flex flex-col rounded border border-white/10 bg-gray-900 px-4 py-3 sm:flex-row sm:items-start sm:justify-between"
+          className="rounded border border-white/10 bg-gray-900 px-4 py-3"
         >
-          <div className="min-w-0 flex-1">
-            {event.dateLabel && <p className="text-sm text-white/40">{event.dateLabel}</p>}
-            <p className="font-medium text-white">{event.title}</p>
-            {event.description && (
-              <p className="mt-0.5 text-sm text-white/60">{event.description}</p>
-            )}
-          </div>
-          <div className="mt-2 flex shrink-0 items-center gap-1 sm:ml-4 sm:mt-0">
-            <button
-              onClick={() => onMoveUp(index)}
-              disabled={index === 0}
-              className="rounded bg-white/5 px-2 py-1 text-sm text-white/40 hover:bg-white/10 hover:text-white disabled:opacity-20"
-              aria-label="Move up"
-            >
-              ↑
-            </button>
-            <button
-              onClick={() => onMoveDown(index)}
-              disabled={index === events.length - 1}
-              className="rounded bg-white/5 px-2 py-1 text-sm text-white/40 hover:bg-white/10 hover:text-white disabled:opacity-20"
-              aria-label="Move down"
-            >
-              ↓
-            </button>
-            <button
-              onClick={() => onDelete(event.id)}
-              disabled={isDeleting}
-              className="rounded px-3 py-1 text-sm text-red-400/70 hover:bg-red-900/20 hover:text-red-400 disabled:opacity-50"
-            >
-              Delete
-            </button>
-          </div>
+          {editingEvent?.id === event.id ? (
+            <TimelineEventForm
+              inline
+              initialValues={event}
+              onSubmit={(data) => onSaveEdit(event.id, data)}
+              onCancel={onCancelEdit}
+              isPending={isSavingEdit}
+              isError={saveEditError}
+            />
+          ) : (
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between">
+              <div className="min-w-0 flex-1">
+                {event.dateLabel && <p className="text-sm text-white/40">{event.dateLabel}</p>}
+                <p className="font-medium text-white">{event.title}</p>
+                {event.description && (
+                  <p className="mt-0.5 text-sm text-white/60">{event.description}</p>
+                )}
+              </div>
+              <div className="mt-2 flex shrink-0 items-center gap-1 sm:ml-4 sm:mt-0">
+                <button
+                  onClick={() => onMoveUp(index)}
+                  disabled={index === 0}
+                  className="rounded bg-white/5 px-2 py-1 text-sm text-white/40 hover:bg-white/10 hover:text-white disabled:opacity-20"
+                  aria-label="Move up"
+                >
+                  ↑
+                </button>
+                <button
+                  onClick={() => onMoveDown(index)}
+                  disabled={index === events.length - 1}
+                  className="rounded bg-white/5 px-2 py-1 text-sm text-white/40 hover:bg-white/10 hover:text-white disabled:opacity-20"
+                  aria-label="Move down"
+                >
+                  ↓
+                </button>
+                <button
+                  onClick={() => onEdit(event)}
+                  className="rounded px-3 py-1 text-sm text-white/60 hover:bg-white/10 hover:text-white"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => onDelete(event.id)}
+                  disabled={isDeleting}
+                  className="rounded px-3 py-1 text-sm text-red-400/70 hover:bg-red-900/20 hover:text-red-400 disabled:opacity-50"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          )}
         </li>
       ))}
     </ul>

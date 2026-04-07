@@ -1,19 +1,26 @@
 "use client";
-import { useState } from "react";
 import { useTimelineAdmin } from "@/components/admin/useTimelineAdmin";
 import { TimelineEventForm } from "@/components/admin/TimelineEventForm";
 import { TimelineEventList } from "@/components/admin/TimelineEventList";
 
 export default function TimelinePage({ params }: { params: { id: string } }) {
-  const [showForm, setShowForm] = useState(false);
   const {
     events,
     isPending,
     isError,
+    showCreateForm,
+    editingEvent,
     nextOrder,
+    openCreateForm,
+    cancelCreate,
+    openEditForm,
+    cancelEdit,
     create,
     isCreating,
     createError,
+    edit,
+    isEditing,
+    editError,
     remove,
     isDeleting,
     moveUp,
@@ -24,9 +31,9 @@ export default function TimelinePage({ params }: { params: { id: string } }) {
     <div>
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-xl font-semibold text-white">Timeline</h1>
-        {!showForm && (
+        {!showCreateForm && (
           <button
-            onClick={() => setShowForm(true)}
+            onClick={openCreateForm}
             className="rounded bg-white/10 px-4 py-2 text-sm text-white hover:bg-white/20"
           >
             Add Event
@@ -34,14 +41,10 @@ export default function TimelinePage({ params }: { params: { id: string } }) {
         )}
       </div>
 
-      {showForm && (
+      {showCreateForm && (
         <TimelineEventForm
-          onSubmit={(data) => {
-            create(data);
-            setShowForm(false);
-          }}
-          onCancel={() => setShowForm(false)}
-          nextOrder={nextOrder}
+          onSubmit={(data) => create({ ...data, order: nextOrder })}
+          onCancel={cancelCreate}
           isPending={isCreating}
           isError={createError}
         />
@@ -53,6 +56,12 @@ export default function TimelinePage({ params }: { params: { id: string } }) {
       {events && (
         <TimelineEventList
           events={events}
+          editingEvent={editingEvent}
+          onEdit={openEditForm}
+          onSaveEdit={edit}
+          onCancelEdit={cancelEdit}
+          isSavingEdit={isEditing}
+          saveEditError={editError}
           onMoveUp={moveUp}
           onMoveDown={moveDown}
           onDelete={remove}
