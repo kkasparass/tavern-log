@@ -1,4 +1,5 @@
 import { screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderWithQuery } from "@/test/utils";
 import { mockCharacterListItem, naraCharacterListItem } from "@/test/fixtures";
@@ -69,5 +70,45 @@ describe("CharacterList", () => {
     vi.mocked(fetch).mockResolvedValue(new Response("", { status: 500 }));
     renderWithQuery(<CharacterList />, []);
     await waitFor(() => expect(screen.getByText("Failed to load characters.")).toBeInTheDocument());
+  });
+
+  it("renders a Delete button per character", () => {
+    renderWithQuery(<CharacterList />, [
+      [["admin-characters"], [mockCharacterListItem, naraCharacterListItem]],
+    ]);
+    expect(screen.getAllByRole("button", { name: "Delete" })).toHaveLength(2);
+  });
+
+  it("opens the confirm dialog when Delete is clicked", async () => {
+    renderWithQuery(<CharacterList />, [[["admin-characters"], [mockCharacterListItem]]]);
+    expect(screen.queryByText("Delete character?")).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: "Delete" }));
+    expect(screen.getByText("Delete character?")).toBeInTheDocument();
+    expect(screen.getByText(/permanently delete/i)).toBeInTheDocument();
+  });
+
+  it("closes the dialog without calling DELETE when Cancel is clicked", async () => {
+    vi.mocked(fetch).mockResolvedValue(new Response(null, { status: 204 }));
+    renderWithQuery(<CharacterList />, [[["admin-characters"], [mockCharacterListItem]]]);
+    await userEvent.click(screen.getByRole("button", { name: "Delete" }));
+    await userEvent.click(screen.getByRole("button", { name: "Cancel" }));
+    expect(screen.queryByText("Delete character?")).not.toBeInTheDocument();
+    expect(fetch).not.toHaveBeenCalledWith(
+      expect.stringContaining(mockCharacterListItem.id),
+      expect.objectContaining({ method: "DELETE" })
+    );
+  });
+
+  it("calls DELETE /api/admin/characters/:id when Confirm is clicked", async () => {
+    vi.mocked(fetch).mockResolvedValue(new Response(null, { status: 204 }));
+    renderWithQuery(<CharacterList />, [[["admin-characters"], [mockCharacterListItem]]]);
+    await userEvent.click(screen.getByRole("button", { name: "Delete" }));
+    // Dialog is open — two Delete buttons exist (list row + dialog confirm); click the dialog's
+    const deleteButtons = screen.getAllByRole("button", { name: "Delete" });
+    await userEvent.click(deleteButtons[deleteButtons.length - 1]);
+    expect(fetch).toHaveBeenCalledWith(
+      `/api/admin/characters/${mockCharacterListItem.id}`,
+      { method: "DELETE" }
+    );
   });
 });
