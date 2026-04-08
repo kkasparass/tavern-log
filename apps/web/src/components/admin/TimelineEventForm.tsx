@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { AdminFormWrapper } from "./AdminFormWrapper";
 
 interface TimelineEventFormProps {
   initialValues?: { title?: string | null; description?: string | null; dateLabel?: string | null };
@@ -33,13 +34,17 @@ export function TimelineEventForm({
     });
   }
 
-  const fields = (
-    <>
-      {!inline && (
-        <h2 className="mb-4 text-sm font-semibold text-white/70">
-          {isEditing ? "Edit Event" : "New Event"}
-        </h2>
-      )}
+  return (
+    <AdminFormWrapper
+      inline={inline}
+      isEditing={isEditing}
+      itemName="Event"
+      isPending={isPending}
+      isError={isError}
+      isSubmitDisabled={!title.trim()}
+      onSubmit={handleSubmit}
+      onCancel={onCancel}
+    >
       <div className="mb-3">
         <label className="mb-1 block text-sm text-white/70">Title</label>
         <input
@@ -70,32 +75,6 @@ export function TimelineEventForm({
           placeholder="e.g. Year 412, Session 3, Spring"
         />
       </div>
-      {isError && (
-        <p className="mb-3 text-sm text-red-400">
-          Failed to {isEditing ? "update" : "create"} event.
-        </p>
-      )}
-      <div className="flex gap-2">
-        <button
-          onClick={handleSubmit}
-          disabled={isPending || !title.trim()}
-          className="rounded bg-white/10 px-4 py-2 text-sm text-white hover:bg-white/20 disabled:opacity-50"
-        >
-          {isPending ? "Saving…" : "Save"}
-        </button>
-        <button
-          onClick={onCancel}
-          className="rounded px-4 py-2 text-sm text-white/50 hover:text-white"
-        >
-          Cancel
-        </button>
-      </div>
-    </>
-  );
-
-  if (inline) return <div className="w-full">{fields}</div>;
-
-  return (
-    <div className="mb-6 rounded border border-white/10 bg-gray-900 p-4">{fields}</div>
+    </AdminFormWrapper>
   );
 }

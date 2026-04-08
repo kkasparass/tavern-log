@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { FileUpload } from "./FileUpload";
+import { AdminFormWrapper } from "./AdminFormWrapper";
 
 interface VoiceLineFormProps {
   initialValues?: { audioUrl?: string | null; transcript?: string | null; context?: string | null };
@@ -30,13 +31,17 @@ export function VoiceLineForm({
     onSubmit({ audioUrl, transcript, context: context || undefined });
   }
 
-  const fields = (
-    <>
-      {!inline && (
-        <h2 className="mb-4 text-sm font-semibold text-white/70">
-          {isEditing ? "Edit Voice Line" : "New Voice Line"}
-        </h2>
-      )}
+  return (
+    <AdminFormWrapper
+      inline={inline}
+      isEditing={isEditing}
+      itemName="Voice Line"
+      isPending={isPending}
+      isError={isError}
+      isSubmitDisabled={!audioUrl.trim() || !transcript.trim()}
+      onSubmit={handleSubmit}
+      onCancel={onCancel}
+    >
       <div className="mb-3">
         {isEditing && initialValues?.audioUrl && (
           <p className="mb-1 text-xs text-white/40">
@@ -69,32 +74,6 @@ export function VoiceLineForm({
           placeholder="e.g. Battle cry, greeting, etc."
         />
       </div>
-      {isError && (
-        <p className="mb-3 text-sm text-red-400">
-          Failed to {isEditing ? "update" : "create"} voice line.
-        </p>
-      )}
-      <div className="flex gap-2">
-        <button
-          onClick={handleSubmit}
-          disabled={isPending || !audioUrl.trim() || !transcript.trim()}
-          className="rounded bg-white/10 px-4 py-2 text-sm text-white hover:bg-white/20 disabled:opacity-50"
-        >
-          {isPending ? "Saving…" : "Save"}
-        </button>
-        <button
-          onClick={onCancel}
-          className="rounded px-4 py-2 text-sm text-white/50 hover:text-white"
-        >
-          Cancel
-        </button>
-      </div>
-    </>
-  );
-
-  if (inline) return <div className="w-full">{fields}</div>;
-
-  return (
-    <div className="mb-6 rounded border border-white/10 bg-gray-900 p-4">{fields}</div>
+    </AdminFormWrapper>
   );
 }

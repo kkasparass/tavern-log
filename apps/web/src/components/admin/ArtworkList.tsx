@@ -1,5 +1,6 @@
 "use client";
 import type { CharacterArtwork } from "@/lib/types";
+import { AdminResourceList, type EditFormProps } from "./AdminResourceList";
 import { ArtworkForm } from "./ArtworkForm";
 
 interface ArtworkListProps {
@@ -29,69 +30,40 @@ export function ArtworkList({
   onDelete,
   isDeleting,
 }: ArtworkListProps) {
-  if (artworks.length === 0) return <p className="text-white/40">No artworks yet.</p>;
-
   return (
-    <ul className="space-y-2">
-      {artworks.map((artwork, index) => (
-        <li
-          key={artwork.id}
-          className="rounded border border-white/10 bg-gray-900 px-4 py-3"
-        >
-          {editingArtwork?.id === artwork.id ? (
-            <ArtworkForm
-              inline
-              initialValues={artwork}
-              onSubmit={(data) => onSaveEdit(artwork.id, data)}
-              onCancel={onCancelEdit}
-              isPending={isSavingEdit}
-              isError={saveEditError}
-            />
-          ) : (
-            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between">
-              <div className="min-w-0 flex-1 overflow-hidden">
-                <p className="truncate text-sm text-white/50">{artwork.imageUrl.split("/").pop()}</p>
-                {artwork.title && <p className="mt-0.5 font-medium text-white">{artwork.title}</p>}
-                {artwork.caption && <p className="mt-0.5 text-sm text-white/50">{artwork.caption}</p>}
-                {artwork.artistCredit && (
-                  <p className="mt-0.5 text-sm text-white/40">Art by {artwork.artistCredit}</p>
-                )}
-              </div>
-              <div className="mt-2 flex shrink-0 items-center gap-1 sm:ml-4 sm:mt-0">
-                <button
-                  onClick={() => onMoveUp(index)}
-                  disabled={index === 0}
-                  className="rounded px-2 py-1 text-sm text-white/40 hover:bg-white/10 hover:text-white disabled:opacity-20"
-                  aria-label="Move up"
-                >
-                  ↑
-                </button>
-                <button
-                  onClick={() => onMoveDown(index)}
-                  disabled={index === artworks.length - 1}
-                  className="rounded px-2 py-1 text-sm text-white/40 hover:bg-white/10 hover:text-white disabled:opacity-20"
-                  aria-label="Move down"
-                >
-                  ↓
-                </button>
-                <button
-                  onClick={() => onEdit(artwork)}
-                  className="rounded px-3 py-1 text-sm text-white/60 hover:bg-white/10 hover:text-white"
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => onDelete(artwork.id)}
-                  disabled={isDeleting}
-                  className="rounded px-3 py-1 text-sm text-red-400/70 hover:bg-red-900/20 hover:text-red-400 disabled:opacity-50"
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
+    <AdminResourceList
+      items={artworks}
+      editingItem={editingArtwork}
+      emptyMessage="No artworks yet."
+      renderItem={(artwork) => (
+        <>
+          <p className="truncate text-sm text-white/50">{artwork.imageUrl.split("/").pop()}</p>
+          {artwork.title && <p className="mt-0.5 font-medium text-white">{artwork.title}</p>}
+          {artwork.caption && <p className="mt-0.5 text-sm text-white/50">{artwork.caption}</p>}
+          {artwork.artistCredit && (
+            <p className="mt-0.5 text-sm text-white/40">Art by {artwork.artistCredit}</p>
           )}
-        </li>
-      ))}
-    </ul>
+        </>
+      )}
+      renderEditForm={(artwork, p: EditFormProps<{ imageUrl?: string; title?: string; caption?: string; artistCredit?: string }>) => (
+        <ArtworkForm
+          inline
+          initialValues={artwork}
+          onSubmit={(data) => p.onSaveEdit(artwork.id, data)}
+          onCancel={p.onCancelEdit}
+          isPending={p.isSavingEdit}
+          isError={p.saveEditError}
+        />
+      )}
+      onEdit={onEdit}
+      onSaveEdit={onSaveEdit}
+      onCancelEdit={onCancelEdit}
+      isSavingEdit={isSavingEdit}
+      saveEditError={saveEditError}
+      onMoveUp={onMoveUp}
+      onMoveDown={onMoveDown}
+      onDelete={onDelete}
+      isDeleting={isDeleting}
+    />
   );
 }

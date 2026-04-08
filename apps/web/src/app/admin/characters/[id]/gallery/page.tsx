@@ -2,72 +2,44 @@
 import { useGalleryAdmin } from "@/components/admin/useGalleryAdmin";
 import { ArtworkForm } from "@/components/admin/ArtworkForm";
 import { ArtworkList } from "@/components/admin/ArtworkList";
+import { AdminResourcePage } from "@/components/admin/AdminResourcePage";
 
 export default function GalleryPage({ params }: { params: { id: string } }) {
-  const {
-    artworks,
-    isPending,
-    isError,
-    showCreateForm,
-    editingArtwork,
-    nextOrder,
-    openCreateForm,
-    cancelCreate,
-    openEditForm,
-    cancelEdit,
-    create,
-    isCreating,
-    createError,
-    edit,
-    isEditing,
-    editError,
-    remove,
-    isDeleting,
-    moveUp,
-    moveDown,
-  } = useGalleryAdmin(params.id);
+  const admin = useGalleryAdmin(params.id);
 
   return (
-    <div>
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-white">Gallery</h1>
-        {!showCreateForm && (
-          <button
-            onClick={openCreateForm}
-            className="rounded bg-white/10 px-4 py-2 text-sm text-white hover:bg-white/20"
-          >
-            Add Artwork
-          </button>
-        )}
-      </div>
-
-      {showCreateForm && (
+    <AdminResourcePage
+      title="Gallery"
+      addLabel="Add Artwork"
+      loadError="Failed to load artworks."
+      showCreateForm={admin.showCreateForm}
+      isPending={admin.isPending}
+      isError={admin.isError}
+      openCreateForm={admin.openCreateForm}
+      createForm={
         <ArtworkForm
-          onSubmit={(data) => create({ ...data, order: nextOrder })}
-          onCancel={cancelCreate}
-          isPending={isCreating}
-          isError={createError}
+          onSubmit={(data) => admin.create({ ...data, order: admin.nextOrder })}
+          onCancel={admin.cancelCreate}
+          isPending={admin.isCreating}
+          isError={admin.createError}
         />
-      )}
-
-      {isPending && <p className="text-white/40">Loading…</p>}
-      {isError && <p className="text-red-400">Failed to load artworks.</p>}
-
-      {artworks && (
+      }
+    >
+      {admin.artworks && (
         <ArtworkList
-          artworks={artworks}
-          editingArtwork={editingArtwork}
-          onEdit={openEditForm}
-          onSaveEdit={edit}
-          onCancelEdit={cancelEdit}
-          isSavingEdit={isEditing}
-          saveEditError={editError}
-          onMoveUp={moveUp}
-          onMoveDown={moveDown}
-          onDelete={remove}
-          isDeleting={isDeleting}
+          artworks={admin.artworks}
+          editingArtwork={admin.editingArtwork}
+          onEdit={admin.openEditForm}
+          onSaveEdit={admin.edit}
+          onCancelEdit={admin.cancelEdit}
+          isSavingEdit={admin.isEditing}
+          saveEditError={admin.editError}
+          onMoveUp={admin.moveUp}
+          onMoveDown={admin.moveDown}
+          onDelete={admin.remove}
+          isDeleting={admin.isDeleting}
         />
       )}
-    </div>
+    </AdminResourcePage>
   );
 }
