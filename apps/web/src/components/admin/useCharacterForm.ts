@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { CharacterStatus, type CharacterTheme } from "@/lib/types";
 import { THEME_PRESETS } from "@/lib/constants";
+import { uploadFile } from "@/lib/upload";
 import type { CharacterFormData } from "./CharacterForm";
 
 function findPresetIndex(theme: CharacterTheme): number {
@@ -17,7 +18,10 @@ export function useCharacterForm(defaultValues?: Partial<CharacterFormData>) {
   );
   const [bio, setBio] = useState(defaultValues?.bio ?? "");
   const [personality, setPersonality] = useState(defaultValues?.personality ?? "");
-  const [thumbnailUrl, setThumbnailUrl] = useState(defaultValues?.thumbnailUrl ?? "");
+  const existingThumbnailUrl = defaultValues?.thumbnailUrl ?? "";
+  const [pendingThumbnailFile, setPendingThumbnailFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
   const [isPublic, setIsPublic] = useState(defaultValues?.isPublic ?? true);
   const [presetIndex, setPresetIndex] = useState(() =>
     defaultValues?.theme ? findPresetIndex(defaultValues.theme) : 0
@@ -44,19 +48,31 @@ export function useCharacterForm(defaultValues?: Partial<CharacterFormData>) {
     }
   }
 
-  function getFormData(): CharacterFormData {
-    return {
+  async function submitForm(onSubmit: (data: CharacterFormData) => void): Promise<void> {
+    let thumbnailUrl = existingThumbnailUrl;
+    setIsUploading(true);
+    setUploadError(null);
+    try {
+      if (pendingThumbnailFile) {
+        thumbnailUrl = await uploadFile(pendingThumbnailFile);
+      }
+      onSubmit({
       name,
       system,
       campaign,
       status,
       bio,
       personality,
-      thumbnailUrl,
-      isPublic,
-      theme: THEME_PRESETS[presetIndex].theme,
-      tags,
-    };
+        thumbnailUrl,
+        isPublic,
+        theme: THEME_PRESETS[presetIndex].theme,
+        tags,
+      });
+    } catch (err) {
+      setUploadError(err instanceof Error ? err.message : "Upload failed");
+    } finally {
+      setIsUploading(false);
+    }
   }
 
   return {
@@ -72,8 +88,10 @@ export function useCharacterForm(defaultValues?: Partial<CharacterFormData>) {
     setBio,
     personality,
     setPersonality,
-    thumbnailUrl,
-    setThumbnailUrl,
+    pendingThumbnailFile,
+    setPendingThumbnailFile,
+    isUploading,
+    uploadError,
     isPublic,
     setIsPublic,
     presetIndex,
@@ -84,6 +102,6 @@ export function useCharacterForm(defaultValues?: Partial<CharacterFormData>) {
     addTag,
     removeTag,
     handleTagKeyDown,
-    getFormData,
+    submitForm,
   };
 }

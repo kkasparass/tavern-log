@@ -1,12 +1,18 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi } from "vitest";
 import { VoiceLineList } from "./VoiceLineList";
 import { mockCharacter } from "@/test/fixtures";
 
+vi.mock("@/lib/upload", () => ({
+  uploadFile: vi.fn().mockResolvedValue("https://new-audio.mp3"),
+}));
+
 vi.mock("./FileUpload", () => ({
-  FileUpload: ({ onUpload, label }: { onUpload: (url: string) => void; label?: string }) => (
-    <button onClick={() => onUpload("https://new-audio.mp3")}>{label ?? "Upload file"}</button>
+  FileUpload: ({ onFileSelect, label }: { onFileSelect: (file: File | null) => void; label?: string }) => (
+    <button onClick={() => onFileSelect(new File(["content"], "new-audio.mp3", { type: "audio/mpeg" }))}>
+      {label ?? "Upload file"}
+    </button>
   ),
 }));
 
@@ -123,9 +129,11 @@ describe("VoiceLineList", () => {
     const onSaveEdit = vi.fn();
     render(<VoiceLineList {...defaultProps} editingVoiceLine={first} onSaveEdit={onSaveEdit} />);
     await userEvent.click(screen.getByRole("button", { name: "Save" }));
-    expect(onSaveEdit).toHaveBeenCalledWith(
-      first.id,
-      expect.objectContaining({ audioUrl: first.audioUrl, transcript: first.transcript })
+    await waitFor(() =>
+      expect(onSaveEdit).toHaveBeenCalledWith(
+        first.id,
+        expect.objectContaining({ audioUrl: first.audioUrl, transcript: first.transcript })
+      )
     );
   });
 

@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { FileUpload } from "./FileUpload";
 import { AdminFormWrapper } from "./AdminFormWrapper";
+import { uploadFile } from "@/lib/upload";
 
 interface ArtworkFormProps {
   initialValues?: { imageUrl?: string | null; title?: string | null; caption?: string | null; artistCredit?: string | null };
@@ -20,15 +21,32 @@ export function ArtworkForm({
   isError,
   inline = false,
 }: ArtworkFormProps) {
-  const [imageUrl, setImageUrl] = useState(initialValues?.imageUrl ?? "");
+  const existingImageUrl = initialValues?.imageUrl ?? "";
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
   const [title, setTitle] = useState(initialValues?.title ?? "");
   const [caption, setCaption] = useState(initialValues?.caption ?? "");
   const [artistCredit, setArtistCredit] = useState(initialValues?.artistCredit ?? "");
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   const isEditing = !!initialValues;
+  const hasImage = !!existingImageUrl || !!pendingFile;
 
-  function handleSubmit() {
-    if (!imageUrl.trim()) return;
+  async function handleSubmit() {
+    let imageUrl = existingImageUrl;
+    if (pendingFile) {
+      setIsUploading(true);
+      setUploadError(null);
+      try {
+        imageUrl = await uploadFile(pendingFile);
+      } catch (err) {
+        setUploadError(err instanceof Error ? err.message : "Upload failed");
+        setIsUploading(false);
+        return;
+      }
+      setIsUploading(false);
+    }
+    if (!imageUrl) return;
     onSubmit({
       imageUrl,
       title: title || undefined,
@@ -42,20 +60,21 @@ export function ArtworkForm({
       inline={inline}
       isEditing={isEditing}
       itemName="Artwork"
-      isPending={isPending}
+      isPending={isPending || isUploading}
       isError={isError}
-      isSubmitDisabled={!imageUrl.trim()}
+      isSubmitDisabled={!hasImage}
       onSubmit={handleSubmit}
       onCancel={onCancel}
     >
       <div className="mb-3">
         <FileUpload
           accept="image/jpeg,image/png,image/webp,image/gif"
-          onUpload={(url) => setImageUrl(url)}
+          onFileSelect={setPendingFile}
           label={isEditing ? "Replace Image (optional)" : "Image"}
           displayValue={initialValues?.imageUrl?.split("/").pop()}
           previewUrl={initialValues?.imageUrl ?? undefined}
         />
+        {uploadError && <p className="mt-1 text-sm text-red-400">{uploadError}</p>}
       </div>
       <div className="mb-3">
         <label className="mb-1 block text-sm text-white/70">Title (optional)</label>

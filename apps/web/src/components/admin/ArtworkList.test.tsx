@@ -1,12 +1,18 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi } from "vitest";
 import { ArtworkList } from "./ArtworkList";
 import { mockCharacter } from "@/test/fixtures";
 
+vi.mock("@/lib/upload", () => ({
+  uploadFile: vi.fn().mockResolvedValue("https://new-img.png"),
+}));
+
 vi.mock("./FileUpload", () => ({
-  FileUpload: ({ onUpload, label }: { onUpload: (url: string) => void; label?: string }) => (
-    <button onClick={() => onUpload("https://new-img.png")}>{label ?? "Upload file"}</button>
+  FileUpload: ({ onFileSelect, label }: { onFileSelect: (file: File | null) => void; label?: string }) => (
+    <button onClick={() => onFileSelect(new File(["content"], "new-img.png", { type: "image/jpeg" }))}>
+      {label ?? "Upload file"}
+    </button>
   ),
 }));
 
@@ -140,9 +146,11 @@ describe("ArtworkList", () => {
     const onSaveEdit = vi.fn();
     render(<ArtworkList {...defaultProps} editingArtwork={first} onSaveEdit={onSaveEdit} />);
     await userEvent.click(screen.getByRole("button", { name: "Save" }));
-    expect(onSaveEdit).toHaveBeenCalledWith(
-      first.id,
-      expect.objectContaining({ imageUrl: first.imageUrl, title: first.title })
+    await waitFor(() =>
+      expect(onSaveEdit).toHaveBeenCalledWith(
+        first.id,
+        expect.objectContaining({ imageUrl: first.imageUrl, title: first.title })
+      )
     );
   });
 

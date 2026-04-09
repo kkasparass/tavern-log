@@ -49,7 +49,9 @@ export function CharacterForm({
     setBio,
     personality,
     setPersonality,
-    setThumbnailUrl,
+    setPendingThumbnailFile,
+    isUploading,
+    uploadError,
     isPublic,
     setIsPublic,
     presetIndex,
@@ -60,16 +62,16 @@ export function CharacterForm({
     addTag,
     removeTag,
     handleTagKeyDown,
-    getFormData,
+    submitForm,
   } = useCharacterForm(defaultValues);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    onSubmit(getFormData());
+    await submitForm(onSubmit);
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex max-w-2xl flex-col gap-6">
+    <form onSubmit={(e) => { void handleSubmit(e); }} className="flex max-w-2xl flex-col gap-6">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="flex flex-col gap-1">
           <label htmlFor="name" className={labelClass}>
@@ -160,11 +162,12 @@ export function CharacterForm({
       <div className="flex flex-col gap-1">
         <FileUpload
           accept="image/jpeg,image/png,image/webp,image/gif"
-          onUpload={(url) => setThumbnailUrl(url)}
+          onFileSelect={setPendingThumbnailFile}
           label="Thumbnail"
           displayValue={defaultValues?.thumbnailUrl?.split("/").pop()}
           previewUrl={defaultValues?.thumbnailUrl}
         />
+        {uploadError && <p className="mt-1 text-sm text-red-400">{uploadError}</p>}
       </div>
 
       <div className="flex items-center gap-2">
@@ -250,10 +253,10 @@ export function CharacterForm({
 
       <button
         type="submit"
-        disabled={isPending}
+        disabled={isPending || isUploading}
         className="rounded bg-white px-4 py-2 font-semibold text-gray-950 transition-colors hover:bg-white/90 disabled:opacity-50"
       >
-        {isPending ? "Saving…" : submitLabel}
+        {isPending || isUploading ? "Saving…" : submitLabel}
       </button>
     </form>
   );

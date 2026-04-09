@@ -9,7 +9,7 @@ import { THEME_PRESETS } from "@/lib/constants";
 vi.mock("next/link");
 
 vi.mock("./FileUpload", () => ({
-  FileUpload: ({ label }: { onUpload: (url: string) => void; label?: string }) => (
+  FileUpload: ({ label }: { onFileSelect: (file: File | null) => void; label?: string }) => (
     <div>{label ?? "Upload file"}</div>
   ),
 }));
