@@ -72,6 +72,17 @@ describe("CharacterList", () => {
     await waitFor(() => expect(screen.getByText("Failed to load characters.")).toBeInTheDocument());
   });
 
+  it("renders a thumbnail img when thumbnailUrl is set", () => {
+    const withThumb = { ...mockCharacterListItem, thumbnailUrl: "https://example.com/mira.jpg" };
+    renderWithQuery(<CharacterList />, [[["admin-characters"], [withThumb]]]);
+    expect(screen.getByRole("img")).toHaveAttribute("src", "https://example.com/mira.jpg");
+  });
+
+  it("renders a placeholder div instead of an img when thumbnailUrl is null", () => {
+    renderWithQuery(<CharacterList />, [[["admin-characters"], [mockCharacterListItem]]]);
+    expect(screen.queryByRole("img")).not.toBeInTheDocument();
+  });
+
   it("renders a Delete button per character", () => {
     renderWithQuery(<CharacterList />, [
       [["admin-characters"], [mockCharacterListItem, naraCharacterListItem]],

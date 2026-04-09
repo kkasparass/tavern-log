@@ -66,11 +66,23 @@ export function CharacterList() {
             key={c.id}
             className="flex flex-col px-4 py-3 md:flex-row md:items-center md:justify-between"
           >
-            <div>
-              <span className="font-medium text-white">{c.name}</span>
-              <span className="ml-2 text-sm text-white/40">{c.system}</span>
+            <div className="flex items-center gap-3">
+              {c.thumbnailUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={c.thumbnailUrl}
+                  alt={c.name}
+                  className="h-10 w-10 shrink-0 rounded-full object-cover"
+                />
+              ) : (
+                <div className="h-10 w-10 shrink-0 rounded-full bg-white/5" />
+              )}
+              <div>
+                <span className="font-medium text-white">{c.name}</span>
+                <span className="ml-2 text-sm text-white/40">{c.system}</span>
+              </div>
             </div>
-            <div className="ml-3 flex flex-wrap items-center gap-1 text-sm sm:ml-0">
+            <div className="mt-2 ml-3 flex flex-wrap items-center gap-1 text-sm sm:ml-0 md:mt-0">
               <Link
                 href={`/admin/characters/${c.id}/edit`}
                 className="rounded px-3 py-1 text-white/60 transition-colors hover:bg-white/10 hover:text-white"
