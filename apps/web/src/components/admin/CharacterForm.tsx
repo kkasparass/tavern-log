@@ -163,6 +163,7 @@ export function CharacterForm({
           onUpload={(url) => setThumbnailUrl(url)}
           label="Thumbnail"
           displayValue={defaultValues?.thumbnailUrl?.split("/").pop()}
+          previewUrl={defaultValues?.thumbnailUrl}
         />
       </div>
 

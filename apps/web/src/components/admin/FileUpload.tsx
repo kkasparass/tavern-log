@@ -1,28 +1,40 @@
 "use client";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Lightbox } from "@/components/ui/Lightbox";
 
 interface FileUploadProps {
   accept: string;
   onUpload: (url: string) => void;
   label?: string;
   displayValue?: string;
+  previewUrl?: string;
 }
 
 type UploadStatus = "idle" | "uploading" | "done" | "error";
 
-export function FileUpload({ accept, onUpload, label = "Upload file", displayValue }: FileUploadProps) {
+export function FileUpload({ accept, onUpload, label = "Upload file", displayValue, previewUrl }: FileUploadProps) {
   const [status, setStatus] = useState<UploadStatus>("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
+  const [localPreviewUrl, setLocalPreviewUrl] = useState<string | null>(null);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  useEffect(() => {
+    return () => {
+      if (localPreviewUrl) URL.revokeObjectURL(localPreviewUrl);
+    };
+  }, [localPreviewUrl]);
+
   const shownFileName = selectedFileName ?? displayValue ?? null;
+  const shownPreviewUrl = localPreviewUrl ?? previewUrl ?? null;
 
   async function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
 
     setSelectedFileName(file.name);
+    setLocalPreviewUrl(URL.createObjectURL(file));
     setStatus("uploading");
     setErrorMessage(null);
 
@@ -85,6 +97,21 @@ export function FileUpload({ accept, onUpload, label = "Upload file", displayVal
       {status === "uploading" && <p className="mt-1 text-sm text-white/50">Uploading…</p>}
       {status === "done" && <p className="mt-1 text-sm text-green-400/70">Uploaded ✓</p>}
       {status === "error" && <p className="mt-1 text-sm text-red-400">{errorMessage}</p>}
+      {accept.includes("image") && shownPreviewUrl && (
+        <>
+          <button
+            type="button"
+            onClick={() => setLightboxOpen(true)}
+            className="mt-2 cursor-zoom-in"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={shownPreviewUrl} alt="" className="h-12 w-12 rounded object-cover" />
+          </button>
+          {lightboxOpen && (
+            <Lightbox src={shownPreviewUrl} onClose={() => setLightboxOpen(false)} />
+          )}
+        </>
+      )}
     </div>
   );
 }

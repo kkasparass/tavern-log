@@ -81,6 +81,64 @@ describe("FileUpload", () => {
     });
   });
 
+  it("renders a preview image when previewUrl is provided for an image accept", () => {
+    render(
+      <FileUpload
+        accept="image/jpeg"
+        onUpload={vi.fn()}
+        previewUrl="https://example.com/existing.jpg"
+      />
+    );
+    const preview = document.querySelector("img");
+    expect(preview).toHaveAttribute("src", "https://example.com/existing.jpg");
+  });
+
+  it("does not render a preview image when accept is audio-only", () => {
+    render(
+      <FileUpload
+        accept="audio/mpeg"
+        onUpload={vi.fn()}
+        previewUrl="https://example.com/existing.jpg"
+      />
+    );
+    expect(document.querySelector("img")).not.toBeInTheDocument();
+  });
+
+  it("renders a local blob preview after picking a file", async () => {
+    vi.stubGlobal("URL", {
+      ...URL,
+      createObjectURL: vi.fn(() => "blob:local-preview"),
+      revokeObjectURL: vi.fn(),
+    });
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: false, json: async () => ({}) }));
+
+    render(<FileUpload accept="image/jpeg" onUpload={vi.fn()} />);
+    expect(document.querySelector("img")).not.toBeInTheDocument();
+
+    const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+    await userEvent.upload(fileInput, new File(["content"], "new.jpg", { type: "image/jpeg" }));
+
+    await waitFor(() => {
+      expect(document.querySelector("img")).toHaveAttribute("src", "blob:local-preview");
+    });
+  });
+
+  it("opens the Lightbox when the preview image is clicked", async () => {
+    render(
+      <FileUpload
+        accept="image/jpeg"
+        onUpload={vi.fn()}
+        previewUrl="https://example.com/existing.jpg"
+      />
+    );
+    expect(document.querySelector(".fixed img")).not.toBeInTheDocument();
+    await userEvent.click(document.querySelector("img")!);
+    expect(document.querySelector(".fixed img")).toHaveAttribute(
+      "src",
+      "https://example.com/existing.jpg"
+    );
+  });
+
   it("shows error message when presign request fails", async () => {
     const mockFetch = vi.fn().mockResolvedValueOnce({
       ok: false,

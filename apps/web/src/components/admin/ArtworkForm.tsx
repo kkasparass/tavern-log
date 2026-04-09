@@ -54,6 +54,7 @@ export function ArtworkForm({
           onUpload={(url) => setImageUrl(url)}
           label={isEditing ? "Replace Image (optional)" : "Image"}
           displayValue={initialValues?.imageUrl?.split("/").pop()}
+          previewUrl={initialValues?.imageUrl ?? undefined}
         />
       </div>
       <div className="mb-3">
