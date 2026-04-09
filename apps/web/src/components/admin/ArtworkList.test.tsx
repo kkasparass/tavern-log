@@ -34,6 +34,29 @@ describe("ArtworkList", () => {
     expect(screen.getByText(second.title!)).toBeInTheDocument();
   });
 
+  it("renders a thumbnail img for each artwork", () => {
+    render(<ArtworkList {...defaultProps} />);
+    const imgs = screen.getAllByRole("img");
+    expect(imgs[0]).toHaveAttribute("src", first.imageUrl);
+    expect(imgs[1]).toHaveAttribute("src", second.imageUrl);
+  });
+
+  it("opens the lightbox when a thumbnail is clicked", async () => {
+    render(<ArtworkList {...defaultProps} />);
+    await userEvent.click(screen.getAllByRole("img")[0]);
+    // Lightbox img has alt="" (presentation role) — query via CSS selector
+    const lightboxImg = document.querySelector(".fixed img");
+    expect(lightboxImg).toHaveAttribute("src", first.imageUrl);
+  });
+
+  it("closes the lightbox when Escape is pressed", async () => {
+    render(<ArtworkList {...defaultProps} />);
+    await userEvent.click(screen.getAllByRole("img")[0]);
+    expect(document.querySelector(".fixed img")).toBeInTheDocument();
+    await userEvent.keyboard("{Escape}");
+    expect(document.querySelector(".fixed img")).not.toBeInTheDocument();
+  });
+
   it("renders artist credit when present", () => {
     render(<ArtworkList {...defaultProps} />);
     expect(screen.getByText(`Art by ${first.artistCredit}`)).toBeInTheDocument();

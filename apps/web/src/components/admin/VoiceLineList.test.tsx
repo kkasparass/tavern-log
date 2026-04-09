@@ -33,6 +33,14 @@ describe("VoiceLineList", () => {
     expect(screen.getByText(second.transcript)).toBeInTheDocument();
   });
 
+  it("renders an audio element for each voice line with the correct src", () => {
+    render(<VoiceLineList {...defaultProps} />);
+    const audios = document.querySelectorAll("audio");
+    expect(audios).toHaveLength(2);
+    expect(audios[0]).toHaveAttribute("src", first.audioUrl);
+    expect(audios[1]).toHaveAttribute("src", second.audioUrl);
+  });
+
   it("renders context when present", () => {
     render(<VoiceLineList {...defaultProps} />);
     expect(screen.getByText(first.context!)).toBeInTheDocument();

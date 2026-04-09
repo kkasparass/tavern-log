@@ -40,6 +40,7 @@ export function VoiceLineList({
           <p className="truncate text-sm text-white/50">{vl.audioUrl.split("/").pop()}</p>
           <p className="mt-0.5 text-white">{vl.transcript}</p>
           {vl.context && <p className="mt-0.5 text-sm text-white/50">{vl.context}</p>}
+          <audio controls src={vl.audioUrl} className="mt-2 w-full" />
         </>
       )}
       renderEditForm={(vl, p: EditFormProps<{ audioUrl?: string; transcript?: string; context?: string }>) => (
