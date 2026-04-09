@@ -43,15 +43,11 @@ export function VoiceLineForm({
       onCancel={onCancel}
     >
       <div className="mb-3">
-        {isEditing && initialValues?.audioUrl && (
-          <p className="mb-1 text-xs text-white/40">
-            Current: {initialValues.audioUrl.split("/").pop()}
-          </p>
-        )}
         <FileUpload
           accept="audio/mpeg,audio/wav,audio/ogg,audio/aac"
           onUpload={(url) => setAudioUrl(url)}
           label={isEditing ? "Replace Audio (optional)" : "Audio"}
+          displayValue={initialValues?.audioUrl?.split("/").pop()}
         />
       </div>
       <div className="mb-3">

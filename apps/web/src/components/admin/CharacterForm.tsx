@@ -162,6 +162,7 @@ export function CharacterForm({
           accept="image/jpeg,image/png,image/webp,image/gif"
           onUpload={(url) => setThumbnailUrl(url)}
           label="Thumbnail"
+          displayValue={defaultValues?.thumbnailUrl?.split("/").pop()}
         />
       </div>
 

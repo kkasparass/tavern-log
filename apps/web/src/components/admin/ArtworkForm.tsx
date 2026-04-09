@@ -49,15 +49,11 @@ export function ArtworkForm({
       onCancel={onCancel}
     >
       <div className="mb-3">
-        {isEditing && initialValues?.imageUrl && (
-          <p className="mb-1 text-xs text-white/40">
-            Current: {initialValues.imageUrl.split("/").pop()}
-          </p>
-        )}
         <FileUpload
           accept="image/jpeg,image/png,image/webp,image/gif"
           onUpload={(url) => setImageUrl(url)}
           label={isEditing ? "Replace Image (optional)" : "Image"}
+          displayValue={initialValues?.imageUrl?.split("/").pop()}
         />
       </div>
       <div className="mb-3">

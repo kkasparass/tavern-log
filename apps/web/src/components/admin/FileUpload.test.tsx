@@ -43,6 +43,44 @@ describe("FileUpload", () => {
     expect(screen.getByText("Uploaded ✓")).toBeInTheDocument();
   });
 
+  it("shows displayValue as the filename when provided", () => {
+    render(
+      <FileUpload accept="image/jpeg" onUpload={vi.fn()} displayValue="portrait.jpg" />
+    );
+    expect(screen.getByText("portrait.jpg")).toBeInTheDocument();
+  });
+
+  it("shows 'No file chosen' when displayValue is omitted", () => {
+    render(<FileUpload accept="image/jpeg" onUpload={vi.fn()} />);
+    expect(screen.getByText("No file chosen")).toBeInTheDocument();
+  });
+
+  it("shows selected file name after picking a file, replacing displayValue", async () => {
+    const mockFetch = vi
+      .fn()
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          uploadUrl: "https://s3.amazonaws.com/presigned-put-url",
+          objectUrl: "https://tavernlog-upload.s3.eu-south-2.amazonaws.com/uploads/new.jpg",
+        }),
+      })
+      .mockResolvedValueOnce({ ok: true });
+    vi.stubGlobal("fetch", mockFetch);
+
+    render(
+      <FileUpload accept="image/jpeg" onUpload={vi.fn()} displayValue="old.jpg" />
+    );
+    expect(screen.getByText("old.jpg")).toBeInTheDocument();
+
+    const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+    await userEvent.upload(fileInput, new File(["content"], "new.jpg", { type: "image/jpeg" }));
+
+    await waitFor(() => {
+      expect(screen.getByText("new.jpg")).toBeInTheDocument();
+    });
+  });
+
   it("shows error message when presign request fails", async () => {
     const mockFetch = vi.fn().mockResolvedValueOnce({
       ok: false,
