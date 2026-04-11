@@ -91,13 +91,17 @@ jobs:
         uses: appleboy/ssh-action@v1
         env:
           IMAGE: ghcr.io/${{ github.repository_owner }}/tavern-log/tavern-api:latest
+          GHCR_USER: ${{ secrets.GHCR_USERNAME }}
+          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
         with:
           host: ${{ secrets.GCP_HOST }}
           username: ${{ secrets.GCP_USER }}
           key: ${{ secrets.GCP_SSH_KEY }}
           passphrase: ${{ secrets.GCP_SSH_KEY_PASSPHRASE }}
-          envs: IMAGE
+          envs: IMAGE,GHCR_USER,GHCR_TOKEN
           script: |
+            set -e
+            echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
             docker pull $IMAGE
             docker stop tavern-api || true
             docker rm tavern-api || true
