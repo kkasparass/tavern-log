@@ -49,6 +49,8 @@ Anyone can register and upload their own characters. The public landing page dis
 | Auth          | `@fastify/jwt` + `@fastify/cookie` + `@fastify/csrf-protection` |
 | File storage  | AWS S3 (presigned PUT URLs)                                     |
 | Testing       | Vitest, React Testing Library                                   |
+| API hosting   | GCP e2-micro, Docker, Nginx, Let's Encrypt                      |
+| CI/CD         | GitHub Actions → GHCR → GCP VM (SSH deploy)                    |
 | Local infra   | Docker Compose (Postgres 16)                                    |
 
 ---
@@ -138,11 +140,18 @@ npm test --workspace=apps/web   # web component tests
 
 ## Deployment
 
-| Service      | Platform                   | Domain                   |
-| ------------ | -------------------------- | ------------------------ |
-| Frontend     | Vercel                     | `tavernlog.kasparas.dev` |
-| Backend API  | Render                     | —                        |
-| Database     | Neon (serverless Postgres) | —                        |
-| File storage | AWS S3 (`eu-south-2`)      | —                        |
+| Service      | Platform                        | Domain                          |
+| ------------ | ------------------------------- | ------------------------------- |
+| Frontend     | Vercel                          | `tavernlog.kasparas.dev`        |
+| Backend API  | GCP e2-micro (Docker)           | `api.tavernlog.kasparas.dev`    |
+| Database     | Neon (serverless Postgres)      | —                               |
+| File storage | AWS S3 (`eu-south-2`)           | —                               |
 
-The GitHub Actions CI pipeline runs typechecks, linting, and `prisma validate` on every pull request. On merge to `master`, it runs `prisma migrate deploy` against the Neon production database and triggers deploys on both Vercel and Render.
+The GitHub Actions CI pipeline runs on every push to `master`:
+
+1. Typecheck, lint, and test both apps
+2. Run `prisma migrate deploy` against the Neon production database
+3. Build a `linux/amd64` Docker image of the API and push to GitHub Container Registry
+4. SSH into the GCP VM and restart the container with the new image
+
+The API container is served behind Nginx with a Let's Encrypt SSL certificate.
