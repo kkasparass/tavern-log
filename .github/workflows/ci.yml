@@ -95,7 +95,7 @@ jobs:
           host: ${{ secrets.GCP_HOST }}
           username: ${{ secrets.GCP_USER }}
           key: ${{ secrets.GCP_SSH_KEY }}
-          key_passphrase: ${{ secrets.GCP_SSH_KEY_PASSPHRASE }}
+          passphrase: ${{ secrets.GCP_SSH_KEY_PASSPHRASE }}
           envs: IMAGE
           script: |
             docker pull $IMAGE
