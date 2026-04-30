@@ -20,7 +20,7 @@ export default async function CharacterLayout({
 
   return (
     <div
-      className="min-h-full"
+      className="flex-1"
       style={
         {
           "--theme-bg": bgColor,
