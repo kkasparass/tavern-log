@@ -1,10 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { CharacterPreview } from "@/lib/types";
+import { TransitionLink } from "../ui/transition-link/TransitionLink";
 
 export function CharacterCard({ slug, name, system, thumbnailUrl, tags }: CharacterPreview) {
   return (
-    <Link
+    <TransitionLink
       href={`/characters/${slug}`}
       className="group block overflow-hidden rounded-lg border border-white/10 bg-white/5 transition-colors hover:bg-white/10"
     >
@@ -30,6 +31,6 @@ export function CharacterCard({ slug, name, system, thumbnailUrl, tags }: Charac
           </ul>
         )}
       </div>
-    </Link>
+    </TransitionLink>
   );
 }
