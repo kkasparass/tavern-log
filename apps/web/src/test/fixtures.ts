@@ -106,6 +106,7 @@ export const mockCharacterListItem: CharacterPreview = {
   system: mockCharacter.system,
   thumbnailUrl: mockCharacter.thumbnailUrl,
   tags: mockCharacter.tags,
+  theme: mockCharacter.theme,
 };
 
 export const naraCharacter: Character = {
@@ -199,4 +200,5 @@ export const naraCharacterListItem: CharacterPreview = {
   system: naraCharacter.system,
   thumbnailUrl: naraCharacter.thumbnailUrl,
   tags: naraCharacter.tags,
+  theme: naraCharacter.theme,
 };

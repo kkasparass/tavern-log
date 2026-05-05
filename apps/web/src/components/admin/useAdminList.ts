@@ -6,12 +6,7 @@ export function useAdminList<
   TItem extends { id: string; order: number },
   TCreateData,
   TUpdateData,
->(config: {
-  characterId: string;
-  queryKey: string;
-  listPath: string;
-  itemPath: string;
-}) {
+>(config: { characterId: string; queryKey: string; listPath: string; itemPath: string }) {
   const { characterId, queryKey, listPath, itemPath } = config;
   const queryClient = useQueryClient();
   const [showCreateForm, setShowCreateForm] = useState(false);
@@ -30,8 +25,7 @@ export function useAdminList<
     },
   });
 
-  const invalidate = () =>
-    queryClient.invalidateQueries({ queryKey: [queryKey, characterId] });
+  const invalidate = () => queryClient.invalidateQueries({ queryKey: [queryKey, characterId] });
 
   const createMutation = useMutation({
     mutationFn: async (data: TCreateData) => {

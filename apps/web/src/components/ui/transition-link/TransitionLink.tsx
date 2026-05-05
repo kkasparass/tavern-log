@@ -5,10 +5,9 @@ export function TransitionLink({
   href,
   children,
   ...props
-}: {
+}: React.AnchorHTMLAttributes<HTMLAnchorElement> & {
   href: string;
   children: React.ReactNode;
-  className?: string;
 }) {
   const { navigate } = usePageTransition();
   return (

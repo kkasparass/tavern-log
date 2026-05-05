@@ -57,12 +57,12 @@ export function useCharacterForm(defaultValues?: Partial<CharacterFormData>) {
         thumbnailUrl = await uploadFile(pendingThumbnailFile);
       }
       onSubmit({
-      name,
-      system,
-      campaign,
-      status,
-      bio,
-      personality,
+        name,
+        system,
+        campaign,
+        status,
+        bio,
+        personality,
         thumbnailUrl,
         isPublic,
         theme: THEME_PRESETS[presetIndex].theme,

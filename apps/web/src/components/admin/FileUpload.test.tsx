@@ -17,7 +17,11 @@ describe("FileUpload", () => {
 
   it("calls onFileSelect with the picked File", async () => {
     const onFileSelect = vi.fn();
-    vi.stubGlobal("URL", { ...URL, createObjectURL: vi.fn(() => "blob:x"), revokeObjectURL: vi.fn() });
+    vi.stubGlobal("URL", {
+      ...URL,
+      createObjectURL: vi.fn(() => "blob:x"),
+      revokeObjectURL: vi.fn(),
+    });
 
     render(<FileUpload accept="image/jpeg" onFileSelect={onFileSelect} />);
     const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
@@ -38,7 +42,11 @@ describe("FileUpload", () => {
   });
 
   it("shows selected file name after picking a file, replacing displayValue", async () => {
-    vi.stubGlobal("URL", { ...URL, createObjectURL: vi.fn(() => "blob:x"), revokeObjectURL: vi.fn() });
+    vi.stubGlobal("URL", {
+      ...URL,
+      createObjectURL: vi.fn(() => "blob:x"),
+      revokeObjectURL: vi.fn(),
+    });
 
     render(<FileUpload accept="image/jpeg" onFileSelect={vi.fn()} displayValue="old.jpg" />);
     expect(screen.getByText("old.jpg")).toBeInTheDocument();

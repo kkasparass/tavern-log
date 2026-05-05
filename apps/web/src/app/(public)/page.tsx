@@ -18,7 +18,7 @@ export default async function HomePage() {
     queryFn: () => fetch(`${process.env.API_URL}/characters`).then((r) => r.json()),
   });
   return (
-    <main className="bg-gray-950 p-4 text-white sm:p-8">
+    <main className="p-4 text-white sm:p-8">
       <HydrationBoundary state={dehydrate(queryClient)}>
         <CharacterGrid />
       </HydrationBoundary>

@@ -7,12 +7,21 @@ type Phase = "idle" | "covering" | "uncovering";
 interface TransitionCtx {
   phase: Phase;
   navigate: (href: string) => void;
+  triggerAnimation: () => void;
   onCoverComplete: () => void;
   onUncoverComplete: () => void;
 }
 
-const Ctx = createContext<TransitionCtx | null>(null);
-export const usePageTransition = () => useContext(Ctx)!;
+const fallbackFunction = () => {};
+const fallback: TransitionCtx = {
+  phase: "idle",
+  navigate: fallbackFunction,
+  triggerAnimation: fallbackFunction,
+  onCoverComplete: fallbackFunction,
+  onUncoverComplete: fallbackFunction,
+};
+const Ctx = createContext<TransitionCtx>(fallback);
+export const usePageTransition = () => useContext(Ctx);
 
 export function TransitionProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -23,6 +32,8 @@ export function TransitionProvider({ children }: { children: React.ReactNode }) 
     pendingHref.current = href;
     setPhase("covering");
   }, []);
+
+  const triggerAnimation = useCallback(() => setPhase("covering"), []);
 
   const onCoverComplete = useCallback(() => {
     if (pendingHref.current) {
@@ -35,7 +46,7 @@ export function TransitionProvider({ children }: { children: React.ReactNode }) 
   const onUncoverComplete = useCallback(() => setPhase("idle"), []);
 
   return (
-    <Ctx.Provider value={{ phase, navigate, onCoverComplete, onUncoverComplete }}>
+    <Ctx.Provider value={{ phase, navigate, triggerAnimation, onCoverComplete, onUncoverComplete }}>
       {children}
     </Ctx.Provider>
   );

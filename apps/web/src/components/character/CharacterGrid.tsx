@@ -4,6 +4,7 @@ import { useState } from "react";
 import { CharacterCard } from "./CharacterCard";
 import { Select } from "@/components/ui/Select";
 import type { CharacterPreview } from "@/lib/types";
+import { AnimationTestButton } from "../dev/AnimationTestButton";
 
 export function CharacterGrid() {
   const { data: characters = [] } = useQuery<CharacterPreview[]>({
@@ -45,6 +46,7 @@ export function CharacterGrid() {
           <CharacterCard key={c.id} {...c} />
         ))}
       </div>
+      <AnimationTestButton />
     </div>
   );
 }

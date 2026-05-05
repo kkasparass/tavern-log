@@ -59,7 +59,8 @@ describe("uploadFile", () => {
   it("throws when PUT to storage fails", async () => {
     vi.stubGlobal(
       "fetch",
-      vi.fn()
+      vi
+        .fn()
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ({

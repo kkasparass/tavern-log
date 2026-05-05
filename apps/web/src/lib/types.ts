@@ -19,6 +19,7 @@ export type CharacterPreview = {
   system: string;
   thumbnailUrl: string | null;
   tags: string[];
+  theme: CharacterTheme;
 };
 
 export type AdminCharacterDetail = {

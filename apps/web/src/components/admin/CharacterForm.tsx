@@ -71,7 +71,12 @@ export function CharacterForm({
   }
 
   return (
-    <form onSubmit={(e) => { void handleSubmit(e); }} className="flex max-w-2xl flex-col gap-6">
+    <form
+      onSubmit={(e) => {
+        void handleSubmit(e);
+      }}
+      className="flex max-w-2xl flex-col gap-6"
+    >
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="flex flex-col gap-1">
           <label htmlFor="name" className={labelClass}>

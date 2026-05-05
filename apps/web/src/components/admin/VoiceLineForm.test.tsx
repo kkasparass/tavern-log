@@ -8,8 +8,16 @@ vi.mock("@/lib/upload", () => ({
 }));
 
 vi.mock("./FileUpload", () => ({
-  FileUpload: ({ onFileSelect, label }: { onFileSelect: (file: File | null) => void; label?: string }) => (
-    <button onClick={() => onFileSelect(new File(["content"], "audio.mp3", { type: "audio/mpeg" }))}>
+  FileUpload: ({
+    onFileSelect,
+    label,
+  }: {
+    onFileSelect: (file: File | null) => void;
+    label?: string;
+  }) => (
+    <button
+      onClick={() => onFileSelect(new File(["content"], "audio.mp3", { type: "audio/mpeg" }))}
+    >
       {label ?? "Upload file"}
     </button>
   ),
@@ -40,8 +48,14 @@ describe("VoiceLineForm", () => {
     const { uploadFile } = await import("@/lib/upload");
     render(<VoiceLineForm {...defaultProps} onSubmit={onSubmit} />);
     await userEvent.click(screen.getByRole("button", { name: "Audio" }));
-    await userEvent.type(screen.getByPlaceholderText("What is said in this voice line"), "Hello world");
-    await userEvent.type(screen.getByPlaceholderText("e.g. Battle cry, greeting, etc."), "Greeting");
+    await userEvent.type(
+      screen.getByPlaceholderText("What is said in this voice line"),
+      "Hello world"
+    );
+    await userEvent.type(
+      screen.getByPlaceholderText("e.g. Battle cry, greeting, etc."),
+      "Greeting"
+    );
     await userEvent.click(screen.getByRole("button", { name: "Save" }));
     await waitFor(() =>
       expect(onSubmit).toHaveBeenCalledWith({
@@ -57,7 +71,10 @@ describe("VoiceLineForm", () => {
     const onSubmit = vi.fn();
     render(<VoiceLineForm {...defaultProps} onSubmit={onSubmit} />);
     await userEvent.click(screen.getByRole("button", { name: "Audio" }));
-    await userEvent.type(screen.getByPlaceholderText("What is said in this voice line"), "Hello world");
+    await userEvent.type(
+      screen.getByPlaceholderText("What is said in this voice line"),
+      "Hello world"
+    );
     await userEvent.click(screen.getByRole("button", { name: "Save" }));
     await waitFor(() =>
       expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({ context: undefined }))
@@ -115,11 +132,17 @@ describe("VoiceLineForm", () => {
     render(
       <VoiceLineForm
         {...defaultProps}
-        initialValues={{ audioUrl: "https://audio.mp3", transcript: "Old line", context: "Old context" }}
+        initialValues={{
+          audioUrl: "https://audio.mp3",
+          transcript: "Old line",
+          context: "Old context",
+        }}
       />
     );
     expect(screen.getByPlaceholderText("What is said in this voice line")).toHaveValue("Old line");
-    expect(screen.getByPlaceholderText("e.g. Battle cry, greeting, etc.")).toHaveValue("Old context");
+    expect(screen.getByPlaceholderText("e.g. Battle cry, greeting, etc.")).toHaveValue(
+      "Old context"
+    );
   });
 
   it("shows 'Failed to update voice line.' error message when editing", () => {

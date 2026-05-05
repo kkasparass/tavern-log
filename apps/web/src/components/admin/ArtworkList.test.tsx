@@ -9,8 +9,16 @@ vi.mock("@/lib/upload", () => ({
 }));
 
 vi.mock("./FileUpload", () => ({
-  FileUpload: ({ onFileSelect, label }: { onFileSelect: (file: File | null) => void; label?: string }) => (
-    <button onClick={() => onFileSelect(new File(["content"], "new-img.png", { type: "image/jpeg" }))}>
+  FileUpload: ({
+    onFileSelect,
+    label,
+  }: {
+    onFileSelect: (file: File | null) => void;
+    label?: string;
+  }) => (
+    <button
+      onClick={() => onFileSelect(new File(["content"], "new-img.png", { type: "image/jpeg" }))}
+    >
       {label ?? "Upload file"}
     </button>
   ),
