@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 538 774" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g transform="matrix(1,0,0,1,-1984.608732,-3198.411685)">
+        <g id="big-leaf">
+            <path id="leaf-shape" d="M2519.813,3690.259C2441.586,3955.856 2184.421,3984.899 2101.041,3968.504C2017.661,3952.109 1936.162,3670.233 2019.534,3591.89C2221.426,3402.177 2283.727,3198.412 2283.727,3198.412C2283.727,3198.412 2552.137,3580.515 2519.813,3690.259Z" style="fill:url(#_Linear1);"/>
+            <path id="primary-shadow" d="M2165.011,3928.896C2165.011,3928.896 2293.504,3790.383 2314.133,3714.938C2334.763,3639.492 2302.345,3289.379 2302.345,3289.379C2302.345,3289.379 2267.569,3624.757 2232.794,3686.646C2198.018,3748.534 2165.011,3928.896 2165.011,3928.896Z" style="fill:rgb(40,59,38);"/>
+        </g>
+    </g>
+    <defs>
+        <linearGradient id="_Linear1" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(-390.19347,334.493707,-334.493707,-390.19347,2442.626118,3524.26153)"><stop offset="0" style="stop-color:rgb(142,203,137);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(81,146,76);stop-opacity:1"/></linearGradient>
+    </defs>
+</svg>
