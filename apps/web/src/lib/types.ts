@@ -12,6 +12,7 @@ export type CharacterPreview = {
   name: string;
   system: string;
   thumbnailUrl: string | null;
+  theme: Record<string, unknown>;
   tags: string[];
 };
 

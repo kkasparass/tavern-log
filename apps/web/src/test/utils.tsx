@@ -1,6 +1,7 @@
 import { render } from "@testing-library/react";
 import { QueryClient, QueryClientProvider, type QueryKey } from "@tanstack/react-query";
 import React from "react";
+import { TransitionProvider } from "@/components/transitions/TransitionProvider";
 
 export function renderWithQuery(
   ui: React.ReactElement,
@@ -17,4 +18,8 @@ export function renderWithQuery(
   }
 
   return render(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>);
+}
+
+export function renderWithTransition(ui: React.ReactElement) {
+  return render(<TransitionProvider>{ui}</TransitionProvider>);
 }

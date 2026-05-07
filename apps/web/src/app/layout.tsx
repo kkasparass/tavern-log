@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Providers } from "./providers";
 import { Header } from "@/components/layout/Header";
+import { TransitionProvider } from "@/components/transitions/TransitionProvider";
+import { CharacterThemeOverlay } from "@/components/transitions/CharacterThemeOverlay";
 
 export const metadata: Metadata = {
   title: "Tavern Log",
@@ -14,10 +16,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <meta name="apple-mobile-web-app-title" content="Tavern Log" />
       </head>
-      <body className="flex min-h-screen flex-col">
+      <body className="flex flex-col h-dvh">
         <Providers>
-          <Header />
-          <div className="flex-1 flex flex-col">{children}</div>
+          <TransitionProvider>
+            <Header />
+            <div className="relative flex flex-col flex-1 overflow-y-auto [container-type:size]">
+              <CharacterThemeOverlay />
+              {children}
+            </div>
+          </TransitionProvider>
         </Providers>
       </body>
     </html>
