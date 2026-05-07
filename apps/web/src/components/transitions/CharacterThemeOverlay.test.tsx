@@ -4,6 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { CharacterThemeOverlay } from "./CharacterThemeOverlay";
 import { TransitionProvider, useTransition } from "./TransitionProvider";
 import { DEFAULT_THEME } from "@/lib/themes/presets";
+import { TransitionId } from "@/lib/themes/types";
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: vi.fn() }),
@@ -16,7 +17,7 @@ function TestDriver({ action }: { action: string }) {
     <button
       onClick={() => {
         if (action === "hover") setHoveredCharacter(DEFAULT_THEME);
-        if (action === "navigate") navigate("/target", "floral-bloom");
+        if (action === "navigate") navigate("/target", TransitionId.FloralBloom);
       }}
     >
       {action}

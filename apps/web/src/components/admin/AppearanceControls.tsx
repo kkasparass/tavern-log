@@ -1,15 +1,30 @@
 "use client";
 import { useTransition } from "@/components/transitions/TransitionProvider";
+import {
+  DecorationSetId,
+  TransitionId,
+  decorationLabel,
+  transitionLabel,
+} from "@/lib/themes/types";
 import type { ThemeConfig } from "@/lib/themes/types";
+import { Select } from "@/components/ui/Select";
 
 type Props = {
   value: ThemeConfig;
   onChange: (theme: ThemeConfig) => void;
 };
 
-const selectClass =
-  "bg-gray-800 border border-white/10 rounded px-3 py-2 text-white text-sm focus:outline-none focus:border-white/30 w-full";
 const labelClass = "text-sm text-white/70";
+
+const transitionOptions = Object.values(TransitionId).map((id) => ({
+  value: id,
+  label: transitionLabel(id),
+}));
+
+const decorationOptions = Object.values(DecorationSetId).map((id) => ({
+  value: id,
+  label: decorationLabel(id),
+}));
 
 export function AppearanceControls({ value, onChange }: Props) {
   const { preview } = useTransition();
@@ -25,49 +40,39 @@ export function AppearanceControls({ value, onChange }: Props) {
           <label htmlFor="bgPattern" className={labelClass}>
             Background Pattern
           </label>
-          <select
+          <Select
             id="bgPattern"
-            value={value.bgPattern}
-            onChange={(e) => setField("bgPattern", e.target.value)}
-            className={selectClass}
-          >
-            <option value="none">None</option>
-          </select>
+            value={value.bgPattern === "none" ? "" : value.bgPattern}
+            onChange={(val) => setField("bgPattern", val || "none")}
+            options={[]}
+            placeholder="None"
+          />
         </div>
 
         <div className="flex flex-col gap-1">
           <label htmlFor="transition" className={labelClass}>
             Transition
           </label>
-          <select
+          <Select
             id="transition"
             value={value.transition ?? ""}
-            onChange={(e) =>
-              setField("transition", (e.target.value || null) as ThemeConfig["transition"])
-            }
-            className={selectClass}
-          >
-            <option value="">None</option>
-            <option value="floral-bloom">Floral Bloom</option>
-            <option value="bells-flower">Bells Flower</option>
-          </select>
+            onChange={(val) => setField("transition", (val || null) as ThemeConfig["transition"])}
+            options={transitionOptions}
+            placeholder="None"
+          />
         </div>
 
         <div className="flex flex-col gap-1">
           <label htmlFor="decorations" className={labelClass}>
             Decorations
           </label>
-          <select
+          <Select
             id="decorations"
             value={value.decorations ?? ""}
-            onChange={(e) =>
-              setField("decorations", (e.target.value || null) as ThemeConfig["decorations"])
-            }
-            className={selectClass}
-          >
-            <option value="">None</option>
-            <option value="forest">Forest</option>
-          </select>
+            onChange={(val) => setField("decorations", (val || null) as ThemeConfig["decorations"])}
+            options={decorationOptions}
+            placeholder="None"
+          />
         </div>
       </div>
 

@@ -1,7 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import { useTransition } from "./TransitionProvider";
-import { Phase } from "@/lib/themes/types";
+import { Phase, TransitionId } from "@/lib/themes/types";
 import { DEFAULT_THEME } from "@/lib/themes/presets";
 import { FloralBloomOverlay } from "./FloralBloomOverlay";
 import { BellsFlowerOverlay } from "./BellsFlowerOverlay";
@@ -34,8 +34,8 @@ export function CharacterThemeOverlay() {
         transition={{ duration: 0.4 }}
       />
       {/* overlay animation component */}
-      {activeTransition === "floral-bloom" && <FloralBloomOverlay theme={theme} />}
-      {activeTransition === "bells-flower" && <BellsFlowerOverlay theme={theme} />}
+      {activeTransition === TransitionId.FloralBloom && <FloralBloomOverlay theme={theme} />}
+      {activeTransition === TransitionId.BellsFlower && <BellsFlowerOverlay theme={theme} />}
     </div>
   );
 }

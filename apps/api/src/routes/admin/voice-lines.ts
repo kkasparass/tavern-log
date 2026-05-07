@@ -76,7 +76,10 @@ export async function adminVoiceLineRoutes(app: FastifyInstance) {
         try {
           await deleteS3Object(existing.audioUrl);
         } catch (err) {
-          request.log.warn({ err, voiceLineId }, "S3 delete failed for old voice line audio, proceeding with update");
+          request.log.warn(
+            { err, voiceLineId },
+            "S3 delete failed for old voice line audio, proceeding with update"
+          );
         }
       }
       const voiceLine = await prisma.voiceLine.update({
@@ -102,7 +105,10 @@ export async function adminVoiceLineRoutes(app: FastifyInstance) {
       try {
         await deleteS3Object(existing.audioUrl);
       } catch (err) {
-        request.log.warn({ err, voiceLineId }, "S3 delete failed for voice line, proceeding with DB delete");
+        request.log.warn(
+          { err, voiceLineId },
+          "S3 delete failed for voice line, proceeding with DB delete"
+        );
       }
       await prisma.voiceLine.delete({ where: { id: voiceLineId } });
       return reply.code(204).send();

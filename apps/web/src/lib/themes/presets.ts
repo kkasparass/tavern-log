@@ -1,3 +1,4 @@
+import { DecorationSetId, TransitionId } from "./types";
 import type { ThemeConfig, ThemePreset } from "./types";
 
 export const DEFAULT_THEME: ThemeConfig = {
@@ -42,11 +43,11 @@ export const THEME_PRESETS: ThemePreset[] = [
   {
     label: "Forest",
     config: {
-      preset: "forest",
+      preset: DecorationSetId.Forest,
       colors: { bg: "#0f1a0f", text: "#d4e8d4", accent: "#4ade80" },
       bgPattern: "none",
-      transition: "bells-flower",
-      decorations: "forest",
+      transition: TransitionId.BellsFlower,
+      decorations: DecorationSetId.Forest,
     },
   },
   {
@@ -55,7 +56,7 @@ export const THEME_PRESETS: ThemePreset[] = [
       preset: "custom",
       colors: { bg: "#1a0f0f", text: "#f0d0d0", accent: "#dc2626" },
       bgPattern: "none",
-      transition: "floral-bloom",
+      transition: TransitionId.FloralBloom,
       decorations: null,
     },
   },

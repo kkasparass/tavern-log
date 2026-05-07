@@ -35,7 +35,10 @@ async function setup() {
 }
 
 const otherUserCharacter = { ...miraCharacterListItem, createdById: "user-2" };
-const characterWithThumbnail = { ...miraCharacterListItem, thumbnailUrl: "https://example.com/old-thumb.jpg" };
+const characterWithThumbnail = {
+  ...miraCharacterListItem,
+  thumbnailUrl: "https://example.com/old-thumb.jpg",
+};
 const characterForDelete = {
   ...miraCharacterListItem,
   thumbnailUrl: "https://example.com/thumb.jpg",
@@ -43,9 +46,7 @@ const characterForDelete = {
     { imageUrl: "https://example.com/art-1.jpg" },
     { imageUrl: "https://example.com/art-2.jpg" },
   ],
-  voiceLines: [
-    { audioUrl: "https://example.com/audio-1.mp3" },
-  ],
+  voiceLines: [{ audioUrl: "https://example.com/audio-1.mp3" }],
 };
 
 describe("GET /admin/characters", () => {

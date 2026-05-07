@@ -52,7 +52,7 @@ describe("CharacterForm", () => {
     expect(screen.getByLabelText("Name *")).toHaveValue("Mira Ashveil");
     expect(screen.getByLabelText("System *")).toHaveValue("D&D 5e");
     expect(screen.getByLabelText("Campaign")).toHaveValue("The Shattered Crown");
-    expect(screen.getByLabelText("Status")).toHaveValue(CharacterStatus.RETIRED);
+    expect(screen.getByLabelText("Status")).toHaveTextContent("Retired");
     expect(screen.getByLabelText("Bio")).toHaveValue("A former court mage.");
     expect(screen.getByText("mage")).toBeInTheDocument();
     expect(screen.getByText("retired")).toBeInTheDocument();

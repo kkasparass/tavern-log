@@ -1,5 +1,27 @@
-export type DecorationSetId = "forest" | "none";
-export type TransitionId = "floral-bloom" | "bells-flower";
+export enum DecorationSetId {
+  Forest = "forest",
+}
+
+export enum TransitionId {
+  FloralBloom = "floral-bloom",
+  BellsFlower = "bells-flower",
+}
+
+export function transitionLabel(id: TransitionId): string {
+  switch (id) {
+    case TransitionId.FloralBloom:
+      return "Floral Bloom";
+    case TransitionId.BellsFlower:
+      return "Bells Flower";
+  }
+}
+
+export function decorationLabel(id: DecorationSetId): string {
+  switch (id) {
+    case DecorationSetId.Forest:
+      return "Forest";
+  }
+}
 
 export enum Phase {
   Idle = "idle",

@@ -4,6 +4,7 @@ import { characterStatusLabel } from "@/lib/constants";
 import { useCharacterForm } from "./useCharacterForm";
 import { FileUpload } from "./FileUpload";
 import { ThemeSection } from "./ThemeSection";
+import { Select } from "@/components/ui/Select";
 
 export type CharacterFormData = {
   name: string;
@@ -124,18 +125,15 @@ export function CharacterForm({
           <label htmlFor="status" className={labelClass}>
             Status
           </label>
-          <select
+          <Select
             id="status"
             value={status}
-            onChange={(e) => setStatus(e.target.value as CharacterStatus)}
-            className={inputClass}
-          >
-            {Object.values(CharacterStatus).map((s) => (
-              <option key={s} value={s}>
-                {characterStatusLabel[s]}
-              </option>
-            ))}
-          </select>
+            onChange={(val) => setStatus(val as CharacterStatus)}
+            options={Object.values(CharacterStatus).map((s) => ({
+              value: s,
+              label: characterStatusLabel[s],
+            }))}
+          />
         </div>
       </div>
 

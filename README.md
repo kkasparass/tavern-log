@@ -50,7 +50,7 @@ Anyone can register and upload their own characters. The public landing page dis
 | File storage  | AWS S3 (presigned PUT URLs)                                     |
 | Testing       | Vitest, React Testing Library                                   |
 | API hosting   | GCP e2-micro, Docker, Nginx, Let's Encrypt                      |
-| CI/CD         | GitHub Actions → GHCR → GCP VM (SSH deploy)                    |
+| CI/CD         | GitHub Actions → GHCR → GCP VM (SSH deploy)                     |
 | Local infra   | Docker Compose (Postgres 16)                                    |
 
 ---
@@ -140,12 +140,12 @@ npm test --workspace=apps/web   # web component tests
 
 ## Deployment
 
-| Service      | Platform                        | Domain                          |
-| ------------ | ------------------------------- | ------------------------------- |
-| Frontend     | Vercel                          | `tavernlog.kasparas.dev`        |
-| Backend API  | GCP e2-micro (Docker)           | `api.tavernlog.kasparas.dev`    |
-| Database     | Neon (serverless Postgres)      | —                               |
-| File storage | AWS S3 (`eu-south-2`)           | —                               |
+| Service      | Platform                   | Domain                       |
+| ------------ | -------------------------- | ---------------------------- |
+| Frontend     | Vercel                     | `tavernlog.kasparas.dev`     |
+| Backend API  | GCP e2-micro (Docker)      | `api.tavernlog.kasparas.dev` |
+| Database     | Neon (serverless Postgres) | —                            |
+| File storage | AWS S3 (`eu-south-2`)      | —                            |
 
 The GitHub Actions CI pipeline runs on every push to `master`:
 

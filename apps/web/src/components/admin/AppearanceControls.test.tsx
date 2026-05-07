@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi } from "vitest";
 import { AppearanceControls } from "./AppearanceControls";
 import { DEFAULT_THEME } from "@/lib/themes/presets";
+import { TransitionId } from "@/lib/themes/types";
 
 const mockPreview = vi.fn();
 
@@ -28,20 +29,21 @@ describe("AppearanceControls", () => {
   it("Preview button calls preview() with the current transitionId", async () => {
     render(
       <AppearanceControls
-        value={{ ...DEFAULT_THEME, transition: "floral-bloom" }}
+        value={{ ...DEFAULT_THEME, transition: TransitionId.FloralBloom }}
         onChange={vi.fn()}
       />
     );
     await userEvent.click(screen.getByRole("button", { name: /Preview/ }));
-    expect(mockPreview).toHaveBeenCalledWith("floral-bloom");
+    expect(mockPreview).toHaveBeenCalledWith(TransitionId.FloralBloom);
   });
 
   it("changing transition calls onChange with updated value and preset: custom", async () => {
     const onChange = vi.fn();
     render(<AppearanceControls value={DEFAULT_THEME} onChange={onChange} />);
-    await userEvent.selectOptions(screen.getByLabelText("Transition"), "floral-bloom");
+    await userEvent.click(screen.getByLabelText("Transition"));
+    await userEvent.click(screen.getByRole("option", { name: "Floral Bloom" }));
     expect(onChange).toHaveBeenCalledWith(
-      expect.objectContaining({ transition: "floral-bloom", preset: "custom" })
+      expect.objectContaining({ transition: TransitionId.FloralBloom, preset: "custom" })
     );
   });
 });
