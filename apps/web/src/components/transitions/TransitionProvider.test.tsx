@@ -3,6 +3,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { TransitionProvider, useTransition } from "./TransitionProvider";
 import { DEFAULT_THEME } from "@/lib/themes/presets";
+import { TransitionId } from "@/lib/themes/types";
 
 const mockPush = vi.fn();
 vi.mock("next/navigation", () => ({
@@ -21,15 +22,23 @@ function PhaseDisplay() {
 }
 
 function Controls() {
-  const { setHoveredCharacter, clearHoveredCharacter, navigate, preview, onCoverComplete, onUncoverComplete } =
-    useTransition();
+  const {
+    setHoveredCharacter,
+    clearHoveredCharacter,
+    navigate,
+    preview,
+    onCoverComplete,
+    onUncoverComplete,
+  } = useTransition();
   return (
     <>
       <button onClick={() => setHoveredCharacter(DEFAULT_THEME)}>set-hovered</button>
       <button onClick={clearHoveredCharacter}>clear-hovered</button>
-      <button onClick={() => navigate("/target", "floral-bloom")}>navigate-transition</button>
+      <button onClick={() => navigate("/target", TransitionId.FloralBloom)}>
+        navigate-transition
+      </button>
       <button onClick={() => navigate("/target", null)}>navigate-immediate</button>
-      <button onClick={() => preview("floral-bloom")}>preview</button>
+      <button onClick={() => preview(TransitionId.FloralBloom)}>preview</button>
       <button onClick={onCoverComplete}>cover-complete</button>
       <button onClick={onUncoverComplete}>uncover-complete</button>
     </>
@@ -95,7 +104,7 @@ describe("TransitionProvider", () => {
     render(<TestTree />);
     await userEvent.click(screen.getByText("navigate-transition"));
     expect(screen.getByTestId("phase")).toHaveTextContent("covering");
-    expect(screen.getByTestId("transition")).toHaveTextContent("floral-bloom");
+    expect(screen.getByTestId("transition")).toHaveTextContent(TransitionId.FloralBloom);
   });
 
   it("onCoverComplete in navigate mode calls router.push and transitions to uncovering", async () => {
@@ -151,6 +160,8 @@ describe("TransitionProvider", () => {
       useTransition();
       return null;
     }
-    expect(() => render(<BadConsumer />)).toThrow("useTransition must be used inside TransitionProvider");
+    expect(() => render(<BadConsumer />)).toThrow(
+      "useTransition must be used inside TransitionProvider"
+    );
   });
 });

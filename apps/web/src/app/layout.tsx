@@ -16,13 +16,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <meta name="apple-mobile-web-app-title" content="Tavern Log" />
       </head>
-      <body className="flex flex-col h-dvh">
+      <body className="flex h-dvh flex-col">
         <Providers>
           <TransitionProvider>
             <Header />
-            <div className="relative flex flex-col flex-1 overflow-y-auto [container-type:size]">
+            <div className="relative flex-1 overflow-hidden [container-type:size]">
+              <div className="absolute inset-0 flex flex-col overflow-y-auto overflow-x-hidden">
+                {children}
+              </div>
               <CharacterThemeOverlay />
-              {children}
             </div>
           </TransitionProvider>
         </Providers>

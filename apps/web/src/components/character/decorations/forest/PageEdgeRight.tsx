@@ -19,7 +19,15 @@ function Leaf({ size, rotate }: { size: number; rotate: number }) {
         opacity="0.5"
         transform={`rotate(${rotate} 12 17)`}
       />
-      <line x1="12" y1="2" x2="12" y2="32" stroke="var(--theme-accent)" strokeWidth="0.8" opacity="0.4" />
+      <line
+        x1="12"
+        y1="2"
+        x2="12"
+        y2="32"
+        stroke="var(--theme-accent)"
+        strokeWidth="0.8"
+        opacity="0.4"
+      />
     </svg>
   );
 }
@@ -35,7 +43,13 @@ export function PageEdgeRight() {
           initial={{ x: 8, opacity: 0 }}
           animate={{ x: [0, -4, 0], opacity: 0.7 }}
           transition={{
-            x: { duration: 3.5 + i * 0.3, repeat: Infinity, repeatType: "mirror", ease: "easeInOut", delay: leaf.delay },
+            x: {
+              duration: 3.5 + i * 0.3,
+              repeat: Infinity,
+              repeatType: "mirror",
+              ease: "easeInOut",
+              delay: leaf.delay,
+            },
             opacity: { duration: 0.8, delay: leaf.delay },
           }}
         >

@@ -5,6 +5,7 @@ import { useSelect } from "./useSelect";
 import type { SelectOption } from "./types";
 
 interface SelectProps {
+  id?: string;
   value: string;
   onChange: (value: string) => void;
   options: SelectOption[];
@@ -13,6 +14,7 @@ interface SelectProps {
 }
 
 export function Select({
+  id,
   value,
   onChange,
   options,
@@ -29,6 +31,7 @@ export function Select({
   return (
     <div ref={containerRef} className={`relative min-w-0${className ? ` ${className}` : ""}`}>
       <SelectTrigger
+        id={id}
         selectedLabel={selectedLabel}
         hasValue={!!value}
         open={open}

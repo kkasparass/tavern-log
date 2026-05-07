@@ -8,7 +8,13 @@ type TransitionLinkProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "href">
   transitionId: TransitionId | null;
 };
 
-export function TransitionLink({ href, transitionId, children, onClick, ...rest }: TransitionLinkProps) {
+export function TransitionLink({
+  href,
+  transitionId,
+  children,
+  onClick,
+  ...rest
+}: TransitionLinkProps) {
   const { navigate } = useTransition();
 
   return (

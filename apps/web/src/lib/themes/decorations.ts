@@ -6,7 +6,10 @@ import { PageEdgeRight } from "@/components/character/decorations/forest/PageEdg
 import { HeaderTop } from "@/components/character/decorations/forest/HeaderTop";
 import { TabsTop } from "@/components/character/decorations/forest/TabsTop";
 
-type DecorationRegistry = Record<DecorationSetId, Partial<Record<DecorationSlotName, ComponentType>>>;
+type DecorationRegistry = Record<
+  DecorationSetId,
+  Partial<Record<DecorationSlotName, ComponentType>>
+>;
 
 const registry: DecorationRegistry = {
   forest: {
@@ -15,7 +18,6 @@ const registry: DecorationRegistry = {
     [DecorationSlotName.HeaderTop]: HeaderTop,
     [DecorationSlotName.TabsTop]: TabsTop,
   },
-  none: {},
 };
 
 export function getDecoration(

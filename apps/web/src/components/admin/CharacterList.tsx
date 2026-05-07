@@ -82,7 +82,7 @@ export function CharacterList() {
                 <span className="ml-2 text-sm text-white/40">{c.system}</span>
               </div>
             </div>
-            <div className="mt-2 ml-3 flex flex-wrap items-center gap-1 text-sm sm:ml-0 md:mt-0">
+            <div className="ml-3 mt-2 flex flex-wrap items-center gap-1 text-sm sm:ml-0 md:mt-0">
               <Link
                 href={`/admin/characters/${c.id}/edit`}
                 className="rounded px-3 py-1 text-white/60 transition-colors hover:bg-white/10 hover:text-white"

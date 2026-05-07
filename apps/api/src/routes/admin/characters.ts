@@ -101,11 +101,18 @@ export async function adminCharacterRoutes(app: FastifyInstance) {
       if (existing.createdById !== request.user.userId)
         return reply.code(403).send({ error: "Forbidden" });
 
-      if (rest.thumbnailUrl && existing.thumbnailUrl && rest.thumbnailUrl !== existing.thumbnailUrl) {
+      if (
+        rest.thumbnailUrl &&
+        existing.thumbnailUrl &&
+        rest.thumbnailUrl !== existing.thumbnailUrl
+      ) {
         try {
           await deleteS3Object(existing.thumbnailUrl);
         } catch (err) {
-          request.log.warn({ err, characterId: id }, "S3 delete failed for old character thumbnail, proceeding with update");
+          request.log.warn(
+            { err, characterId: id },
+            "S3 delete failed for old character thumbnail, proceeding with update"
+          );
         }
       }
 
@@ -151,7 +158,10 @@ export async function adminCharacterRoutes(app: FastifyInstance) {
       const results = await Promise.allSettled(s3Urls.map((url) => deleteS3Object(url)));
       results.forEach((result, i) => {
         if (result.status === "rejected") {
-          request.log.warn({ err: result.reason, url: s3Urls[i] }, "S3 delete failed during character deletion");
+          request.log.warn(
+            { err: result.reason, url: s3Urls[i] },
+            "S3 delete failed during character deletion"
+          );
         }
       });
 

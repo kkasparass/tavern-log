@@ -80,13 +80,7 @@ describe("TimelineEventForm", () => {
   });
 
   it("shows 'Failed to update event.' error message when editing", () => {
-    render(
-      <TimelineEventForm
-        {...defaultProps}
-        initialValues={{ title: "Some Event" }}
-        isError
-      />
-    );
+    render(<TimelineEventForm {...defaultProps} initialValues={{ title: "Some Event" }} isError />);
     expect(screen.getByText("Failed to update event.")).toBeInTheDocument();
   });
 });

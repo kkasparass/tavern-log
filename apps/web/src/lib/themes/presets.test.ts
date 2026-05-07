@@ -21,7 +21,9 @@ describe("resolveTheme", () => {
     });
 
     it("falls back to DEFAULT_THEME for missing fields", () => {
-      const result = resolveTheme({ colors: { bg: "#aabbcc", text: "#ffffff", accent: "#ff0000" } });
+      const result = resolveTheme({
+        colors: { bg: "#aabbcc", text: "#ffffff", accent: "#ff0000" },
+      });
       expect(result.preset).toBe(DEFAULT_THEME.preset);
       expect(result.bgPattern).toBe(DEFAULT_THEME.bgPattern);
       expect(result.transition).toBe(DEFAULT_THEME.transition);

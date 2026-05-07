@@ -24,12 +24,12 @@ describe("TransitionLink", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("renders children", () => {
-    renderLink("floral-bloom");
+    renderLink(TransitionId.FloralBloom);
     expect(screen.getByText("Go to Mira")).toBeInTheDocument();
   });
 
   it("renders as an anchor with correct href", () => {
-    renderLink("floral-bloom");
+    renderLink(TransitionId.FloralBloom);
     expect(screen.getByRole("link")).toHaveAttribute("href", "/characters/mira-ashveil");
   });
 
@@ -45,7 +45,7 @@ describe("TransitionLink", () => {
   });
 
   it("with transitionId: does not call router.push immediately on click (uses covering phase)", async () => {
-    renderLink("floral-bloom");
+    renderLink(TransitionId.FloralBloom);
     await userEvent.click(screen.getByText("Go to Mira"));
     expect(mockPush).not.toHaveBeenCalled();
   });
@@ -57,7 +57,7 @@ describe("TransitionLink", () => {
   });
 
   it("prevents default browser navigation on click", async () => {
-    renderLink("floral-bloom");
+    renderLink(TransitionId.FloralBloom);
     const link = screen.getByRole("link");
     const clickEvent = new MouseEvent("click", { bubbles: true, cancelable: true });
     link.dispatchEvent(clickEvent);

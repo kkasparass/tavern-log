@@ -1,8 +1,10 @@
 "use client";
 import { CharacterStatus } from "@/lib/types";
-import { characterStatusLabel, THEME_PRESETS } from "@/lib/constants";
+import { characterStatusLabel } from "@/lib/constants";
 import { useCharacterForm } from "./useCharacterForm";
 import { FileUpload } from "./FileUpload";
+import { ThemeSection } from "./ThemeSection";
+import { Select } from "@/components/ui/Select";
 
 export type CharacterFormData = {
   name: string;
@@ -54,8 +56,8 @@ export function CharacterForm({
     uploadError,
     isPublic,
     setIsPublic,
-    presetIndex,
-    setPresetIndex,
+    theme,
+    setTheme,
     tags,
     tagInput,
     setTagInput,
@@ -71,7 +73,12 @@ export function CharacterForm({
   }
 
   return (
-    <form onSubmit={(e) => { void handleSubmit(e); }} className="flex max-w-2xl flex-col gap-6">
+    <form
+      onSubmit={(e) => {
+        void handleSubmit(e);
+      }}
+      className="flex max-w-2xl flex-col gap-6"
+    >
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="flex flex-col gap-1">
           <label htmlFor="name" className={labelClass}>
@@ -118,18 +125,15 @@ export function CharacterForm({
           <label htmlFor="status" className={labelClass}>
             Status
           </label>
-          <select
+          <Select
             id="status"
             value={status}
-            onChange={(e) => setStatus(e.target.value as CharacterStatus)}
-            className={inputClass}
-          >
-            {Object.values(CharacterStatus).map((s) => (
-              <option key={s} value={s}>
-                {characterStatusLabel[s]}
-              </option>
-            ))}
-          </select>
+            onChange={(val) => setStatus(val as CharacterStatus)}
+            options={Object.values(CharacterStatus).map((s) => ({
+              value: s,
+              label: characterStatusLabel[s],
+            }))}
+          />
         </div>
       </div>
 
@@ -183,29 +187,7 @@ export function CharacterForm({
         </label>
       </div>
 
-      <div className="flex flex-col gap-2">
-        <span className={labelClass}>Theme</span>
-        <div className="flex flex-wrap gap-3">
-          {THEME_PRESETS.map((preset, i) => (
-            <button
-              key={preset.label}
-              type="button"
-              onClick={() => setPresetIndex(i)}
-              className={`flex items-center gap-2 rounded border px-3 py-2 text-sm transition-colors ${
-                presetIndex === i
-                  ? "border-white text-white"
-                  : "border-white/20 text-white/60 hover:border-white/40 hover:text-white/80"
-              }`}
-            >
-              <span
-                className="h-3 w-3 shrink-0 rounded-full"
-                style={{ backgroundColor: preset.config.colors.accent }}
-              />
-              {preset.label}
-            </button>
-          ))}
-        </div>
-      </div>
+      <ThemeSection value={theme} onChange={setTheme} />
 
       <div className="flex flex-col gap-2">
         <span className={labelClass}>Tags</span>

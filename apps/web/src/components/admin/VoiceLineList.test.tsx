@@ -9,8 +9,16 @@ vi.mock("@/lib/upload", () => ({
 }));
 
 vi.mock("./FileUpload", () => ({
-  FileUpload: ({ onFileSelect, label }: { onFileSelect: (file: File | null) => void; label?: string }) => (
-    <button onClick={() => onFileSelect(new File(["content"], "new-audio.mp3", { type: "audio/mpeg" }))}>
+  FileUpload: ({
+    onFileSelect,
+    label,
+  }: {
+    onFileSelect: (file: File | null) => void;
+    label?: string;
+  }) => (
+    <button
+      onClick={() => onFileSelect(new File(["content"], "new-audio.mp3", { type: "audio/mpeg" }))}
+    >
       {label ?? "Upload file"}
     </button>
   ),
@@ -115,8 +123,12 @@ describe("VoiceLineList", () => {
 
   it("pre-fills the inline form with the editing voice line values", () => {
     render(<VoiceLineList {...defaultProps} editingVoiceLine={first} />);
-    expect(screen.getByPlaceholderText("What is said in this voice line")).toHaveValue(first.transcript);
-    expect(screen.getByPlaceholderText("e.g. Battle cry, greeting, etc.")).toHaveValue(first.context);
+    expect(screen.getByPlaceholderText("What is said in this voice line")).toHaveValue(
+      first.transcript
+    );
+    expect(screen.getByPlaceholderText("e.g. Battle cry, greeting, etc.")).toHaveValue(
+      first.context
+    );
   });
 
   it("still renders normal view for items not being edited", () => {
@@ -139,7 +151,9 @@ describe("VoiceLineList", () => {
 
   it("calls onCancelEdit when Cancel is clicked in the inline form", async () => {
     const onCancelEdit = vi.fn();
-    render(<VoiceLineList {...defaultProps} editingVoiceLine={first} onCancelEdit={onCancelEdit} />);
+    render(
+      <VoiceLineList {...defaultProps} editingVoiceLine={first} onCancelEdit={onCancelEdit} />
+    );
     await userEvent.click(screen.getByRole("button", { name: "Cancel" }));
     expect(onCancelEdit).toHaveBeenCalled();
   });

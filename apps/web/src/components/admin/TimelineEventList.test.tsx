@@ -93,7 +93,9 @@ describe("TimelineEventList", () => {
     render(<TimelineEventList {...defaultProps} editingEvent={first} />);
     expect(screen.getByPlaceholderText("Event title")).toHaveValue(first.title);
     expect(screen.getByPlaceholderText("What happened?")).toHaveValue(first.description);
-    expect(screen.getByPlaceholderText("e.g. Year 412, Session 3, Spring")).toHaveValue(first.dateLabel);
+    expect(screen.getByPlaceholderText("e.g. Year 412, Session 3, Spring")).toHaveValue(
+      first.dateLabel
+    );
   });
 
   it("still renders normal view for items not being edited", () => {
@@ -115,7 +117,9 @@ describe("TimelineEventList", () => {
 
   it("calls onCancelEdit when Cancel is clicked in the inline form", async () => {
     const onCancelEdit = vi.fn();
-    render(<TimelineEventList {...defaultProps} editingEvent={first} onCancelEdit={onCancelEdit} />);
+    render(
+      <TimelineEventList {...defaultProps} editingEvent={first} onCancelEdit={onCancelEdit} />
+    );
     await userEvent.click(screen.getByRole("button", { name: "Cancel" }));
     expect(onCancelEdit).toHaveBeenCalled();
   });

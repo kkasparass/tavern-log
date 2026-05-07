@@ -10,7 +10,13 @@ interface FileUploadProps {
   previewUrl?: string;
 }
 
-export function FileUpload({ accept, onFileSelect, label = "Upload file", displayValue, previewUrl }: FileUploadProps) {
+export function FileUpload({
+  accept,
+  onFileSelect,
+  label = "Upload file",
+  displayValue,
+  previewUrl,
+}: FileUploadProps) {
   const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
   const [localPreviewUrl, setLocalPreviewUrl] = useState<string | null>(null);
   const [lightboxOpen, setLightboxOpen] = useState(false);

@@ -15,7 +15,15 @@ function VineNode({ height }: { height: number }) {
   return (
     <svg width="10" height={height + 8} viewBox={`0 0 10 ${height + 8}`} fill="none">
       {/* stem */}
-      <line x1="5" y1="0" x2="5" y2={height} stroke="var(--theme-accent)" strokeWidth="1.2" opacity="0.5" />
+      <line
+        x1="5"
+        y1="0"
+        x2="5"
+        y2={height}
+        stroke="var(--theme-accent)"
+        strokeWidth="1.2"
+        opacity="0.5"
+      />
       {/* small leaf */}
       <ellipse cx="5" cy={height + 4} rx="4" ry="4" fill="var(--theme-accent)" opacity="0.45" />
     </svg>
@@ -35,7 +43,13 @@ export function TabsTop() {
           transition={{
             scaleY: { duration: 0.4, delay: node.delay },
             opacity: { duration: 0.4, delay: node.delay },
-            y: { duration: 3 + i * 0.2, repeat: Infinity, repeatType: "mirror", ease: "easeInOut", delay: node.delay + 0.5 },
+            y: {
+              duration: 3 + i * 0.2,
+              repeat: Infinity,
+              repeatType: "mirror",
+              ease: "easeInOut",
+              delay: node.delay + 0.5,
+            },
           }}
         >
           <VineNode height={node.height} />

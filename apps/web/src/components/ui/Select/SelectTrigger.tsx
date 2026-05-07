@@ -1,6 +1,7 @@
 import { ChevronDown } from "lucide-react";
 
 interface SelectTriggerProps {
+  id?: string;
   selectedLabel: string;
   hasValue: boolean;
   open: boolean;
@@ -9,6 +10,7 @@ interface SelectTriggerProps {
 }
 
 export function SelectTrigger({
+  id,
   selectedLabel,
   hasValue,
   open,
@@ -17,6 +19,7 @@ export function SelectTrigger({
 }: SelectTriggerProps) {
   return (
     <button
+      id={id}
       type="button"
       role="combobox"
       aria-haspopup="listbox"

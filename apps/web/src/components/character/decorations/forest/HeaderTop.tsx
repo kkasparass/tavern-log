@@ -20,7 +20,13 @@ export function HeaderTop() {
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: [0, 3, 0], opacity: 0.55 }}
           transition={{
-            y: { duration: 4 + i * 0.4, repeat: Infinity, repeatType: "mirror", ease: "easeInOut", delay: flower.delay },
+            y: {
+              duration: 4 + i * 0.4,
+              repeat: Infinity,
+              repeatType: "mirror",
+              ease: "easeInOut",
+              delay: flower.delay,
+            },
             opacity: { duration: 0.9, delay: flower.delay },
           }}
         >

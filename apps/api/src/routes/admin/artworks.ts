@@ -79,7 +79,10 @@ export async function adminArtworkRoutes(app: FastifyInstance) {
         try {
           await deleteS3Object(existing.imageUrl);
         } catch (err) {
-          request.log.warn({ err, artworkId }, "S3 delete failed for old artwork image, proceeding with update");
+          request.log.warn(
+            { err, artworkId },
+            "S3 delete failed for old artwork image, proceeding with update"
+          );
         }
       }
       const artwork = await prisma.artwork.update({
@@ -105,7 +108,10 @@ export async function adminArtworkRoutes(app: FastifyInstance) {
       try {
         await deleteS3Object(existing.imageUrl);
       } catch (err) {
-        request.log.warn({ err, artworkId }, "S3 delete failed for artwork, proceeding with DB delete");
+        request.log.warn(
+          { err, artworkId },
+          "S3 delete failed for artwork, proceeding with DB delete"
+        );
       }
       await prisma.artwork.delete({ where: { id: artworkId } });
       return reply.code(204).send();

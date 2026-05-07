@@ -1,17 +1,9 @@
 import { useState } from "react";
 import { CharacterStatus } from "@/lib/types";
-import { THEME_PRESETS } from "@/lib/constants";
 import { resolveTheme } from "@/lib/themes/presets";
 import { uploadFile } from "@/lib/upload";
+import type { ThemeConfig } from "@/lib/themes/types";
 import type { CharacterFormData } from "./CharacterForm";
-
-function findPresetIndex(theme: Record<string, unknown>): number {
-  const resolvedTheme = resolveTheme(theme);
-  const idx = THEME_PRESETS.findIndex(
-    (p) => p.config.colors.accent === resolvedTheme.colors.accent
-  );
-  return idx >= 0 ? idx : 0;
-}
 
 export function useCharacterForm(defaultValues?: Partial<CharacterFormData>) {
   const [name, setName] = useState(defaultValues?.name ?? "");
@@ -27,9 +19,7 @@ export function useCharacterForm(defaultValues?: Partial<CharacterFormData>) {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [isPublic, setIsPublic] = useState(defaultValues?.isPublic ?? true);
-  const [presetIndex, setPresetIndex] = useState(() =>
-    defaultValues?.theme ? findPresetIndex(defaultValues.theme) : 0
-  );
+  const [theme, setTheme] = useState<ThemeConfig>(() => resolveTheme(defaultValues?.theme ?? {}));
   const [tags, setTags] = useState<string[]>(defaultValues?.tags ?? []);
   const [tagInput, setTagInput] = useState("");
 
@@ -69,7 +59,7 @@ export function useCharacterForm(defaultValues?: Partial<CharacterFormData>) {
         personality,
         thumbnailUrl,
         isPublic,
-        theme: THEME_PRESETS[presetIndex].config,
+        theme,
         tags,
       });
     } catch (err) {
@@ -98,8 +88,8 @@ export function useCharacterForm(defaultValues?: Partial<CharacterFormData>) {
     uploadError,
     isPublic,
     setIsPublic,
-    presetIndex,
-    setPresetIndex,
+    theme,
+    setTheme,
     tags,
     tagInput,
     setTagInput,
