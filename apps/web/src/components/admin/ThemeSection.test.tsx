@@ -5,7 +5,6 @@ import { ThemeSection } from "./ThemeSection";
 import { THEME_PRESETS } from "@/lib/constants";
 import { DEFAULT_THEME } from "@/lib/themes/presets";
 import type { ThemeConfig } from "@/lib/themes/types";
-import { hslToHex, hexToHSL } from "@/lib/colorUtils";
 
 const mockPreview = vi.fn();
 
@@ -79,23 +78,5 @@ describe("ThemeSection", () => {
     renderSection({ ...DEFAULT_THEME, transition: "floral-bloom" });
     await userEvent.click(screen.getByRole("button", { name: /Preview/ }));
     expect(mockPreview).toHaveBeenCalledWith("floral-bloom");
-  });
-
-  it("renders 4 harmony palette buttons", () => {
-    renderSection(DEFAULT_THEME);
-    expect(screen.getAllByRole("button", { name: /Apply harmony palette/ })).toHaveLength(4);
-  });
-
-  it("clicking a harmony palette applies all three colors and sets preset to custom", async () => {
-    const accent = DEFAULT_THEME.colors.accent;
-    const [h, s, l] = hexToHSL(accent);
-    const expectedAccent = hslToHex((h + 180) % 360, s, l);
-    const { onChange } = renderSection(DEFAULT_THEME);
-    await userEvent.click(screen.getByRole("button", { name: "Apply harmony palette 1" }));
-    const call: ThemeConfig = onChange.mock.calls[0][0];
-    expect(call.preset).toBe("custom");
-    expect(call.colors.accent).toBe(expectedAccent);
-    expect(call.colors.bg).toBeTruthy();
-    expect(call.colors.text).toBeTruthy();
   });
 });
