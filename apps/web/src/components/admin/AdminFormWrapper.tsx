@@ -57,7 +57,5 @@ export function AdminFormWrapper({
 
   if (inline) return <div className="w-full">{fields}</div>;
 
-  return (
-    <div className="mb-6 rounded border border-white/10 bg-gray-900 p-4">{fields}</div>
-  );
+  return <div className="mb-6 rounded border border-white/10 bg-gray-900 p-4">{fields}</div>;
 }

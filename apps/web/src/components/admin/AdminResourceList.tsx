@@ -43,7 +43,12 @@ export function AdminResourceList<TItem extends { id: string }, TUpdateData>({
 }: AdminResourceListProps<TItem, TUpdateData>) {
   if (items.length === 0) return <p className="text-white/40">{emptyMessage}</p>;
 
-  const editFormProps: EditFormProps<TUpdateData> = { onSaveEdit, onCancelEdit, isSavingEdit, saveEditError };
+  const editFormProps: EditFormProps<TUpdateData> = {
+    onSaveEdit,
+    onCancelEdit,
+    isSavingEdit,
+    saveEditError,
+  };
 
   return (
     <ul className="space-y-2">

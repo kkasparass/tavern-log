@@ -26,7 +26,7 @@ function safeParseColor(hex: string): Color {
 const thumbClass =
   "h-5 w-5 rounded-full border-2 border-white shadow-md cursor-grab forced-colors:border-[Highlight]";
 
-export function ColorHarmonyPicker({ value, onChange, label }: Props) {
+export function ColorPicker({ value, onChange, label }: Props) {
   const color = safeParseColor(value);
   const [hue] = hexToHSL(value);
 

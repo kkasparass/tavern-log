@@ -9,7 +9,10 @@ interface ArtworkListProps {
   artworks: CharacterArtwork[];
   editingArtwork: CharacterArtwork | null;
   onEdit: (artwork: CharacterArtwork) => void;
-  onSaveEdit: (id: string, data: { imageUrl?: string; title?: string; caption?: string; artistCredit?: string }) => void;
+  onSaveEdit: (
+    id: string,
+    data: { imageUrl?: string; title?: string; caption?: string; artistCredit?: string }
+  ) => void;
   onCancelEdit: () => void;
   isSavingEdit: boolean;
   saveEditError: boolean;
@@ -64,7 +67,15 @@ export function ArtworkList({
             </div>
           </div>
         )}
-        renderEditForm={(artwork, p: EditFormProps<{ imageUrl?: string; title?: string; caption?: string; artistCredit?: string }>) => (
+        renderEditForm={(
+          artwork,
+          p: EditFormProps<{
+            imageUrl?: string;
+            title?: string;
+            caption?: string;
+            artistCredit?: string;
+          }>
+        ) => (
           <ArtworkForm
             inline
             initialValues={artwork}

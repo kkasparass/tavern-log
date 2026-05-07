@@ -5,8 +5,18 @@ import { AdminFormWrapper } from "./AdminFormWrapper";
 import { uploadFile } from "@/lib/upload";
 
 interface ArtworkFormProps {
-  initialValues?: { imageUrl?: string | null; title?: string | null; caption?: string | null; artistCredit?: string | null };
-  onSubmit: (data: { imageUrl: string; title?: string; caption?: string; artistCredit?: string }) => void;
+  initialValues?: {
+    imageUrl?: string | null;
+    title?: string | null;
+    caption?: string | null;
+    artistCredit?: string | null;
+  };
+  onSubmit: (data: {
+    imageUrl: string;
+    title?: string;
+    caption?: string;
+    artistCredit?: string;
+  }) => void;
   onCancel: () => void;
   isPending: boolean;
   isError: boolean;

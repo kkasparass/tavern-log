@@ -2,7 +2,12 @@
 import type { CharacterVoiceLine } from "@/lib/types";
 import { useAdminList } from "./useAdminList";
 
-type VoiceLineCreateData = { audioUrl: string; transcript: string; context?: string; order?: number };
+type VoiceLineCreateData = {
+  audioUrl: string;
+  transcript: string;
+  context?: string;
+  order?: number;
+};
 type VoiceLineUpdateData = { audioUrl?: string; transcript?: string; context?: string };
 
 export function useVoiceLinesAdmin(characterId: string) {

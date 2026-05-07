@@ -7,7 +7,10 @@ interface VoiceLineListProps {
   voiceLines: CharacterVoiceLine[];
   editingVoiceLine: CharacterVoiceLine | null;
   onEdit: (voiceLine: CharacterVoiceLine) => void;
-  onSaveEdit: (id: string, data: { audioUrl?: string; transcript?: string; context?: string }) => void;
+  onSaveEdit: (
+    id: string,
+    data: { audioUrl?: string; transcript?: string; context?: string }
+  ) => void;
   onCancelEdit: () => void;
   isSavingEdit: boolean;
   saveEditError: boolean;
@@ -43,7 +46,10 @@ export function VoiceLineList({
           <audio controls src={vl.audioUrl} className="mt-2 w-full" />
         </>
       )}
-      renderEditForm={(vl, p: EditFormProps<{ audioUrl?: string; transcript?: string; context?: string }>) => (
+      renderEditForm={(
+        vl,
+        p: EditFormProps<{ audioUrl?: string; transcript?: string; context?: string }>
+      ) => (
         <VoiceLineForm
           inline
           initialValues={vl}

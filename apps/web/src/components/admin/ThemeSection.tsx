@@ -2,7 +2,7 @@
 import { THEME_PRESETS } from "@/lib/constants";
 import { useTransition } from "@/components/transitions/TransitionProvider";
 import type { ThemeConfig, ThemePreset } from "@/lib/themes/types";
-import { ColorHarmonyPicker } from "./ColorHarmonyPicker";
+import { ColorPicker } from "./ColorPicker";
 
 type Props = {
   value: ThemeConfig;
@@ -71,17 +71,17 @@ export function ThemeSection({ value, onChange }: Props) {
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <ColorHarmonyPicker
+        <ColorPicker
           label="Background"
           value={value.colors.bg}
           onChange={(hex) => setColor("bg", hex)}
         />
-        <ColorHarmonyPicker
+        <ColorPicker
           label="Text"
           value={value.colors.text}
           onChange={(hex) => setColor("text", hex)}
         />
-        <ColorHarmonyPicker
+        <ColorPicker
           label="Accent"
           value={value.colors.accent}
           onChange={(hex) => setColor("accent", hex)}

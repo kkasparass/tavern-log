@@ -7,7 +7,10 @@ interface TimelineEventListProps {
   events: CharacterTimelineEvent[];
   editingEvent: CharacterTimelineEvent | null;
   onEdit: (event: CharacterTimelineEvent) => void;
-  onSaveEdit: (id: string, data: { title?: string; description?: string; dateLabel?: string }) => void;
+  onSaveEdit: (
+    id: string,
+    data: { title?: string; description?: string; dateLabel?: string }
+  ) => void;
   onCancelEdit: () => void;
   isSavingEdit: boolean;
   saveEditError: boolean;
@@ -39,12 +42,13 @@ export function TimelineEventList({
         <>
           {event.dateLabel && <p className="text-sm text-white/40">{event.dateLabel}</p>}
           <p className="font-medium text-white">{event.title}</p>
-          {event.description && (
-            <p className="mt-0.5 text-sm text-white/60">{event.description}</p>
-          )}
+          {event.description && <p className="mt-0.5 text-sm text-white/60">{event.description}</p>}
         </>
       )}
-      renderEditForm={(event, p: EditFormProps<{ title?: string; description?: string; dateLabel?: string }>) => (
+      renderEditForm={(
+        event,
+        p: EditFormProps<{ title?: string; description?: string; dateLabel?: string }>
+      ) => (
         <TimelineEventForm
           inline
           initialValues={event}

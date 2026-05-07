@@ -8,7 +8,13 @@ vi.mock("@/lib/upload", () => ({
 }));
 
 vi.mock("./FileUpload", () => ({
-  FileUpload: ({ onFileSelect, label }: { onFileSelect: (file: File | null) => void; label?: string }) => (
+  FileUpload: ({
+    onFileSelect,
+    label,
+  }: {
+    onFileSelect: (file: File | null) => void;
+    label?: string;
+  }) => (
     <button onClick={() => onFileSelect(new File(["content"], "img.png", { type: "image/jpeg" }))}>
       {label ?? "Upload file"}
     </button>
@@ -124,7 +130,12 @@ describe("ArtworkForm", () => {
     render(
       <ArtworkForm
         {...defaultProps}
-        initialValues={{ imageUrl: "https://img.png", title: "Old Title", caption: "Old caption", artistCredit: "Old Artist" }}
+        initialValues={{
+          imageUrl: "https://img.png",
+          title: "Old Title",
+          caption: "Old caption",
+          artistCredit: "Old Artist",
+        }}
       />
     );
     expect(screen.getByPlaceholderText("Artwork title")).toHaveValue("Old Title");
@@ -134,11 +145,7 @@ describe("ArtworkForm", () => {
 
   it("shows 'Failed to update artwork.' error message when editing", () => {
     render(
-      <ArtworkForm
-        {...defaultProps}
-        initialValues={{ imageUrl: "https://img.png" }}
-        isError
-      />
+      <ArtworkForm {...defaultProps} initialValues={{ imageUrl: "https://img.png" }} isError />
     );
     expect(screen.getByText("Failed to update artwork.")).toBeInTheDocument();
   });

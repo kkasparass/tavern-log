@@ -117,9 +117,8 @@ describe("CharacterList", () => {
     // Dialog is open — two Delete buttons exist (list row + dialog confirm); click the dialog's
     const deleteButtons = screen.getAllByRole("button", { name: "Delete" });
     await userEvent.click(deleteButtons[deleteButtons.length - 1]);
-    expect(fetch).toHaveBeenCalledWith(
-      `/api/admin/characters/${mockCharacterListItem.id}`,
-      { method: "DELETE" }
-    );
+    expect(fetch).toHaveBeenCalledWith(`/api/admin/characters/${mockCharacterListItem.id}`, {
+      method: "DELETE",
+    });
   });
 });

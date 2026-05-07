@@ -12,8 +12,8 @@ vi.mock("@/components/transitions/TransitionProvider", () => ({
   useTransition: () => ({ preview: mockPreview }),
 }));
 
-vi.mock("./ColorHarmonyPicker", () => ({
-  ColorHarmonyPicker: ({
+vi.mock("./ColorPicker", () => ({
+  ColorPicker: ({
     value,
     onChange,
     label,
