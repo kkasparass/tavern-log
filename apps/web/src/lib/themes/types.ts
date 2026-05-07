@@ -1,11 +1,19 @@
 export type DecorationSetId = "forest" | "none";
 export type TransitionId = "floral-bloom" | "bells-flower";
-export type DecorationSlotName =
-  | "page-edge-left"
-  | "page-edge-right"
-  | "header-top"
-  | "tabs-top"
-  | "background";
+
+export enum Phase {
+  Idle = "idle",
+  HoverPreview = "hover-preview",
+  Covering = "covering",
+  Uncovering = "uncovering",
+}
+export enum DecorationSlotName {
+  PageEdgeLeft = "page-edge-left",
+  PageEdgeRight = "page-edge-right",
+  HeaderTop = "header-top",
+  TabsTop = "tabs-top",
+  Background = "background",
+}
 
 export type ThemeColors = {
   bg: string;

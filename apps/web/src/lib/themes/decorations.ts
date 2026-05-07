@@ -1,5 +1,6 @@
 import type { ComponentType } from "react";
-import type { DecorationSetId, DecorationSlotName } from "./types";
+import { DecorationSlotName } from "./types";
+import type { DecorationSetId } from "./types";
 import { PageEdgeLeft } from "@/components/character/decorations/forest/PageEdgeLeft";
 import { PageEdgeRight } from "@/components/character/decorations/forest/PageEdgeRight";
 import { HeaderTop } from "@/components/character/decorations/forest/HeaderTop";
@@ -9,10 +10,10 @@ type DecorationRegistry = Record<DecorationSetId, Partial<Record<DecorationSlotN
 
 const registry: DecorationRegistry = {
   forest: {
-    "page-edge-left": PageEdgeLeft,
-    "page-edge-right": PageEdgeRight,
-    "header-top": HeaderTop,
-    "tabs-top": TabsTop,
+    [DecorationSlotName.PageEdgeLeft]: PageEdgeLeft,
+    [DecorationSlotName.PageEdgeRight]: PageEdgeRight,
+    [DecorationSlotName.HeaderTop]: HeaderTop,
+    [DecorationSlotName.TabsTop]: TabsTop,
   },
   none: {},
 };

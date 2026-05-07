@@ -1,6 +1,7 @@
 "use client";
 import { NavTabs } from "@/components/ui/NavTabs";
 import { DecorationSlot } from "@/components/character/DecorationSlot";
+import { DecorationSlotName } from "@/lib/themes/types";
 import type { DecorationSetId } from "@/lib/themes/types";
 
 const getTabs = (slug: string) => [
@@ -20,7 +21,7 @@ export function CharacterTabs({
 }) {
   return (
     <div className="relative">
-      <DecorationSlot slot="tabs-top" decorationSet={decorationSet} />
+      <DecorationSlot slot={DecorationSlotName.TabsTop} decorationSet={decorationSet} />
       <NavTabs
         tabs={getTabs(slug)}
         className="mt-6 flex gap-1 overflow-x-auto border-b border-white/10 px-8"

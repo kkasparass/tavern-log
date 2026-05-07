@@ -33,7 +33,7 @@ export const THEME_PRESETS: ThemePreset[] = [
     label: "Slate",
     config: {
       preset: "custom",
-      colors: { bg: "#111827", text: "#f3f4f6", accent: "#3b82f6" },
+      colors: { bg: "white", text: "#f3f4f6", accent: "#3b82f6" },
       bgPattern: "none",
       transition: null,
       decorations: null,
@@ -55,7 +55,7 @@ export const THEME_PRESETS: ThemePreset[] = [
       preset: "custom",
       colors: { bg: "#1a0f0f", text: "#f0d0d0", accent: "#dc2626" },
       bgPattern: "none",
-      transition: null,
+      transition: "floral-bloom",
       decorations: null,
     },
   },

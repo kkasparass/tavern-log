@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import { DecorationSlot } from "./DecorationSlot";
+import { DecorationSlotName } from "@/lib/themes/types";
 
 vi.mock("@/lib/themes/decorations", () => ({
   getDecoration: vi.fn(),
@@ -15,32 +16,32 @@ function StubComponent() {
 
 describe("DecorationSlot", () => {
   it("renders nothing when decorationSet is null", () => {
-    const { container } = render(<DecorationSlot slot="header-top" decorationSet={null} />);
+    const { container } = render(<DecorationSlot slot={DecorationSlotName.HeaderTop} decorationSet={null} />);
     expect(container).toBeEmptyDOMElement();
     expect(mockGetDecoration).not.toHaveBeenCalled();
   });
 
   it("renders nothing when getDecoration returns null", () => {
     mockGetDecoration.mockReturnValue(null);
-    const { container } = render(<DecorationSlot slot="background" decorationSet="forest" />);
+    const { container } = render(<DecorationSlot slot={DecorationSlotName.Background} decorationSet="forest" />);
     expect(container).toBeEmptyDOMElement();
   });
 
   it("renders the component returned by getDecoration", async () => {
     mockGetDecoration.mockReturnValue(StubComponent);
-    render(<DecorationSlot slot="header-top" decorationSet="forest" />);
+    render(<DecorationSlot slot={DecorationSlotName.HeaderTop} decorationSet="forest" />);
     expect(await screen.findByTestId("decoration")).toBeInTheDocument();
   });
 
   it("calls getDecoration with the correct set and slot", () => {
     mockGetDecoration.mockReturnValue(null);
-    render(<DecorationSlot slot="tabs-top" decorationSet="forest" />);
-    expect(mockGetDecoration).toHaveBeenCalledWith("forest", "tabs-top");
+    render(<DecorationSlot slot={DecorationSlotName.TabsTop} decorationSet="forest" />);
+    expect(mockGetDecoration).toHaveBeenCalledWith("forest", DecorationSlotName.TabsTop);
   });
 
   it("renders nothing for 'none' decoration set when getDecoration returns null", () => {
     mockGetDecoration.mockReturnValue(null);
-    const { container } = render(<DecorationSlot slot="page-edge-left" decorationSet="none" />);
+    const { container } = render(<DecorationSlot slot={DecorationSlotName.PageEdgeLeft} decorationSet="none" />);
     expect(container).toBeEmptyDOMElement();
   });
 });

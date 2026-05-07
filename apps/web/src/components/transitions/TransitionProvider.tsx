@@ -1,9 +1,8 @@
 "use client";
 import { createContext, useCallback, useContext, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Phase } from "@/lib/themes/types";
 import type { ThemeConfig, TransitionId } from "@/lib/themes/types";
-
-type Phase = "idle" | "hover-preview" | "covering" | "uncovering";
 
 type TransitionContextValue = {
   phase: Phase;
@@ -27,11 +26,11 @@ export function useTransition(): TransitionContextValue {
 
 export function TransitionProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const [phase, setPhase] = useState<Phase>("idle");
+  const [phase, setPhase] = useState<Phase>(Phase.Idle);
   const [hoveredCharacter, setHoveredCharacter] = useState<ThemeConfig | null>(null);
   const [activeTransition, setActiveTransition] = useState<TransitionId | null>(null);
   // phaseRef lets callbacks read current phase without stale closure
-  const phaseRef = useRef<Phase>("idle");
+  const phaseRef = useRef<Phase>(Phase.Idle);
   const pendingHref = useRef<string | null>(null);
   // routerRef keeps callbacks stable even if router object identity changes across renders
   const routerRef = useRef(router);
@@ -39,17 +38,19 @@ export function TransitionProvider({ children }: { children: React.ReactNode }) 
 
   const setHoveredCharacterFn = useCallback((theme: ThemeConfig) => {
     setHoveredCharacter(theme);
-    if (phaseRef.current === "idle") {
-      phaseRef.current = "hover-preview";
-      setPhase("hover-preview");
+    if (phaseRef.current === Phase.Idle) {
+      setActiveTransition(theme.transition);
+      phaseRef.current = Phase.HoverPreview;
+      setPhase(Phase.HoverPreview);
     }
   }, []);
 
   const clearHoveredCharacter = useCallback(() => {
-    if (phaseRef.current !== "hover-preview") return;
+    if (phaseRef.current !== Phase.HoverPreview) return;
+    setActiveTransition(null);
     setHoveredCharacter(null);
-    phaseRef.current = "idle";
-    setPhase("idle");
+    phaseRef.current = Phase.Idle;
+    setPhase(Phase.Idle);
   }, []);
 
   const navigate = useCallback((href: string, transitionId: TransitionId | null) => {
@@ -59,14 +60,14 @@ export function TransitionProvider({ children }: { children: React.ReactNode }) 
     }
     pendingHref.current = href;
     setActiveTransition(transitionId);
-    phaseRef.current = "covering";
-    setPhase("covering");
+    phaseRef.current = Phase.Covering;
+    setPhase(Phase.Covering);
   }, []);
 
   const preview = useCallback((transitionId: TransitionId) => {
     setActiveTransition(transitionId);
-    phaseRef.current = "covering";
-    setPhase("covering");
+    phaseRef.current = Phase.Covering;
+    setPhase(Phase.Covering);
   }, []);
 
   const onCoverComplete = useCallback(() => {
@@ -74,15 +75,15 @@ export function TransitionProvider({ children }: { children: React.ReactNode }) 
       routerRef.current.push(pendingHref.current);
       pendingHref.current = null;
     }
-    phaseRef.current = "uncovering";
-    setPhase("uncovering");
+    phaseRef.current = Phase.Uncovering;
+    setPhase(Phase.Uncovering);
   }, []);
 
   const onUncoverComplete = useCallback(() => {
     setHoveredCharacter(null);
     setActiveTransition(null);
-    phaseRef.current = "idle";
-    setPhase("idle");
+    phaseRef.current = Phase.Idle;
+    setPhase(Phase.Idle);
   }, []);
 
   return (

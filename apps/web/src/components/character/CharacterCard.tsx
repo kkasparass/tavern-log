@@ -1,12 +1,21 @@
+"use client";
 import Image from "next/image";
-import Link from "next/link";
 import type { CharacterPreview } from "@/lib/types";
+import { resolveTheme } from "@/lib/themes/presets";
+import { TransitionLink } from "@/components/transitions/TransitionLink";
+import { useTransition } from "@/components/transitions/TransitionProvider";
 
-export function CharacterCard({ slug, name, system, thumbnailUrl, tags }: CharacterPreview) {
+export function CharacterCard({ slug, name, system, thumbnailUrl, tags, theme }: CharacterPreview) {
+  const { setHoveredCharacter, clearHoveredCharacter } = useTransition();
+  const resolvedTheme = resolveTheme(theme);
+
   return (
-    <Link
+    <TransitionLink
       href={`/characters/${slug}`}
+      transitionId={resolvedTheme.transition}
       className="group block overflow-hidden rounded-lg border border-white/10 bg-white/5 transition-colors hover:bg-white/10"
+      onMouseEnter={() => setHoveredCharacter(resolvedTheme)}
+      onMouseLeave={clearHoveredCharacter}
     >
       <div className="relative aspect-square bg-white/10">
         {thumbnailUrl ? (
@@ -30,6 +39,6 @@ export function CharacterCard({ slug, name, system, thumbnailUrl, tags }: Charac
           </ul>
         )}
       </div>
-    </Link>
+    </TransitionLink>
   );
 }

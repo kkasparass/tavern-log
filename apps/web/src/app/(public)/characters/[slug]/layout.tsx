@@ -3,6 +3,7 @@ import type { Character } from "@/lib/types";
 import { resolveTheme } from "@/lib/themes/presets";
 import { CharacterTabs } from "@/components/character/CharacterTabs";
 import { DecorationSlot } from "@/components/character/DecorationSlot";
+import { DecorationSlotName } from "@/lib/themes/types";
 import { PageTransition } from "@/components/character/PageTransition";
 
 export default async function CharacterLayout({
@@ -33,11 +34,11 @@ export default async function CharacterLayout({
         } as React.CSSProperties
       }
     >
-      <DecorationSlot slot="page-edge-left" decorationSet={theme.decorations} />
-      <DecorationSlot slot="page-edge-right" decorationSet={theme.decorations} />
+      <DecorationSlot slot={DecorationSlotName.PageEdgeLeft} decorationSet={theme.decorations} />
+      <DecorationSlot slot={DecorationSlotName.PageEdgeRight} decorationSet={theme.decorations} />
 
       <header className="relative px-4 pt-4 sm:px-8 sm:pt-8">
-        <DecorationSlot slot="header-top" decorationSet={theme.decorations} />
+        <DecorationSlot slot={DecorationSlotName.HeaderTop} decorationSet={theme.decorations} />
         <h1 className="text-3xl font-bold">{character.name}</h1>
         <p className="mt-1 text-sm opacity-60">
           {character.system}
