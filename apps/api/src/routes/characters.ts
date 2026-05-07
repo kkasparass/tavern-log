@@ -25,6 +25,7 @@ export async function characterRoutes(app: FastifyInstance) {
       name: rest.name,
       system: rest.system,
       thumbnailUrl: rest.thumbnailUrl,
+      theme: rest.theme,
       tags: tags.map((t) => t.tag),
     }));
   });
