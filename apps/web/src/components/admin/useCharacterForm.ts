@@ -1,11 +1,15 @@
 import { useState } from "react";
-import { CharacterStatus, type CharacterTheme } from "@/lib/types";
+import { CharacterStatus } from "@/lib/types";
 import { THEME_PRESETS } from "@/lib/constants";
+import { resolveTheme } from "@/lib/themes/presets";
 import { uploadFile } from "@/lib/upload";
 import type { CharacterFormData } from "./CharacterForm";
 
-function findPresetIndex(theme: CharacterTheme): number {
-  const idx = THEME_PRESETS.findIndex((p) => p.theme.accentColor === theme.accentColor);
+function findPresetIndex(theme: Record<string, unknown>): number {
+  const resolvedTheme = resolveTheme(theme);
+  const idx = THEME_PRESETS.findIndex(
+    (p) => p.config.colors.accent === resolvedTheme.colors.accent
+  );
   return idx >= 0 ? idx : 0;
 }
 
@@ -57,15 +61,15 @@ export function useCharacterForm(defaultValues?: Partial<CharacterFormData>) {
         thumbnailUrl = await uploadFile(pendingThumbnailFile);
       }
       onSubmit({
-      name,
-      system,
-      campaign,
-      status,
-      bio,
-      personality,
+        name,
+        system,
+        campaign,
+        status,
+        bio,
+        personality,
         thumbnailUrl,
         isPublic,
-        theme: THEME_PRESETS[presetIndex].theme,
+        theme: THEME_PRESETS[presetIndex].config,
         tags,
       });
     } catch (err) {

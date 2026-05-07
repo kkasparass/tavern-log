@@ -1,5 +1,5 @@
 "use client";
-import { CharacterStatus, type CharacterTheme } from "@/lib/types";
+import { CharacterStatus } from "@/lib/types";
 import { characterStatusLabel, THEME_PRESETS } from "@/lib/constants";
 import { useCharacterForm } from "./useCharacterForm";
 import { FileUpload } from "./FileUpload";
@@ -13,7 +13,7 @@ export type CharacterFormData = {
   personality: string;
   thumbnailUrl: string;
   isPublic: boolean;
-  theme: CharacterTheme;
+  theme: Record<string, unknown>;
   tags: string[];
 };
 
@@ -199,7 +199,7 @@ export function CharacterForm({
             >
               <span
                 className="h-3 w-3 shrink-0 rounded-full"
-                style={{ backgroundColor: preset.theme.accentColor }}
+                style={{ backgroundColor: preset.config.colors.accent }}
               />
               {preset.label}
             </button>
