@@ -23,6 +23,7 @@
     "lucide-react": "^1.7.0",
     "next": "14.2.35",
     "react": "^18",
+    "react-aria-components": "^1.17.0",
     "react-dom": "^18"
   },
   "devDependencies": {

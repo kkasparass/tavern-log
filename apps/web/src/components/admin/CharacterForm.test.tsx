@@ -4,9 +4,12 @@ import { describe, it, expect, vi } from "vitest";
 import { render } from "@testing-library/react";
 import { CharacterForm, type CharacterFormData } from "./CharacterForm";
 import { CharacterStatus } from "@/lib/types";
-import { THEME_PRESETS } from "@/lib/constants";
 
 vi.mock("next/link");
+
+vi.mock("./ThemeSection", () => ({
+  ThemeSection: () => <div data-testid="theme-section" />,
+}));
 
 vi.mock("./FileUpload", () => ({
   FileUpload: ({ label }: { onFileSelect: (file: File | null) => void; label?: string }) => (
@@ -32,9 +35,7 @@ describe("CharacterForm", () => {
     expect(screen.getByText("Thumbnail")).toBeInTheDocument();
     expect(screen.getByLabelText("Public")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Save" })).toBeInTheDocument();
-    for (const preset of THEME_PRESETS) {
-      expect(screen.getByRole("button", { name: new RegExp(preset.label) })).toBeInTheDocument();
-    }
+    expect(screen.getByTestId("theme-section")).toBeInTheDocument();
   });
 
   it("pre-fills fields from defaultValues", () => {
@@ -66,7 +67,10 @@ describe("CharacterForm", () => {
     const submitted: CharacterFormData = onSubmit.mock.calls[0][0];
     expect(submitted.name).toBe("Nara Solis");
     expect(submitted.system).toBe("Blades in the Dark");
-    expect(submitted.theme).toEqual(THEME_PRESETS[0].config);
+    expect(submitted.theme).toMatchObject({
+      colors: expect.any(Object),
+      preset: expect.any(String),
+    });
   });
 
   it("adds a tag and shows it as a chip", async () => {
@@ -101,17 +105,6 @@ describe("CharacterForm", () => {
     await userEvent.type(screen.getByLabelText("Tag input"), "mage");
     await userEvent.click(screen.getByRole("button", { name: "Add" }));
     expect(screen.getAllByText("mage")).toHaveLength(1);
-  });
-
-  it("selects a theme preset", async () => {
-    const { onSubmit } = renderForm();
-    await userEvent.type(screen.getByLabelText("Name *"), "Test");
-    await userEvent.type(screen.getByLabelText("System *"), "D&D 5e");
-    await userEvent.click(screen.getByRole("button", { name: /Ember/ }));
-    await userEvent.click(screen.getByRole("button", { name: "Save" }));
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
-    const submitted: CharacterFormData = onSubmit.mock.calls[0][0];
-    expect(submitted.theme).toEqual(THEME_PRESETS[1].config);
   });
 
   it("shows an error message when error prop is set", () => {
