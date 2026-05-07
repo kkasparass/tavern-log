@@ -2,12 +2,29 @@
 import { THEME_PRESETS } from "@/lib/constants";
 import { useTransition } from "@/components/transitions/TransitionProvider";
 import type { ThemeConfig, ThemePreset } from "@/lib/themes/types";
+import { hexToHSL, hslToHex } from "@/lib/colorUtils";
 import { ColorHarmonyPicker } from "./ColorHarmonyPicker";
 
 type Props = {
   value: ThemeConfig;
   onChange: (theme: ThemeConfig) => void;
 };
+
+type Palette = { bg: string; text: string; accent: string };
+
+const HARMONY_OFFSETS = [180, 30, 120, 150];
+
+function getHarmonyPalettes(accentHex: string): Palette[] {
+  const [h, s, l] = hexToHSL(accentHex);
+  return HARMONY_OFFSETS.map((offset) => {
+    const hue = (h + offset) % 360;
+    return {
+      accent: hslToHex(hue, s, l),
+      bg: hslToHex(hue, Math.min(s * 0.4, 0.3), 0.07),
+      text: hslToHex(hue, Math.min(s * 0.2, 0.15), 0.88),
+    };
+  });
+}
 
 function findMatchingPreset(theme: ThemeConfig): ThemePreset | null {
   return (
@@ -30,6 +47,7 @@ const labelClass = "text-sm text-white/70";
 export function ThemeSection({ value, onChange }: Props) {
   const { preview } = useTransition();
   const activePreset = findMatchingPreset(value);
+  const harmonyPalettes = getHarmonyPalettes(value.colors.accent);
 
   function setColor(field: "bg" | "text" | "accent", hex: string) {
     onChange({ ...value, colors: { ...value.colors, [field]: hex }, preset: "custom" });
@@ -86,6 +104,34 @@ export function ThemeSection({ value, onChange }: Props) {
           value={value.colors.accent}
           onChange={(hex) => setColor("accent", hex)}
         />
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <span className={labelClass}>Harmony suggestions</span>
+        <div className="flex gap-2">
+          {harmonyPalettes.map((palette, i) => (
+            <button
+              key={i}
+              type="button"
+              aria-label={`Apply harmony palette ${i + 1}`}
+              onClick={() => onChange({ ...value, colors: palette, preset: "custom" })}
+              className="flex items-center gap-1 rounded border border-white/10 px-2 py-1.5 transition-colors hover:border-white/30"
+            >
+              <span
+                className="h-4 w-4 rounded-full border border-white/10"
+                style={{ backgroundColor: palette.bg }}
+              />
+              <span
+                className="h-4 w-4 rounded-full border border-white/10"
+                style={{ backgroundColor: palette.text }}
+              />
+              <span
+                className="h-4 w-4 rounded-full border border-white/10"
+                style={{ backgroundColor: palette.accent }}
+              />
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
