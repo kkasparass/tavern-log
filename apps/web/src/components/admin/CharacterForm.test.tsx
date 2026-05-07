@@ -66,7 +66,7 @@ describe("CharacterForm", () => {
     const submitted: CharacterFormData = onSubmit.mock.calls[0][0];
     expect(submitted.name).toBe("Nara Solis");
     expect(submitted.system).toBe("Blades in the Dark");
-    expect(submitted.theme).toEqual(THEME_PRESETS[0].theme);
+    expect(submitted.theme).toEqual(THEME_PRESETS[0].config);
   });
 
   it("adds a tag and shows it as a chip", async () => {
@@ -111,7 +111,7 @@ describe("CharacterForm", () => {
     await userEvent.click(screen.getByRole("button", { name: "Save" }));
     await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
     const submitted: CharacterFormData = onSubmit.mock.calls[0][0];
-    expect(submitted.theme).toEqual(THEME_PRESETS[1].theme);
+    expect(submitted.theme).toEqual(THEME_PRESETS[1].config);
   });
 
   it("shows an error message when error prop is set", () => {

@@ -1,6 +1,8 @@
 import { notFound } from "next/navigation";
 import type { Character } from "@/lib/types";
+import { resolveTheme } from "@/lib/themes/presets";
 import { CharacterTabs } from "@/components/character/CharacterTabs";
+import { DecorationSlot } from "@/components/character/DecorationSlot";
 import { PageTransition } from "@/components/character/PageTransition";
 
 export default async function CharacterLayout({
@@ -16,22 +18,26 @@ export default async function CharacterLayout({
   if (!res.ok) notFound();
   const character: Character = await res.json();
 
-  const { bgColor = "#1a1a2e", textColor = "#e0e0e0", accentColor = "#7c3aed" } = character.theme;
+  const theme = resolveTheme(character.theme);
 
   return (
     <div
-      className="flex-1"
+      className="relative flex-1"
       style={
         {
-          "--theme-bg": bgColor,
-          "--theme-text": textColor,
-          "--theme-accent": accentColor,
+          "--theme-bg": theme.colors.bg,
+          "--theme-text": theme.colors.text,
+          "--theme-accent": theme.colors.accent,
           backgroundColor: "var(--theme-bg)",
           color: "var(--theme-text)",
         } as React.CSSProperties
       }
     >
-      <header className="px-4 pt-4 sm:px-8 sm:pt-8">
+      <DecorationSlot slot="page-edge-left" decorationSet={theme.decorations} />
+      <DecorationSlot slot="page-edge-right" decorationSet={theme.decorations} />
+
+      <header className="relative px-4 pt-4 sm:px-8 sm:pt-8">
+        <DecorationSlot slot="header-top" decorationSet={theme.decorations} />
         <h1 className="text-3xl font-bold">{character.name}</h1>
         <p className="mt-1 text-sm opacity-60">
           {character.system}
@@ -42,7 +48,7 @@ export default async function CharacterLayout({
         </span>
       </header>
 
-      <CharacterTabs slug={params.slug} />
+      <CharacterTabs slug={params.slug} decorationSet={theme.decorations} />
 
       <main className="p-4 sm:p-8">
         <PageTransition>{children}</PageTransition>

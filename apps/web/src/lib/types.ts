@@ -4,13 +4,7 @@ export enum CharacterStatus {
   DECEASED = "DECEASED",
 }
 
-export type CharacterTheme = {
-  bgColor?: string;
-  textColor?: string;
-  accentColor?: string;
-  bgPattern?: string;
-  transition?: string;
-};
+export type { ThemeConfig as CharacterTheme } from "./themes/types";
 
 export type CharacterPreview = {
   id: string;
@@ -32,7 +26,7 @@ export type AdminCharacterDetail = {
   personality: string | null;
   thumbnailUrl: string | null;
   isPublic: boolean;
-  theme: CharacterTheme;
+  theme: Record<string, unknown>;
   tags: string[];
 };
 
@@ -90,7 +84,7 @@ export type Character = {
   bio: string | null;
   personality: string | null;
   thumbnailUrl: string | null;
-  theme: CharacterTheme;
+  theme: Record<string, unknown>;
   tags: string[];
   stories: CharacterStory[];
   voiceLines: CharacterVoiceLine[];
