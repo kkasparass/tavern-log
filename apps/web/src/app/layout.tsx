@@ -20,7 +20,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Providers>
           <TransitionProvider>
             <Header />
-            <div className="relative flex-1 overflow-hidden [container-type:size]">
+            <div className="relative flex-1 overflow-clip [container-type:size]">
               <div className="absolute inset-0 flex flex-col overflow-y-auto overflow-x-hidden">
                 {children}
               </div>
