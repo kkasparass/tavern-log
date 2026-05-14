@@ -1,16 +1,11 @@
 "use client";
-import { useAnimate, stagger } from "framer-motion";
+import { useAnimate } from "framer-motion";
 import { useEffect, useState } from "react";
-import { BellsFlowerIcon } from "@/components/ui/icons/BellsFlowerIcon";
 import { GrassIcon } from "@/components/ui/icons/GrassIcon";
 import { useTransition } from "./TransitionProvider";
 import { Phase, type ThemeConfig } from "@/lib/themes/types";
 import { BellsFlowerIconV2 } from "../ui/icons/BellsFlowerIconV2";
 import { FernBranchIcon } from "../ui/icons/FernBranchIcon";
-
-// Animation Map:
-// Bell flower rotation: -60 -> -40 hold for hover -> 0
-// petals rotation: -60 -> 0, 5, 0 hold for hover -> -60, 0, -5, 0
 
 type FlowerConfig = {
   side: "left" | "right";
@@ -30,11 +25,11 @@ async function animationSetup(animate: AnimateFn, _config: FlowerConfig) {
     { rotate: 180, transformOrigin: "top center" },
     { duration: 0 }
   );
-  // await animate(
-  //   "#segmented-bulb-1, #segmented-bulb-2",
-  //   { y: [0, -10, 3, 0] },
-  //   { duration: 0.5, delay: stagger(0.1, { startDelay: 0.1 }), ease: "easeInOut" }
-  // );
+  await animate(
+    ".fern-branch",
+    { rotate: 90, scaleX: -1, transformOrigin: "top right", translateX: "-20vw" },
+    { duration: 0 }
+  );
 }
 
 async function animateFlowerIn(animate: AnimateFn, _config: FlowerConfig) {
@@ -46,34 +41,23 @@ async function animateFlowerIn(animate: AnimateFn, _config: FlowerConfig) {
       { rotate: [150, 60, 0, 15, 0, 10] },
       { duration: 1, ease: "easeIn" }
     ),
+    animate(".fern-branch", { rotate: 0 }, { type: "spring", bounce: 0.25, duration: 1.5 }),
   ]);
-
-  // animate("#background-leaf", { rotate: [0, 6, -3, 0] }, { duration: 0.7, ease: "easeInOut" });
-  // animate(
-  //   "#stem-leaf",
-  //   { rotate: [0, -10, 5, 0] },
-  //   { duration: 0.6, delay: 0.1, ease: "easeInOut" }
-  // );
-  // animate(
-  //   "#flower-bulb-1, #flower-bulb-2, #flower-bulb-3, #flower-bulb-4",
-  //   { y: [0, -14, 4, 0] },
-  //   { duration: 0.55, delay: stagger(0.08), ease: "easeInOut" }
-  // );
-  // await animate(
-  //   "#segmented-bulb-1, #segmented-bulb-2",
-  //   { y: [0, -10, 3, 0] },
-  //   { duration: 0.5, delay: stagger(0.1, { startDelay: 0.1 }), ease: "easeInOut" }
-  // );
 }
 
 async function animatePreviewIn(animate: AnimateFn, _config: FlowerConfig) {
   await Promise.all([
-    animate(".flower-group", { x: "0vw" }, SPRING_PEEK),
+    animate(".flower-group", { x: "-35vw" }, SPRING_PEEK),
     animate(".bell-flower", { rotate: -40 }, SPRING_PEEK),
     animate(
       "#bellsFlowerV2_flower-bulb-1, #bellsFlowerV2_flower-bulb-2, #bellsFlowerV2_flower-bulb-3, #bellsFlowerV2_flower-bulb-4, #bellsFlowerV2_segmented-bulb-1, #bellsFlowerV2_segmented-bulb-2",
       { rotate: [180, 0, 60, 30, 60] },
       { duration: 1.5, ease: "easeIn", delay: 0.5 }
+    ),
+    animate(
+      ".fern-branch",
+      { rotate: 40 },
+      { type: "spring", bounce: 0.25, duration: 1.5, delay: 0.5 }
     ),
   ]);
 }
@@ -163,7 +147,7 @@ export function BellsFlowerOverlay({ theme }: { theme: ThemeConfig }) {
           </div>
         </div>
         {/* fern branch — anchored top-left */}
-        <div className="absolute left-0 top-0">
+        <div className="absolute left-0 top-0" style={{ top: "2cqh" }}>
           <div className="flower-group" style={{ transform: "translateX(-110vw)" }}>
             <FernBranchIcon
               className="fern-branch"
@@ -171,7 +155,6 @@ export function BellsFlowerOverlay({ theme }: { theme: ThemeConfig }) {
               width="auto"
               color={theme.colors.accent}
               secColor={theme.colors.text}
-              style={{ transform: "scaleX(-1)" }}
             />
           </div>
         </div>
@@ -201,7 +184,7 @@ export function BellsFlowerOverlay({ theme }: { theme: ThemeConfig }) {
           </div>
         </div>
         {/* fern branch — anchored top-left */}
-        <div className="absolute left-0 top-0">
+        <div className="absolute left-0 top-0" style={{ top: "2cqh" }}>
           <div className="flower-group" style={{ transform: "translateX(-110vw)" }}>
             <FernBranchIcon
               className="fern-branch"
@@ -209,7 +192,6 @@ export function BellsFlowerOverlay({ theme }: { theme: ThemeConfig }) {
               width="auto"
               color={theme.colors.accent}
               secColor={theme.colors.text}
-              style={{ transform: "scaleX(-1)" }}
             />
           </div>
         </div>
