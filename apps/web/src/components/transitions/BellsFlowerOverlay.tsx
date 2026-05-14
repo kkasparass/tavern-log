@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import { useAnimate } from "framer-motion";
 import { useEffect, useState } from "react";
@@ -109,6 +110,7 @@ export function BellsFlowerOverlay({ theme }: { theme: ThemeConfig }) {
 
   useEffect(() => {
     runSetup(animateLeft, animateRight, () => setHasCompletedSetup(true));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
