@@ -1,59 +1,202 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
-import { motion } from "framer-motion";
-import { BellsFlowerIcon } from "@/components/ui/icons/BellsFlowerIcon";
+import { useAnimate } from "framer-motion";
+import { useEffect, useState } from "react";
+import { GrassIcon } from "@/components/ui/icons/GrassIcon";
 import { useTransition } from "./TransitionProvider";
 import { Phase, type ThemeConfig } from "@/lib/themes/types";
+import { BellsFlowerIconV2 } from "../ui/icons/BellsFlowerIconV2";
+import { FernBranchIcon } from "../ui/icons/FernBranchIcon";
 
-function flowerAnimate(phase: Phase) {
-  if (phase === Phase.HoverPreview) return { x: "-60vw" };
-  if (phase === Phase.Covering) return { x: "0vw" };
-  return { x: "-120vw" }; // uncovering — exit off-screen
+type FlowerConfig = {
+  side: "left" | "right";
+};
+
+const FLOWERS: FlowerConfig[] = [{ side: "left" }, { side: "right" }];
+
+type AnimateFn = ReturnType<typeof useAnimate>[1];
+
+const SPRING_IN = { type: "spring", bounce: 0.3, duration: 0.8 } as const;
+const SPRING_PEEK = { type: "spring", bounce: 0.25, duration: 1.5 } as const;
+
+async function animationSetup(animate: AnimateFn, _config: FlowerConfig) {
+  await animate(".bell-flower", { rotate: -90 }, { duration: 0 });
+  await animate(
+    "#bellsFlowerV2_flower-bulb-1, #bellsFlowerV2_flower-bulb-2, #bellsFlowerV2_flower-bulb-3, #bellsFlowerV2_flower-bulb-4, #bellsFlowerV2_segmented-bulb-1, #bellsFlowerV2_segmented-bulb-2",
+    { rotate: 180, transformOrigin: "top center" },
+    { duration: 0 }
+  );
+  await animate(
+    ".fern-branch",
+    { rotate: 90, scaleX: -1, transformOrigin: "top right", translateX: "-20vw" },
+    { duration: 0 }
+  );
 }
 
-function flowerTransition(phase: Phase) {
-  if (phase === Phase.Covering) return { type: "spring", bounce: 0.2, duration: 0.7 } as const;
-  if (phase === Phase.HoverPreview) return { type: "spring", bounce: 0.2, duration: 0.7 } as const;
-  return { duration: 0.5 };
+async function animateFlowerIn(animate: AnimateFn, _config: FlowerConfig) {
+  await Promise.all([
+    animate(".flower-group", { x: 0 }, SPRING_IN),
+    animate(".bell-flower", { rotate: -20 }, SPRING_IN),
+    animate(
+      "#bellsFlowerV2_flower-bulb-1, #bellsFlowerV2_flower-bulb-2, #bellsFlowerV2_flower-bulb-3, #bellsFlowerV2_flower-bulb-4, #bellsFlowerV2_segmented-bulb-1, #bellsFlowerV2_segmented-bulb-2",
+      { rotate: [150, 60, 0, 15, 0, 10] },
+      { duration: 1, ease: "easeIn" }
+    ),
+    animate(".fern-branch", { rotate: 0 }, { type: "spring", bounce: 0.25, duration: 1.5 }),
+  ]);
 }
 
-const FLOWER_STYLE = { height: "clamp(280px, 80cqh, 9000px)", width: "auto" } as const;
+async function animatePreviewIn(animate: AnimateFn, _config: FlowerConfig) {
+  await Promise.all([
+    animate(".flower-group", { x: "-35vw" }, SPRING_PEEK),
+    animate(".bell-flower", { rotate: -40 }, SPRING_PEEK),
+    animate(
+      "#bellsFlowerV2_flower-bulb-1, #bellsFlowerV2_flower-bulb-2, #bellsFlowerV2_flower-bulb-3, #bellsFlowerV2_flower-bulb-4, #bellsFlowerV2_segmented-bulb-1, #bellsFlowerV2_segmented-bulb-2",
+      { rotate: [180, 0, 60, 30, 60] },
+      { duration: 1.5, ease: "easeIn", delay: 0.5 }
+    ),
+    animate(
+      ".fern-branch",
+      { rotate: 40 },
+      { type: "spring", bounce: 0.25, duration: 1.5, delay: 0.5 }
+    ),
+  ]);
+}
+
+async function runPreview(animateLeft: AnimateFn, animateRight: AnimateFn) {
+  await Promise.all([
+    animatePreviewIn(animateLeft, FLOWERS[0]),
+    animatePreviewIn(animateRight, FLOWERS[1]),
+  ]);
+}
+
+async function runCovering(
+  animateLeft: AnimateFn,
+  animateRight: AnimateFn,
+  onCoverComplete: () => void
+) {
+  await Promise.all([
+    animateFlowerIn(animateLeft, FLOWERS[0]),
+    animateFlowerIn(animateRight, FLOWERS[1]),
+  ]);
+  onCoverComplete();
+}
+
+async function runUncovering(
+  animateLeft: AnimateFn,
+  animateRight: AnimateFn,
+  onUncoverComplete: () => void
+) {
+  await Promise.all([
+    animateLeft(".flower-group", { x: "-110vw" }, { duration: 0.45, ease: "easeIn" }),
+    animateRight(".flower-group", { x: "-110vw" }, { duration: 0.45, ease: "easeIn" }),
+  ]);
+  onUncoverComplete();
+}
+
+async function runSetup(animateLeft: AnimateFn, animateRight: AnimateFn, onComplete: () => void) {
+  await Promise.all([
+    animationSetup(animateLeft, FLOWERS[0]),
+    animationSetup(animateRight, FLOWERS[1]),
+  ]);
+  onComplete();
+}
 
 export function BellsFlowerOverlay({ theme }: { theme: ThemeConfig }) {
   const { phase, onCoverComplete, onUncoverComplete } = useTransition();
+  const [scopeLeft, animateLeft] = useAnimate<HTMLDivElement>();
+  const [scopeRight, animateRight] = useAnimate<HTMLDivElement>();
+  const [hasCompletedSetup, setHasCompletedSetup] = useState(false);
 
-  function handleCoverComplete() {
-    if (phase === Phase.Covering) onCoverComplete();
-    else if (phase === Phase.Uncovering) onUncoverComplete();
-  }
+  useEffect(() => {
+    runSetup(animateLeft, animateRight, () => setHasCompletedSetup(true));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  const animate = flowerAnimate(phase);
-  const transition = flowerTransition(phase);
+  useEffect(() => {
+    if (!hasCompletedSetup) return;
+    if (phase === Phase.HoverPreview) runPreview(animateLeft, animateRight);
+    else if (phase === Phase.Covering) runCovering(animateLeft, animateRight, onCoverComplete);
+    else if (phase === Phase.Uncovering)
+      runUncovering(animateLeft, animateRight, onUncoverComplete);
+  }, [phase, animateLeft, animateRight, onCoverComplete, onUncoverComplete, hasCompletedSetup]);
 
   return (
     <div className="absolute inset-0">
-      {/* Left flower — fires the phase callbacks */}
-      <div className="absolute bottom-0 left-0">
-        <motion.div
-          initial={{ x: "-120vw" }}
-          animate={animate}
-          transition={transition}
-          onAnimationComplete={handleCoverComplete}
-          style={FLOWER_STYLE}
-        >
-          <BellsFlowerIcon height="100%" color={theme.colors.accent} secColor={theme.colors.text} />
-        </motion.div>
+      {/* Left scope — absolute inset-0 so children can be positioned independently */}
+      <div ref={scopeLeft} className="absolute inset-0 overflow-visible">
+        {/* Flower — anchored bottom-left */}
+        <div className="absolute bottom-0 left-0">
+          <div className="flower-group" style={{ transform: "translateX(-110vw)" }}>
+            <BellsFlowerIconV2
+              className="bell-flower"
+              height="clamp(280px, 80cqh, 9000px)"
+              width="auto"
+              color={theme.colors.accent}
+              secColor={theme.colors.text}
+            />
+          </div>
+        </div>
+        {/* Grass — pushed down so only the top shows above the screen edge */}
+        <div className="absolute left-0" style={{ bottom: "-25cqh" }}>
+          <div className="flower-group" style={{ transform: "translateX(-110vw)" }}>
+            <GrassIcon
+              height="clamp(280px, 60cqh, 9000px)"
+              width="auto"
+              color={theme.colors.accent}
+              secColor={theme.colors.text}
+            />
+          </div>
+        </div>
+        {/* fern branch — anchored top-left */}
+        <div className="absolute left-0 top-0" style={{ top: "2cqh" }}>
+          <div className="flower-group" style={{ transform: "translateX(-110vw)" }}>
+            <FernBranchIcon
+              className="fern-branch"
+              height="clamp(280px, 60cqh, 9000px)"
+              width="auto"
+              color={theme.colors.accent}
+              secColor={theme.colors.text}
+            />
+          </div>
+        </div>
       </div>
-
-      {/* Right flower — mirrored via static CSS on parent, same animation values */}
-      <div className="absolute bottom-0 right-0" style={{ transform: "scaleX(-1)" }}>
-        <motion.div
-          initial={{ x: "-120vw" }}
-          animate={animate}
-          transition={transition}
-          style={FLOWER_STYLE}
-        >
-          <BellsFlowerIcon height="100%" color={theme.colors.accent} secColor={theme.colors.text} />
-        </motion.div>
+      {/* Right scope — mirrored via scaleX(-1) */}
+      <div ref={scopeRight} className="absolute inset-0" style={{ transform: "scaleX(-1)" }}>
+        <div className="absolute bottom-0 left-0">
+          <div className="flower-group" style={{ transform: "translateX(-110vw)" }}>
+            <BellsFlowerIconV2
+              className="bell-flower"
+              height="clamp(280px, 80cqh, 9000px)"
+              width="auto"
+              color={theme.colors.accent}
+              secColor={theme.colors.text}
+            />
+          </div>
+        </div>
+        {/* Grass — pushed down so only the top shows above the screen edge */}
+        <div className="absolute left-0" style={{ bottom: "-25cqh" }}>
+          <div className="flower-group" style={{ transform: "translateX(-110vw)" }}>
+            <GrassIcon
+              height="clamp(280px, 60cqh, 9000px)"
+              width="auto"
+              color={theme.colors.accent}
+              secColor={theme.colors.text}
+            />
+          </div>
+        </div>
+        {/* fern branch — anchored top-left */}
+        <div className="absolute left-0 top-0" style={{ top: "2cqh" }}>
+          <div className="flower-group" style={{ transform: "translateX(-110vw)" }}>
+            <FernBranchIcon
+              className="fern-branch"
+              height="clamp(280px, 60cqh, 9000px)"
+              width="auto"
+              color={theme.colors.accent}
+              secColor={theme.colors.text}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
