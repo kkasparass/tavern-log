@@ -24,7 +24,7 @@ export function CharacterGrid() {
 
   return (
     <div>
-      <div className="mb-6 flex max-w-full gap-3 sm:max-w-xl">
+      <div className="mb-6 flex gap-3">
         <Select
           value={systemFilter}
           onChange={setSystemFilter}
@@ -40,7 +40,7 @@ export function CharacterGrid() {
           className="flex-1"
         />
       </div>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+      <div className="flex flex-col gap-6">
         {filtered.map((c) => (
           <CharacterCard key={c.id} {...c} />
         ))}

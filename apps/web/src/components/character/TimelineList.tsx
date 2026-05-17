@@ -14,7 +14,7 @@ export function TimelineList({ slug }: { slug: string }) {
   }
 
   return (
-    <ol className="relative max-w-2xl space-y-8 border-l border-white/10">
+    <ol className="relative space-y-8 border-l border-white/10">
       {character.timeline.map((event) => (
         <li key={event.id} className="ml-6">
           <span className="absolute -left-1.5 h-3 w-3 rounded-full bg-[var(--theme-accent)]" />

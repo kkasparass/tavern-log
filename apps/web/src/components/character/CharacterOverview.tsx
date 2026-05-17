@@ -11,7 +11,7 @@ export function CharacterOverview({ slug }: { slug: string }) {
   if (!character) return null;
 
   return (
-    <div className="max-w-2xl space-y-6">
+    <div className="space-y-6">
       {character.bio && (
         <section>
           <h2 className="mb-2 text-xs font-semibold uppercase tracking-widest opacity-40">Bio</h2>
