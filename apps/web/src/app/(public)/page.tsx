@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { QueryClient, dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { CharacterGrid } from "@/components/character/CharacterGrid";
+import { PageLayout } from "@/components/layout/PageLayout";
 
 export const metadata: Metadata = {
   title: "Tavern Log",
@@ -18,10 +19,12 @@ export default async function HomePage() {
     queryFn: () => fetch(`${process.env.API_URL}/characters`).then((r) => r.json()),
   });
   return (
-    <main className="bg-gray-950 p-4 text-white sm:p-8">
-      <HydrationBoundary state={dehydrate(queryClient)}>
-        <CharacterGrid />
-      </HydrationBoundary>
+    <main className="flex flex-col bg-gray-950 py-8 text-white">
+      <PageLayout>
+        <HydrationBoundary state={dehydrate(queryClient)}>
+          <CharacterGrid />
+        </HydrationBoundary>
+      </PageLayout>
     </main>
   );
 }

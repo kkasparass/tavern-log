@@ -15,7 +15,7 @@ export function VoiceLinesList({ slug }: { slug: string }) {
   }
 
   return (
-    <ul className="max-w-2xl space-y-6">
+    <ul className="space-y-6">
       {character.voiceLines.map((line) => (
         <li key={line.id} className="space-y-3">
           {line.context && (

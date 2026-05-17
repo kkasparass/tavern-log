@@ -15,7 +15,7 @@ export function StoriesList({ slug }: { slug: string }) {
   }
 
   return (
-    <ul className="max-w-2xl space-y-4">
+    <ul className="space-y-4">
       {character.stories.map((story) => (
         <li key={story.id}>
           <Link

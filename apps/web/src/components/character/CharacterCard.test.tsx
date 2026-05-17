@@ -10,29 +10,31 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: vi.fn() }),
 }));
 
+const withThumbnail = { ...mockCharacterListItem, thumbnailUrl: "https://example.com/mira.png" };
+
 function HoverDisplay() {
   const { hoveredCharacter } = useTransition();
   return <div data-testid="hovered">{hoveredCharacter ? "set" : "null"}</div>;
 }
 
-function renderCard() {
+function renderCard(props = mockCharacterListItem) {
   return render(
     <TransitionProvider>
-      <CharacterCard {...mockCharacterListItem} />
+      <CharacterCard {...props} />
       <HoverDisplay />
     </TransitionProvider>
   );
 }
 
 describe("CharacterCard", () => {
-  it("renders name and system", () => {
+  it("renders name and system in overlay", () => {
     renderCard();
     expect(screen.getByText("Mira Ashveil")).toBeInTheDocument();
     // 'D&D 5e' appears twice: once as the system label, once as a tag
     expect(screen.getAllByText("D&D 5e")).toHaveLength(2);
   });
 
-  it("renders tags", () => {
+  it("renders tags in overlay", () => {
     renderCard();
     expect(screen.getByText("mage")).toBeInTheDocument();
     expect(screen.getByText("retired")).toBeInTheDocument();
@@ -41,6 +43,17 @@ describe("CharacterCard", () => {
   it("links to the character page", () => {
     renderCard();
     expect(screen.getByRole("link")).toHaveAttribute("href", "/characters/mira-ashveil");
+  });
+
+  it("renders thumbnail image when thumbnailUrl is set", () => {
+    renderCard(withThumbnail);
+    expect(screen.getByRole("img", { name: "Mira Ashveil" })).toBeInTheDocument();
+  });
+
+  it("renders placeholder when thumbnailUrl is null", () => {
+    renderCard();
+    expect(screen.queryByRole("img")).not.toBeInTheDocument();
+    expect(screen.getByText("?")).toBeInTheDocument();
   });
 
   it("sets hovered character on mouseenter", async () => {

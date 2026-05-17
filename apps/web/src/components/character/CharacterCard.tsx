@@ -13,31 +13,42 @@ export function CharacterCard({ slug, name, system, thumbnailUrl, tags, theme }:
     <TransitionLink
       href={`/characters/${slug}`}
       transitionId={resolvedTheme.transition}
-      className="group block overflow-hidden rounded-lg border border-white/10 bg-white/5 transition-colors hover:bg-white/10"
+      className="group block overflow-hidden rounded-lg"
       onMouseEnter={() => setHoveredCharacter(resolvedTheme)}
       onMouseLeave={clearHoveredCharacter}
     >
-      <div className="relative aspect-square bg-white/10">
+      <div className="relative">
         {thumbnailUrl ? (
-          <Image src={thumbnailUrl} alt={name} fill className="object-cover" />
+          <Image
+            src={thumbnailUrl}
+            alt={name}
+            width={0}
+            height={0}
+            sizes="100vw"
+            className="block h-auto w-full transition-transform duration-500 ease-out group-hover:scale-110"
+          />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-4xl text-white/20">
+          <div className="flex aspect-[2/3] items-center justify-center bg-white/10 text-4xl text-white/20">
             ?
           </div>
         )}
-      </div>
-      <div className="p-3">
-        <h2 className="truncate font-semibold text-white">{name}</h2>
-        <p className="mb-2 text-sm text-white/60">{system}</p>
-        {tags.length > 0 && (
-          <ul className="flex flex-wrap gap-1">
-            {tags.map((tag) => (
-              <li key={tag} className="rounded-full bg-white/10 px-2 py-0.5 text-xs text-white/70">
-                {tag}
-              </li>
-            ))}
-          </ul>
-        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 p-6">
+          <h2 className="text-2xl font-bold text-white">{name}</h2>
+          <p className="mt-1 text-sm text-white/70">{system}</p>
+          {tags.length > 0 && (
+            <ul className="mt-3 flex flex-wrap gap-1">
+              {tags.map((tag) => (
+                <li
+                  key={tag}
+                  className="rounded-full bg-white/20 px-2 py-0.5 text-xs text-white/80"
+                >
+                  {tag}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </div>
     </TransitionLink>
   );

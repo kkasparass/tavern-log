@@ -15,7 +15,7 @@ export function StoryContent({ slug, storySlug }: { slug: string; storySlug: str
     typeof window !== "undefined" ? DOMPurify.sanitize(story.content) : story.content;
 
   return (
-    <article className="max-w-2xl">
+    <article>
       <header className="mb-8">
         <h1 className="text-2xl font-bold">{story.title}</h1>
         {story.publishedAt && (

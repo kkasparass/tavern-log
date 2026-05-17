@@ -5,6 +5,7 @@ import { CharacterTabs } from "@/components/character/CharacterTabs";
 import { DecorationSlot } from "@/components/character/DecorationSlot";
 import { DecorationSlotName } from "@/lib/themes/types";
 import { PageTransition } from "@/components/character/PageTransition";
+import { PageLayout } from "@/components/layout/PageLayout";
 
 export default async function CharacterLayout({
   children,
@@ -23,7 +24,7 @@ export default async function CharacterLayout({
 
   return (
     <div
-      className="relative flex-1"
+      className="flex flex-1 flex-col"
       style={
         {
           "--theme-bg": theme.colors.bg,
@@ -34,26 +35,38 @@ export default async function CharacterLayout({
         } as React.CSSProperties
       }
     >
-      <DecorationSlot slot={DecorationSlotName.PageEdgeLeft} decorationSet={theme.decorations} />
-      <DecorationSlot slot={DecorationSlotName.PageEdgeRight} decorationSet={theme.decorations} />
+      <PageLayout
+        leftWing={
+          <DecorationSlot
+            slot={DecorationSlotName.PageEdgeLeft}
+            decorationSet={theme.decorations}
+          />
+        }
+        rightWing={
+          <DecorationSlot
+            slot={DecorationSlotName.PageEdgeRight}
+            decorationSet={theme.decorations}
+          />
+        }
+      >
+        <header className="relative pt-8">
+          <DecorationSlot slot={DecorationSlotName.HeaderTop} decorationSet={theme.decorations} />
+          <h1 className="text-3xl font-bold">{character.name}</h1>
+          <p className="mt-1 text-sm opacity-60">
+            {character.system}
+            {character.campaign ? ` · ${character.campaign}` : ""}
+          </p>
+          <span className="mt-2 inline-block rounded-full bg-white/10 px-2 py-0.5 text-xs opacity-70">
+            {character.status}
+          </span>
+        </header>
 
-      <header className="relative px-4 pt-4 sm:px-8 sm:pt-8">
-        <DecorationSlot slot={DecorationSlotName.HeaderTop} decorationSet={theme.decorations} />
-        <h1 className="text-3xl font-bold">{character.name}</h1>
-        <p className="mt-1 text-sm opacity-60">
-          {character.system}
-          {character.campaign ? ` · ${character.campaign}` : ""}
-        </p>
-        <span className="mt-2 inline-block rounded-full bg-white/10 px-2 py-0.5 text-xs opacity-70">
-          {character.status}
-        </span>
-      </header>
+        <CharacterTabs slug={params.slug} decorationSet={theme.decorations} />
 
-      <CharacterTabs slug={params.slug} decorationSet={theme.decorations} />
-
-      <main className="p-4 sm:p-8">
-        <PageTransition>{children}</PageTransition>
-      </main>
+        <main className="py-8">
+          <PageTransition>{children}</PageTransition>
+        </main>
+      </PageLayout>
     </div>
   );
 }
