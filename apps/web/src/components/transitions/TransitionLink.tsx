@@ -1,20 +1,14 @@
 "use client";
 import type { AnchorHTMLAttributes } from "react";
-import type { TransitionId } from "@/lib/themes/types";
+import type { ThemeConfig } from "@/lib/themes/types";
 import { useTransition } from "./TransitionProvider";
 
 type TransitionLinkProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "href"> & {
   href: string;
-  transitionId: TransitionId | null;
+  theme: ThemeConfig;
 };
 
-export function TransitionLink({
-  href,
-  transitionId,
-  children,
-  onClick,
-  ...rest
-}: TransitionLinkProps) {
+export function TransitionLink({ href, theme, children, onClick, ...rest }: TransitionLinkProps) {
   const { navigate } = useTransition();
 
   return (
@@ -23,7 +17,7 @@ export function TransitionLink({
       onClick={(e) => {
         e.preventDefault();
         onClick?.(e);
-        navigate(href, transitionId);
+        navigate(href, theme);
       }}
       {...rest}
     >

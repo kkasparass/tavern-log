@@ -6,15 +6,22 @@ import { TransitionProvider, useTransition } from "@/components/transitions/Tran
 import { mockCharacterListItem } from "@/test/fixtures";
 
 vi.mock("next/image");
+const mockPush = vi.fn();
 vi.mock("next/navigation", () => ({
-  useRouter: () => ({ push: vi.fn() }),
+  useRouter: () => ({ push: mockPush }),
 }));
 
 const withThumbnail = { ...mockCharacterListItem, thumbnailUrl: "https://example.com/mira.png" };
 
 function HoverDisplay() {
-  const { hoveredCharacter } = useTransition();
-  return <div data-testid="hovered">{hoveredCharacter ? "set" : "null"}</div>;
+  const { previewTheme, phase } = useTransition();
+  return (
+    <>
+      <div data-testid="theme">{previewTheme ? "set" : "null"}</div>
+      <div data-testid="bg">{previewTheme?.colors.bg ?? "null"}</div>
+      <div data-testid="phase">{phase}</div>
+    </>
+  );
 }
 
 function renderCard(props = mockCharacterListItem) {
@@ -56,16 +63,26 @@ describe("CharacterCard", () => {
     expect(screen.getByText("?")).toBeInTheDocument();
   });
 
-  it("sets hovered character on mouseenter", async () => {
+  it("sets previewTheme on mouseenter", async () => {
     renderCard();
     await userEvent.hover(screen.getByRole("link"));
-    expect(screen.getByTestId("hovered")).toHaveTextContent("set");
+    expect(screen.getByTestId("theme")).toHaveTextContent("set");
+    expect(screen.getByTestId("bg")).toHaveTextContent("#1a1a2e");
   });
 
-  it("clears hovered character on mouseleave", async () => {
+  it("clears previewTheme on mouseleave", async () => {
     renderCard();
     await userEvent.hover(screen.getByRole("link"));
     await userEvent.unhover(screen.getByRole("link"));
-    expect(screen.getByTestId("hovered")).toHaveTextContent("null");
+    expect(screen.getByTestId("theme")).toHaveTextContent("null");
+  });
+
+  it("passes the resolved theme to TransitionLink — legacy theme has no transition, so click routes immediately", async () => {
+    renderCard();
+    await userEvent.hover(screen.getByRole("link"));
+    await userEvent.click(screen.getByRole("link"));
+    // hover fires first (hover-preview), but navigate() pushed immediately — no covering
+    expect(mockPush).toHaveBeenCalledWith("/characters/mira-ashveil");
+    expect(screen.queryByTestId("phase")).toHaveTextContent("hover-preview");
   });
 });

@@ -2,16 +2,16 @@
 import { createContext, useCallback, useContext, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Phase } from "@/lib/themes/types";
-import type { ThemeConfig, TransitionId } from "@/lib/themes/types";
+import type { ThemeConfig } from "@/lib/themes/types";
 
 type TransitionContextValue = {
   phase: Phase;
-  hoveredCharacter: ThemeConfig | null;
-  activeTransition: TransitionId | null;
-  setHoveredCharacter: (theme: ThemeConfig) => void;
-  clearHoveredCharacter: () => void;
-  navigate: (href: string, transitionId: TransitionId | null) => void;
-  preview: (transitionId: TransitionId) => void;
+  previewTheme: ThemeConfig | null;
+  activeTransition: ThemeConfig["transition"];
+  hoverPreview: (theme: ThemeConfig) => void;
+  clearHoverPreview: () => void;
+  navigate: (href: string, theme: ThemeConfig) => void;
+  preview: (theme: ThemeConfig) => void;
   onCoverComplete: () => void;
   onUncoverComplete: () => void;
 };
@@ -27,8 +27,8 @@ export function useTransition(): TransitionContextValue {
 export function TransitionProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const [phase, setPhase] = useState<Phase>(Phase.Idle);
-  const [hoveredCharacter, setHoveredCharacter] = useState<ThemeConfig | null>(null);
-  const [activeTransition, setActiveTransition] = useState<TransitionId | null>(null);
+  const [previewTheme, setPreviewTheme] = useState<ThemeConfig | null>(null);
+  const activeTransition = previewTheme?.transition ?? null;
   // phaseRef lets callbacks read current phase without stale closure
   const phaseRef = useRef<Phase>(Phase.Idle);
   const pendingHref = useRef<string | null>(null);
@@ -36,36 +36,34 @@ export function TransitionProvider({ children }: { children: React.ReactNode }) 
   const routerRef = useRef(router);
   routerRef.current = router;
 
-  const setHoveredCharacterFn = useCallback((theme: ThemeConfig) => {
-    setHoveredCharacter(theme);
+  const hoverPreview = useCallback((theme: ThemeConfig) => {
+    setPreviewTheme(theme);
     if (phaseRef.current === Phase.Idle) {
-      setActiveTransition(theme.transition);
       phaseRef.current = Phase.HoverPreview;
       setPhase(Phase.HoverPreview);
     }
   }, []);
 
-  const clearHoveredCharacter = useCallback(() => {
+  const clearHoverPreview = useCallback(() => {
     if (phaseRef.current !== Phase.HoverPreview) return;
-    setActiveTransition(null);
-    setHoveredCharacter(null);
+    setPreviewTheme(null);
     phaseRef.current = Phase.Idle;
     setPhase(Phase.Idle);
   }, []);
 
-  const navigate = useCallback((href: string, transitionId: TransitionId | null) => {
-    if (!transitionId) {
+  const navigate = useCallback((href: string, theme: ThemeConfig) => {
+    if (!theme.transition) {
       routerRef.current.push(href);
       return;
     }
     pendingHref.current = href;
-    setActiveTransition(transitionId);
+    setPreviewTheme(theme);
     phaseRef.current = Phase.Covering;
     setPhase(Phase.Covering);
   }, []);
 
-  const preview = useCallback((transitionId: TransitionId) => {
-    setActiveTransition(transitionId);
+  const preview = useCallback((theme: ThemeConfig) => {
+    setPreviewTheme(theme);
     phaseRef.current = Phase.Covering;
     setPhase(Phase.Covering);
   }, []);
@@ -80,8 +78,7 @@ export function TransitionProvider({ children }: { children: React.ReactNode }) 
   }, []);
 
   const onUncoverComplete = useCallback(() => {
-    setHoveredCharacter(null);
-    setActiveTransition(null);
+    setPreviewTheme(null);
     phaseRef.current = Phase.Idle;
     setPhase(Phase.Idle);
   }, []);
@@ -90,10 +87,10 @@ export function TransitionProvider({ children }: { children: React.ReactNode }) 
     <TransitionContext.Provider
       value={{
         phase,
-        hoveredCharacter,
+        previewTheme,
         activeTransition,
-        setHoveredCharacter: setHoveredCharacterFn,
-        clearHoveredCharacter,
+        hoverPreview,
+        clearHoverPreview,
         navigate,
         preview,
         onCoverComplete,

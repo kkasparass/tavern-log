@@ -5,19 +5,22 @@ import { CharacterThemeOverlay } from "./CharacterThemeOverlay";
 import { TransitionProvider, useTransition } from "./TransitionProvider";
 import { DEFAULT_THEME } from "@/lib/themes/presets";
 import { TransitionId } from "@/lib/themes/types";
+import type { ThemeConfig } from "@/lib/themes/types";
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: vi.fn() }),
 }));
 
+const FLORAL_THEME: ThemeConfig = { ...DEFAULT_THEME, transition: TransitionId.FloralBloom };
+
 // Driver component to control TransitionProvider state from tests
-function TestDriver({ action }: { action: string }) {
-  const { setHoveredCharacter, navigate } = useTransition();
+function TestDriver({ action, theme }: { action: string; theme: ThemeConfig }) {
+  const { hoverPreview, navigate } = useTransition();
   return (
     <button
       onClick={() => {
-        if (action === "hover") setHoveredCharacter(DEFAULT_THEME);
-        if (action === "navigate") navigate("/target", TransitionId.FloralBloom);
+        if (action === "hover") hoverPreview(theme);
+        if (action === "navigate") navigate("/target", theme);
       }}
     >
       {action}
@@ -25,11 +28,11 @@ function TestDriver({ action }: { action: string }) {
   );
 }
 
-function renderOverlay(action: string) {
+function renderOverlay(action: string, theme: ThemeConfig = FLORAL_THEME) {
   return render(
     <TransitionProvider>
       <CharacterThemeOverlay />
-      <TestDriver action={action} />
+      <TestDriver action={action} theme={theme} />
     </TransitionProvider>
   );
 }
@@ -65,5 +68,21 @@ describe("CharacterThemeOverlay", () => {
     await userEvent.click(screen.getByText("navigate"));
     const overlayRoot = container.querySelector(".absolute.inset-0.pointer-events-none");
     expect(overlayRoot).not.toBeNull();
+  });
+
+  it("sources colours from previewTheme, not DEFAULT_THEME", async () => {
+    const customTheme: ThemeConfig = {
+      ...FLORAL_THEME,
+      colors: { ...DEFAULT_THEME.colors, bg: "#123456" },
+    };
+    const { container } = renderOverlay("navigate", customTheme);
+    await userEvent.click(screen.getByText("navigate"));
+    const overlayRoot = container.querySelector(".absolute.inset-0.pointer-events-none")!;
+    const backgrounds = Array.from(overlayRoot.children).map(
+      (el) => (el as HTMLElement).style.background
+    );
+    // jsdom normalises hex to rgb()
+    const rgb = "rgb(18, 52, 86)";
+    expect(backgrounds.some((bg) => bg.includes("#123456") || bg.includes(rgb))).toBe(true);
   });
 });

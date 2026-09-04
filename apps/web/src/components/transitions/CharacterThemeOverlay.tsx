@@ -7,11 +7,11 @@ import { FloralBloomOverlay } from "./FloralBloomOverlay";
 import { BellsFlowerOverlay } from "./BellsFlowerOverlay";
 
 export function CharacterThemeOverlay() {
-  const { phase, hoveredCharacter, activeTransition } = useTransition();
+  const { phase, previewTheme, activeTransition } = useTransition();
 
   if (phase === Phase.Idle) return null;
 
-  const theme = hoveredCharacter ?? DEFAULT_THEME;
+  const theme = previewTheme ?? DEFAULT_THEME;
   const bg = theme.colors.bg;
 
   return (

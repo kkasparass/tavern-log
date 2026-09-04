@@ -26,15 +26,11 @@ describe("AppearanceControls", () => {
     expect(screen.getByRole("button", { name: /Preview/ })).toBeDisabled();
   });
 
-  it("Preview button calls preview() with the current transitionId", async () => {
-    render(
-      <AppearanceControls
-        value={{ ...DEFAULT_THEME, transition: TransitionId.FloralBloom }}
-        onChange={vi.fn()}
-      />
-    );
+  it("Preview button calls preview() with the live form theme", async () => {
+    const theme = { ...DEFAULT_THEME, transition: TransitionId.FloralBloom };
+    render(<AppearanceControls value={theme} onChange={vi.fn()} />);
     await userEvent.click(screen.getByRole("button", { name: /Preview/ }));
-    expect(mockPreview).toHaveBeenCalledWith(TransitionId.FloralBloom);
+    expect(mockPreview).toHaveBeenCalledWith(theme);
   });
 
   it("changing transition calls onChange with updated value and preset: custom", async () => {

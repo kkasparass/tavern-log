@@ -6,16 +6,16 @@ import { TransitionLink } from "@/components/transitions/TransitionLink";
 import { useTransition } from "@/components/transitions/TransitionProvider";
 
 export function CharacterCard({ slug, name, system, thumbnailUrl, tags, theme }: CharacterPreview) {
-  const { setHoveredCharacter, clearHoveredCharacter } = useTransition();
+  const { hoverPreview, clearHoverPreview } = useTransition();
   const resolvedTheme = resolveTheme(theme);
 
   return (
     <TransitionLink
       href={`/characters/${slug}`}
-      transitionId={resolvedTheme.transition}
+      theme={resolvedTheme}
       className="group block overflow-hidden rounded-lg"
-      onMouseEnter={() => setHoveredCharacter(resolvedTheme)}
-      onMouseLeave={clearHoveredCharacter}
+      onMouseEnter={() => hoverPreview(resolvedTheme)}
+      onMouseLeave={clearHoverPreview}
     >
       <div className="relative">
         {thumbnailUrl ? (
