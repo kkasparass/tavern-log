@@ -119,7 +119,16 @@ npx prisma migrate dev
 npx prisma db seed
 ```
 
-### 5. Start both apps
+### 5. Browse the database (optional)
+
+Prisma Studio gives you a web UI to inspect and edit the local database:
+
+```bash
+npm run db:studio
+# → http://localhost:5555
+```
+
+### 6. Start both apps
 
 From the repo root:
 
