@@ -6,6 +6,7 @@ vi.mock("../lib/prisma", () => ({
   prisma: {
     character: { findMany: vi.fn(), findFirst: vi.fn() },
     story: { findFirst: vi.fn() },
+    characterTag: { groupBy: vi.fn() },
   },
 }));
 
@@ -21,15 +22,11 @@ describe("GET /characters", () => {
     expect(res.statusCode).toBe(200);
     const body = res.json();
     expect(body[0].slug).toBe("mira-ashveil");
-    expect(body[0].tags).toEqual(["mage", "D&D 5e", "retired"]);
-  });
-
-  it("supports ?system= filter", async () => {
-    vi.mocked(prisma.character.findMany).mockResolvedValue([]);
-    const app = buildApp();
-    await app.inject({ method: "GET", url: "/characters?system=D%26D+5e" });
-    const call = vi.mocked(prisma.character.findMany).mock.calls[0]![0]!;
-    expect(call.where).toMatchObject({ system: { equals: "D&D 5e", mode: "insensitive" } });
+    expect(body[0].tagline).toBe(
+      "Ex-court mage turned wandering debt collector. The Ashwood remembers her."
+    );
+    expect(body[0].system).toBeUndefined();
+    expect(body[0].tags).toEqual(["mage", "D&D 5e", "The Shattered Crown"]);
   });
 
   it("supports ?tag= filter", async () => {
@@ -67,8 +64,9 @@ describe("GET /characters/:slug", () => {
     const app = buildApp();
     const res = await app.inject({ method: "GET", url: "/characters/mira-ashveil" });
     expect(res.statusCode).toBe(200);
-    expect(res.json().tags).toEqual(["mage", "D&D 5e", "retired"]);
+    expect(res.json().tags).toEqual(["mage", "D&D 5e", "The Shattered Crown"]);
     expect(res.json().name).toBe("Mira Ashveil");
+    expect(res.json().pronouns).toBe("she/her");
   });
 });
 

@@ -60,7 +60,7 @@ describe("GET /admin/characters", () => {
     });
     expect(res.statusCode).toBe(200);
     expect(res.json()).toHaveLength(1);
-    expect(res.json()[0].tags).toEqual(["mage", "D&D 5e", "retired"]);
+    expect(res.json()[0].tags).toEqual(["mage", "D&D 5e", "The Shattered Crown"]);
   });
 
   it("filters by createdById", async () => {
@@ -86,12 +86,35 @@ describe("POST /admin/characters", () => {
       method: "POST",
       url: "/admin/characters",
       headers: { cookie: authCookie },
-      payload: { name: "Mira Ashveil", system: "D&D 5e" },
+      payload: { name: "Mira Ashveil", tagline: "A wandering debt collector" },
     });
     expect(res.statusCode).toBe(201);
     expect(res.json().name).toBe("Mira Ashveil");
     const call = vi.mocked(prisma.character.create).mock.calls[0]![0]!;
-    expect(call.data).toMatchObject({ createdById: "user-1" });
+    expect(call.data).toMatchObject({ createdById: "user-1", tagline: "A wandering debt collector" });
+  });
+
+  it("creates character with name only", async () => {
+    vi.mocked(prisma.character.create).mockResolvedValue(miraCharacterListItem);
+    const { app, authCookie } = await setup();
+    const res = await app.inject({
+      method: "POST",
+      url: "/admin/characters",
+      headers: { cookie: authCookie },
+      payload: { name: "Nameless Wanderer" },
+    });
+    expect(res.statusCode).toBe(201);
+  });
+
+  it("rejects a tagline over 140 characters", async () => {
+    const { app, authCookie } = await setup();
+    const res = await app.inject({
+      method: "POST",
+      url: "/admin/characters",
+      headers: { cookie: authCookie },
+      payload: { name: "Mira", tagline: "x".repeat(141) },
+    });
+    expect(res.statusCode).toBe(400);
   });
 
   it("returns 401 when unauthenticated", async () => {
@@ -99,7 +122,7 @@ describe("POST /admin/characters", () => {
     const res = await app.inject({
       method: "POST",
       url: "/admin/characters",
-      payload: { name: "Test", system: "D&D 5e" },
+      payload: { name: "Test" },
     });
     expect(res.statusCode).toBe(401);
   });
@@ -116,7 +139,7 @@ describe("GET /admin/characters/:id", () => {
     });
     expect(res.statusCode).toBe(200);
     expect(res.json().slug).toBe("mira-ashveil");
-    expect(res.json().tags).toEqual(["mage", "D&D 5e", "retired"]);
+    expect(res.json().tags).toEqual(["mage", "D&D 5e", "The Shattered Crown"]);
   });
 
   it("returns 404 when not found", async () => {
@@ -170,7 +193,7 @@ describe("PUT /admin/characters/:id", () => {
       method: "PUT",
       url: "/admin/characters/cuid-mira",
       headers: { cookie: authCookie },
-      payload: { tags: ["mage", "retired"] },
+      payload: { tags: ["mage", "wanderer"] },
     });
     expect(res.statusCode).toBe(200);
     expect(vi.mocked(prisma.characterTag.deleteMany)).toHaveBeenCalledWith({

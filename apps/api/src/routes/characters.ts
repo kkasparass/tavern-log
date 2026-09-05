@@ -2,13 +2,12 @@ import { FastifyInstance } from "fastify";
 import { prisma } from "../lib/prisma";
 
 export async function characterRoutes(app: FastifyInstance) {
-  app.get<{ Querystring: { system?: string; tag?: string } }>("/", async (request) => {
-    const { system, tag } = request.query;
+  app.get<{ Querystring: { tag?: string } }>("/", async (request) => {
+    const { tag } = request.query;
 
     const characters = await prisma.character.findMany({
       where: {
         isPublic: true,
-        ...(system && { system: { equals: system, mode: "insensitive" } }),
         ...(tag && {
           tags: { some: { tag: { equals: tag, mode: "insensitive" } } },
         }),
@@ -23,7 +22,8 @@ export async function characterRoutes(app: FastifyInstance) {
       id: rest.id,
       slug: rest.slug,
       name: rest.name,
-      system: rest.system,
+      tagline: rest.tagline,
+      pronouns: rest.pronouns,
       thumbnailUrl: rest.thumbnailUrl,
       theme: rest.theme,
       tags: tags.map((t) => t.tag),

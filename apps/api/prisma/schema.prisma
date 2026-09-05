@@ -17,33 +17,27 @@ model User {
 }
 
 model Character {
-  id           String          @id @default(cuid())
-  slug         String          @unique
+  id           String   @id @default(cuid())
+  slug         String   @unique
   name         String
-  system       String
-  campaign     String?
-  status       CharacterStatus @default(ACTIVE)
+  tagline      String?
+  pronouns     String?
+  designedBy   String?
   bio          String?
   personality  String?
   thumbnailUrl String?
-  isPublic     Boolean         @default(true)
-  theme        Json            @default("{}")
+  isPublic     Boolean  @default(true)
+  theme        Json     @default("{}")
   createdById  String
-  createdBy    User            @relation(fields: [createdById], references: [id])
-  createdAt    DateTime        @default(now())
-  updatedAt    DateTime        @updatedAt
+  createdBy    User     @relation(fields: [createdById], references: [id])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   tags       CharacterTag[]
   stories    Story[]
   voiceLines VoiceLine[]
   artworks   Artwork[]
   timeline   TimelineEvent[]
-}
-
-enum CharacterStatus {
-  ACTIVE
-  RETIRED
-  DECEASED
 }
 
 model CharacterTag {
