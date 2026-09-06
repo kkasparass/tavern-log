@@ -5,9 +5,17 @@ import { resolveTheme } from "@/lib/themes/presets";
 import { TransitionLink } from "@/components/transitions/TransitionLink";
 import { useTransition } from "@/components/transitions/TransitionProvider";
 
-export function CharacterCard({ slug, name, system, thumbnailUrl, tags, theme }: CharacterPreview) {
+export function CharacterCard({
+  slug,
+  name,
+  tagline,
+  thumbnailUrl,
+  tags,
+  theme,
+}: CharacterPreview) {
   const { hoverPreview, clearHoverPreview } = useTransition();
   const resolvedTheme = resolveTheme(theme);
+  const subtext = tagline ?? tags.slice(0, 3).join(" · ");
 
   return (
     <TransitionLink
@@ -35,7 +43,7 @@ export function CharacterCard({ slug, name, system, thumbnailUrl, tags, theme }:
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
         <div className="absolute bottom-0 left-0 right-0 p-6">
           <h2 className="text-2xl font-bold text-white">{name}</h2>
-          <p className="mt-1 text-sm text-white/70">{system}</p>
+          {subtext && <p className="mt-1 text-sm text-white/70">{subtext}</p>}
           {tags.length > 0 && (
             <ul className="mt-3 flex flex-wrap gap-1">
               {tags.map((tag) => (

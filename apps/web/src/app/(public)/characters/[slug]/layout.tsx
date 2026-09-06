@@ -52,13 +52,9 @@ export default async function CharacterLayout({
         <header className="relative pt-8">
           <DecorationSlot slot={DecorationSlotName.HeaderTop} decorationSet={theme.decorations} />
           <h1 className="text-3xl font-bold">{character.name}</h1>
-          <p className="mt-1 text-sm opacity-60">
-            {character.system}
-            {character.campaign ? ` · ${character.campaign}` : ""}
-          </p>
-          <span className="mt-2 inline-block rounded-full bg-white/10 px-2 py-0.5 text-xs opacity-70">
-            {character.status}
-          </span>
+          {(character.tagline || character.pronouns) && (
+            <p className="mt-1 text-sm opacity-60">{character.tagline || character.pronouns}</p>
+          )}
         </header>
 
         <CharacterTabs slug={params.slug} decorationSet={theme.decorations} />

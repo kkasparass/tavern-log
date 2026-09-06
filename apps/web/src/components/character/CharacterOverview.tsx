@@ -10,8 +10,21 @@ export function CharacterOverview({ slug }: { slug: string }) {
 
   if (!character) return null;
 
+  const meta: string[] = [];
+  if (character.pronouns) meta.push(`Pronouns: ${character.pronouns}`);
+  if (character.designedBy) meta.push(`Designed by ${character.designedBy}`);
+
   return (
     <div className="space-y-6">
+      {meta.length > 0 && (
+        <ul className="flex flex-wrap gap-2 text-xs opacity-70">
+          {meta.map((m) => (
+            <li key={m} className="rounded-full bg-white/10 px-2 py-0.5">
+              {m}
+            </li>
+          ))}
+        </ul>
+      )}
       {character.bio && (
         <section>
           <h2 className="mb-2 text-xs font-semibold uppercase tracking-widest opacity-40">Bio</h2>

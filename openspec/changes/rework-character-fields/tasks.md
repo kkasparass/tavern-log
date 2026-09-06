@@ -1,28 +1,28 @@
 ## 1. Schema & Migration (API)
 
-- [ ] 1.1 Update `apps/api/prisma/schema.prisma` — remove `system`, `campaign`, `status` and the `CharacterStatus` enum; add `tagline String?`, `pronouns String?`, `designedBy String?`
-- [ ] 1.2 Generate migration (`npx prisma migrate dev`) and edit its SQL to backfill tags first: insert `system` and `campaign` values as `CharacterTag` rows, skipping NULL/empty and duplicates (respect `@@unique([characterId, tag])`), then drop the columns and enum type
-- [ ] 1.3 Run migration against local Docker Postgres and verify with a seeded character: system/campaign values appear as tags, columns gone, no duplicates
-- [ ] 1.4 Update `apps/api/prisma/seed.ts` — Mira/Nara carry tags instead of system/campaign/status, plus sample `tagline`/`pronouns` values; re-seed dev DB
+- [x] 1.1 Update `apps/api/prisma/schema.prisma` — remove `system`, `campaign`, `status` and the `CharacterStatus` enum; add `tagline String?`, `pronouns String?`, `designedBy String?`
+- [x] 1.2 Generate migration (`npx prisma migrate dev`) and edit its SQL to backfill tags first: insert `system` and `campaign` values as `CharacterTag` rows, skipping NULL/empty and duplicates (respect `@@unique([characterId, tag])`), then drop the columns and enum type
+- [x] 1.3 Run migration against local Docker Postgres and verify with a seeded character: system/campaign values appear as tags, columns gone, no duplicates
+- [x] 1.4 Update `apps/api/prisma/seed.ts` — Mira/Nara carry tags instead of system/campaign/status, plus sample `tagline`/`pronouns` values; re-seed dev DB
 
 ## 2. API Routes & Tests
 
-- [ ] 2.1 Create `src/routes/tags.ts` — `GET /tags?q=`: public, `groupBy` on `characterTag` scoped to public characters, case-insensitive `startsWith`, `_count` desc + tag asc tiebreak, `take: 10`; register in route index
-- [ ] 2.2 Update `src/routes/characters.ts` — remove `?system=` filter handling and dropped fields from selects/responses
-- [ ] 2.3 Update `src/routes/admin/characters.ts` — JSON schemas: drop `system`/`campaign`/`status` (remove `system` from required), add optional `tagline` (maxLength 140), `pronouns`, `designedBy`
-- [ ] 2.4 Update `src/test/fixtures.ts` — reworked character shape, in sync with new seed data
-- [ ] 2.5 Add `src/routes/tags.test.ts` — prefix filter, count ordering + alphabetical tiebreak, take 10, public-characters-only scoping, empty/no-match cases
-- [ ] 2.6 Update affected route tests — `characters.test.ts` (remove `?system=` test), `admin/characters.test.ts` (create with name only succeeds; new fields persist; removed fields absent from responses)
+- [x] 2.1 Create `src/routes/tags.ts` — `GET /tags?q=`: public, `groupBy` on `characterTag` scoped to public characters, case-insensitive `startsWith`, `_count` desc + tag asc tiebreak, `take: 10`; register in route index
+- [x] 2.2 Update `src/routes/characters.ts` — remove `?system=` filter handling and dropped fields from selects/responses
+- [x] 2.3 Update `src/routes/admin/characters.ts` — JSON schemas: drop `system`/`campaign`/`status` (remove `system` from required), add optional `tagline` (maxLength 140), `pronouns`, `designedBy`
+- [x] 2.4 Update `src/test/fixtures.ts` — reworked character shape, in sync with new seed data
+- [x] 2.5 Add `src/routes/tags.test.ts` — prefix filter, count ordering + alphabetical tiebreak, take 10, public-characters-only scoping, empty/no-match cases
+- [x] 2.6 Update affected route tests — `characters.test.ts` (remove `?system=` test), `admin/characters.test.ts` (create with name only succeeds; new fields persist; removed fields absent from responses)
 
 ## 3. Web Types & Display Components
 
-- [ ] 3.1 Update `apps/web/src/lib/types.ts` — remove `system`/`campaign`/`status`, add `tagline?`/`pronouns?`/`designedBy?`
-- [ ] 3.2 Update `src/test/fixtures.ts` — mirror the API fixture changes (keep-in-sync rule)
-- [ ] 3.3 Update `CharacterCard.tsx` — subtext: tagline → first 3 tags → omitted; remove system; update card tests (overlay shows tagline/tags, no system label)
-- [ ] 3.4 Update `CharacterGrid.tsx` — remove system filter axis, tags-only filtering; update grid tests
-- [ ] 3.5 Update character `layout.tsx` header — tagline, falling back to pronouns; update `[slug]/page.tsx` OG fallback to `bio ?? tagline ?? name`
-- [ ] 3.6 Update `CharacterOverview.tsx` — remove status block; show pronouns/designedBy (and tagline) where set; update tests
-- [ ] 3.7 Update admin `CharacterList.tsx` — replace system column with tagline or tags; update list tests
+- [x] 3.1 Update `apps/web/src/lib/types.ts` — remove `system`/`campaign`/`status`, add `tagline?`/`pronouns?`/`designedBy?`
+- [x] 3.2 Update `src/test/fixtures.ts` — mirror the API fixture changes (keep-in-sync rule)
+- [x] 3.3 Update `CharacterCard.tsx` — subtext: tagline → first 3 tags → omitted; remove system; update card tests (overlay shows tagline/tags, no system label)
+- [x] 3.4 Update `CharacterGrid.tsx` — remove system filter axis, tags-only filtering; update grid tests
+- [x] 3.5 Update character `layout.tsx` header — tagline, falling back to pronouns; update `[slug]/page.tsx` OG fallback to `bio ?? tagline ?? name`
+- [x] 3.6 Update `CharacterOverview.tsx` — remove status block; show pronouns/designedBy (and tagline) where set; update tests
+- [x] 3.7 Update admin `CharacterList.tsx` — replace system column with tagline or tags; update list tests
 
 ## 4. Tag Autocomplete UI
 
