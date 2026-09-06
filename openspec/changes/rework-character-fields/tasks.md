@@ -32,9 +32,9 @@
 
 ## 5. Admin Form Field Rework
 
-- [ ] 5.1 Update `useCharacterForm.ts` — replace `system`/`campaign`/`status` state with `tagline`/`pronouns`/`designedBy`; submit payload carries only existing fields
-- [ ] 5.2 Update `CharacterForm.tsx` — remove system/campaign/status inputs; add tagline (maxLength 140), pronouns, designedBy inputs; update edit page initial values
-- [ ] 5.3 Update `CharacterForm.test.tsx` — submission asserts new fields, no removed fields; removed-field inputs absent
+- [x] 5.1 Update `useCharacterForm.ts` — replace `system`/`campaign`/`status` state with `tagline`/`pronouns`/`designedBy`; submit payload carries only existing fields
+- [x] 5.2 Update `CharacterForm.tsx` — remove system/campaign/status inputs; add tagline (maxLength 140), pronouns, designedBy inputs; update edit page initial values
+- [x] 5.3 Update `CharacterForm.test.tsx` — submission asserts new fields, no removed fields; removed-field inputs absent
 
 ## 6. Verification
 

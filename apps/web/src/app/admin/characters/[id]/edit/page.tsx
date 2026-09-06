@@ -15,7 +15,9 @@ async function updateCharacter(id: string, data: CharacterFormData) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       ...data,
-      campaign: data.campaign || undefined,
+      tagline: data.tagline || undefined,
+      pronouns: data.pronouns || undefined,
+      designedBy: data.designedBy || undefined,
       bio: data.bio || undefined,
       personality: data.personality || undefined,
       thumbnailUrl: data.thumbnailUrl || undefined,
@@ -53,9 +55,9 @@ export default function EditCharacterPage({ params }: { params: { id: string } }
 
   const defaultValues: Partial<CharacterFormData> = {
     name: character.name,
-    system: character.system,
-    campaign: character.campaign ?? "",
-    status: character.status,
+    tagline: character.tagline ?? "",
+    pronouns: character.pronouns ?? "",
+    designedBy: character.designedBy ?? "",
     bio: character.bio ?? "",
     personality: character.personality ?? "",
     thumbnailUrl: character.thumbnailUrl ?? "",
