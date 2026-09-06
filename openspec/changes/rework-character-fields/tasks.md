@@ -38,6 +38,6 @@
 
 ## 6. Verification
 
-- [ ] 6.1 Run `npm test --workspace=apps/api` and `npm test --workspace=apps/web` — all green
-- [ ] 6.2 Run lint + typecheck for both apps
-- [ ] 6.3 Manual smoke: create character with name only → add tags via autocomplete → save → verify card subtext, header, landing tag filter on public pages
+- [x] 6.1 Run `npm test --workspace=apps/api` and `npm test --workspace=apps/web` — all green
+- [x] 6.2 Run lint + typecheck for both apps
+- [x] 6.3 Manual smoke: create character with name only → add tags via autocomplete → save → verify card subtext, header, landing tag filter on public pages
