@@ -171,7 +171,7 @@ describe("CharacterForm tag autocomplete", () => {
     expect(screen.getByRole("option", { name: /goblin/ })).toBeInTheDocument();
     expect(screen.getByRole("option", { name: /gods/ })).toBeInTheDocument();
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
-    expect(fetchMock).toHaveBeenCalledWith("/tags?q=go");
+    expect(fetchMock).toHaveBeenCalledWith("/api/tags?q=go");
     expect(tagInput()).toHaveAttribute("aria-expanded", "true");
   });
 
@@ -181,7 +181,7 @@ describe("CharacterForm tag autocomplete", () => {
     renderForm();
     await user.type(tagInput(), "goblin");
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
-    expect(fetchMock).toHaveBeenCalledWith("/tags?q=goblin");
+    expect(fetchMock).toHaveBeenCalledWith("/api/tags?q=goblin");
     await new Promise((r) => setTimeout(r, 350));
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });

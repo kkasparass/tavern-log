@@ -26,7 +26,7 @@ export function useTagSuggestions(query: string, exclude: string[]) {
     const requestId = ++requestIdRef.current;
     const timer = setTimeout(async () => {
       try {
-        const res = await fetch(`/tags?q=${encodeURIComponent(trimmed)}`);
+        const res = await fetch(`/api/tags?q=${encodeURIComponent(trimmed)}`);
         if (!res.ok) return;
         const data = (await res.json()) as { tags: TagSuggestion[] };
         if (requestId !== requestIdRef.current) return;
