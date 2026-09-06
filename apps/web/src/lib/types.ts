@@ -1,16 +1,11 @@
-export enum CharacterStatus {
-  ACTIVE = "ACTIVE",
-  RETIRED = "RETIRED",
-  DECEASED = "DECEASED",
-}
-
 export type { ThemeConfig as CharacterTheme } from "./themes/types";
 
 export type CharacterPreview = {
   id: string;
   slug: string;
   name: string;
-  system: string;
+  tagline: string | null;
+  pronouns: string | null;
   thumbnailUrl: string | null;
   theme: Record<string, unknown>;
   tags: string[];
@@ -20,9 +15,9 @@ export type AdminCharacterDetail = {
   id: string;
   slug: string;
   name: string;
-  system: string;
-  campaign: string | null;
-  status: CharacterStatus;
+  tagline: string | null;
+  pronouns: string | null;
+  designedBy: string | null;
   bio: string | null;
   personality: string | null;
   thumbnailUrl: string | null;
@@ -79,9 +74,9 @@ export type Character = {
   createdById: string;
   slug: string;
   name: string;
-  system: string;
-  campaign: string | null;
-  status: CharacterStatus;
+  tagline: string | null;
+  pronouns: string | null;
+  designedBy: string | null;
   bio: string | null;
   personality: string | null;
   thumbnailUrl: string | null;

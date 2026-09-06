@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { CharacterStatus } from "@/lib/types";
 import { resolveTheme } from "@/lib/themes/presets";
 import { uploadFile } from "@/lib/upload";
 import type { ThemeConfig } from "@/lib/themes/types";
@@ -7,11 +6,9 @@ import type { CharacterFormData } from "./CharacterForm";
 
 export function useCharacterForm(defaultValues?: Partial<CharacterFormData>) {
   const [name, setName] = useState(defaultValues?.name ?? "");
-  const [system, setSystem] = useState(defaultValues?.system ?? "");
-  const [campaign, setCampaign] = useState(defaultValues?.campaign ?? "");
-  const [status, setStatus] = useState<CharacterStatus>(
-    defaultValues?.status ?? CharacterStatus.ACTIVE
-  );
+  const [tagline, setTagline] = useState(defaultValues?.tagline ?? "");
+  const [pronouns, setPronouns] = useState(defaultValues?.pronouns ?? "");
+  const [designedBy, setDesignedBy] = useState(defaultValues?.designedBy ?? "");
   const [bio, setBio] = useState(defaultValues?.bio ?? "");
   const [personality, setPersonality] = useState(defaultValues?.personality ?? "");
   const existingThumbnailUrl = defaultValues?.thumbnailUrl ?? "";
@@ -23,9 +20,9 @@ export function useCharacterForm(defaultValues?: Partial<CharacterFormData>) {
   const [tags, setTags] = useState<string[]>(defaultValues?.tags ?? []);
   const [tagInput, setTagInput] = useState("");
 
-  function addTag() {
-    const trimmed = tagInput.trim();
-    if (trimmed && !tags.includes(trimmed)) {
+  function addTag(value?: string) {
+    const trimmed = (value ?? tagInput).trim();
+    if (trimmed && !tags.some((t) => t.toLowerCase() === trimmed.toLowerCase())) {
       setTags((prev) => [...prev, trimmed]);
     }
     setTagInput("");
@@ -33,13 +30,6 @@ export function useCharacterForm(defaultValues?: Partial<CharacterFormData>) {
 
   function removeTag(tag: string) {
     setTags((prev) => prev.filter((t) => t !== tag));
-  }
-
-  function handleTagKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      addTag();
-    }
   }
 
   async function submitForm(onSubmit: (data: CharacterFormData) => void): Promise<void> {
@@ -52,9 +42,9 @@ export function useCharacterForm(defaultValues?: Partial<CharacterFormData>) {
       }
       onSubmit({
         name,
-        system,
-        campaign,
-        status,
+        tagline,
+        pronouns,
+        designedBy,
         bio,
         personality,
         thumbnailUrl,
@@ -72,12 +62,12 @@ export function useCharacterForm(defaultValues?: Partial<CharacterFormData>) {
   return {
     name,
     setName,
-    system,
-    setSystem,
-    campaign,
-    setCampaign,
-    status,
-    setStatus,
+    tagline,
+    setTagline,
+    pronouns,
+    setPronouns,
+    designedBy,
+    setDesignedBy,
     bio,
     setBio,
     personality,
@@ -95,7 +85,6 @@ export function useCharacterForm(defaultValues?: Partial<CharacterFormData>) {
     setTagInput,
     addTag,
     removeTag,
-    handleTagKeyDown,
     submitForm,
   };
 }

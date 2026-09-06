@@ -16,10 +16,10 @@ export async function generateMetadata({
 
   return {
     title: `${character.name} — Tavern Log`,
-    description: character.bio ?? `${character.name} · ${character.system}`,
+    description: character.bio ?? character.tagline ?? character.name,
     openGraph: {
       title: `${character.name} — Tavern Log`,
-      description: character.bio ?? `${character.name} · ${character.system}`,
+      description: character.bio ?? character.tagline ?? character.name,
       images: character.thumbnailUrl ? [{ url: character.thumbnailUrl }] : [],
     },
   };

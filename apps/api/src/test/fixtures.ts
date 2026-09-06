@@ -1,6 +1,5 @@
 // Fixture data mirrors apps/api/prisma/seed.ts — keep in sync when seed changes
 import {
-  CharacterStatus,
   type Story,
   type VoiceLine,
   type Artwork,
@@ -29,9 +28,9 @@ export const miraCharacterListItem: CharacterListItem = {
   createdById: "user-1",
   slug: "mira-ashveil",
   name: "Mira Ashveil",
-  system: "D&D 5e",
-  campaign: "The Shattered Crown",
-  status: CharacterStatus.RETIRED,
+  tagline: "Ex-court mage turned wandering debt collector. The Ashwood remembers her.",
+  pronouns: "she/her",
+  designedBy: null,
   bio: "A former court mage who walked away from power after the Siege of Valdenmoor. She now wanders the Ashwood, collecting debts and forgetting names.",
   personality:
     "Dry wit, deeply loyal to a very short list of people. Distrusts institutions. Excellent at leaving before things get complicated.",
@@ -40,7 +39,7 @@ export const miraCharacterListItem: CharacterListItem = {
   theme: { bgColor: "#1a1a2e", textColor: "#e0e0e0", accentColor: "#7c3aed" },
   createdAt: new Date("2024-01-01"),
   updatedAt: new Date("2024-01-01"),
-  tags: [{ tag: "mage" }, { tag: "D&D 5e" }, { tag: "retired" }],
+  tags: [{ tag: "mage" }, { tag: "D&D 5e" }, { tag: "The Shattered Crown" }],
 };
 
 export const miraStory: Story = {
@@ -153,9 +152,9 @@ export const naraCharacterListItem: CharacterListItem = {
   createdById: "user-1",
   slug: "nara-solis",
   name: "Nara Solis",
-  system: "Blades in the Dark",
-  campaign: "Shadows of Doskvol",
-  status: CharacterStatus.ACTIVE,
+  tagline: "Dockworker turned enforcer, now running her own crew out of Crow's Foot.",
+  pronouns: "she/her",
+  designedBy: null,
   bio: "Former dockworker turned enforcer for the Red Sashes. She cut ties with the crew after a job went sideways in the Dusk ward and now runs her own small operation out of Crow's Foot.",
   personality:
     "Pragmatic to a fault. Doesn't enjoy violence but is very good at it. Has a reputation for honoring her word — which in Doskvol is either an asset or a liability depending on who's asking.",
@@ -164,7 +163,7 @@ export const naraCharacterListItem: CharacterListItem = {
   theme: { bgColor: "#1c1408", textColor: "#e8d5b0", accentColor: "#d4901a" },
   createdAt: new Date("2025-01-01"),
   updatedAt: new Date("2025-01-01"),
-  tags: [{ tag: "scoundrel" }, { tag: "Blades in the Dark" }, { tag: "active" }],
+  tags: [{ tag: "scoundrel" }, { tag: "Blades in the Dark" }, { tag: "Shadows of Doskvol" }],
 };
 
 const naraVoiceLines: VoiceLine[] = [

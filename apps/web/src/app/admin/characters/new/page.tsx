@@ -9,7 +9,9 @@ async function createCharacter(data: CharacterFormData) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       ...data,
-      campaign: data.campaign || undefined,
+      tagline: data.tagline || undefined,
+      pronouns: data.pronouns || undefined,
+      designedBy: data.designedBy || undefined,
       bio: data.bio || undefined,
       personality: data.personality || undefined,
       thumbnailUrl: data.thumbnailUrl || undefined,

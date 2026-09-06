@@ -1,5 +1,5 @@
 import { FastifyInstance } from "fastify";
-import { CharacterStatus, Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { prisma } from "../../lib/prisma";
 import { authenticate } from "../../plugins/auth";
 import { toSlug } from "../../utils/slug";
@@ -7,9 +7,9 @@ import { deleteS3Object } from "../../lib/s3";
 
 interface CreateCharacterBody {
   name: string;
-  system: string;
-  campaign?: string;
-  status?: CharacterStatus;
+  tagline?: string;
+  pronouns?: string;
+  designedBy?: string;
   bio?: string;
   personality?: string;
   thumbnailUrl?: string;
@@ -20,9 +20,9 @@ interface CreateCharacterBody {
 
 interface UpdateCharacterBody {
   name?: string;
-  system?: string;
-  campaign?: string;
-  status?: CharacterStatus;
+  tagline?: string;
+  pronouns?: string;
+  designedBy?: string;
   bio?: string;
   personality?: string;
   thumbnailUrl?: string;
@@ -48,10 +48,12 @@ export async function adminCharacterRoutes(app: FastifyInstance) {
       schema: {
         body: {
           type: "object",
-          required: ["name", "system"],
+          required: ["name"],
           properties: {
-            name: { type: "string" },
-            system: { type: "string" },
+            name: { type: "string", minLength: 1 },
+            tagline: { type: "string", maxLength: 140 },
+            pronouns: { type: "string" },
+            designedBy: { type: "string" },
           },
         },
       },

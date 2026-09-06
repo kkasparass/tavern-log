@@ -3,7 +3,6 @@ import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi } from "vitest";
 import { render } from "@testing-library/react";
 import { CharacterForm, type CharacterFormData } from "./CharacterForm";
-import { CharacterStatus } from "@/lib/types";
 
 vi.mock("next/link");
 
@@ -27,9 +26,9 @@ describe("CharacterForm", () => {
   it("renders all fields", () => {
     renderForm();
     expect(screen.getByLabelText("Name *")).toBeInTheDocument();
-    expect(screen.getByLabelText("System *")).toBeInTheDocument();
-    expect(screen.getByLabelText("Campaign")).toBeInTheDocument();
-    expect(screen.getByLabelText("Status")).toBeInTheDocument();
+    expect(screen.getByLabelText("Tagline")).toBeInTheDocument();
+    expect(screen.getByLabelText("Pronouns")).toBeInTheDocument();
+    expect(screen.getByLabelText("Designed by")).toBeInTheDocument();
     expect(screen.getByLabelText("Bio")).toBeInTheDocument();
     expect(screen.getByLabelText("Personality")).toBeInTheDocument();
     expect(screen.getByText("Thumbnail")).toBeInTheDocument();
@@ -38,35 +37,51 @@ describe("CharacterForm", () => {
     expect(screen.getByTestId("theme-section")).toBeInTheDocument();
   });
 
+  it("has no system, campaign, or status inputs", () => {
+    renderForm();
+    expect(screen.queryByLabelText("System *")).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("Campaign")).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("Status")).not.toBeInTheDocument();
+  });
+
   it("pre-fills fields from defaultValues", () => {
     renderForm({
       defaultValues: {
         name: "Mira Ashveil",
-        system: "D&D 5e",
-        campaign: "The Shattered Crown",
-        status: CharacterStatus.RETIRED,
+        tagline: "Ex-court mage turned wandering debt collector.",
+        pronouns: "she/her",
+        designedBy: "Placeholder Artist",
         bio: "A former court mage.",
-        tags: ["mage", "retired"],
+        tags: ["mage", "wanderer"],
       },
     });
     expect(screen.getByLabelText("Name *")).toHaveValue("Mira Ashveil");
-    expect(screen.getByLabelText("System *")).toHaveValue("D&D 5e");
-    expect(screen.getByLabelText("Campaign")).toHaveValue("The Shattered Crown");
-    expect(screen.getByLabelText("Status")).toHaveTextContent("Retired");
+    expect(screen.getByLabelText("Tagline")).toHaveValue(
+      "Ex-court mage turned wandering debt collector."
+    );
+    expect(screen.getByLabelText("Pronouns")).toHaveValue("she/her");
+    expect(screen.getByLabelText("Designed by")).toHaveValue("Placeholder Artist");
     expect(screen.getByLabelText("Bio")).toHaveValue("A former court mage.");
     expect(screen.getByText("mage")).toBeInTheDocument();
-    expect(screen.getByText("retired")).toBeInTheDocument();
+    expect(screen.getByText("wanderer")).toBeInTheDocument();
+  });
+
+  it("caps the tagline input at 140 characters", () => {
+    renderForm();
+    expect(screen.getByLabelText("Tagline")).toHaveAttribute("maxlength", "140");
   });
 
   it("calls onSubmit with correct data when submitted", async () => {
     const { onSubmit } = renderForm();
     await userEvent.type(screen.getByLabelText("Name *"), "Nara Solis");
-    await userEvent.type(screen.getByLabelText("System *"), "Blades in the Dark");
+    await userEvent.type(screen.getByLabelText("Tagline"), "Runs her own crew");
+    await userEvent.type(screen.getByLabelText("Pronouns"), "she/her");
     await userEvent.click(screen.getByRole("button", { name: "Save" }));
     await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
     const submitted: CharacterFormData = onSubmit.mock.calls[0][0];
     expect(submitted.name).toBe("Nara Solis");
-    expect(submitted.system).toBe("Blades in the Dark");
+    expect(submitted.tagline).toBe("Runs her own crew");
+    expect(submitted.pronouns).toBe("she/her");
     expect(submitted.theme).toMatchObject({
       colors: expect.any(Object),
       preset: expect.any(String),
@@ -88,10 +103,10 @@ describe("CharacterForm", () => {
   });
 
   it("removes a tag chip with the × button", async () => {
-    renderForm({ defaultValues: { tags: ["mage", "retired"] } });
+    renderForm({ defaultValues: { tags: ["mage", "wanderer"] } });
     await userEvent.click(screen.getByRole("button", { name: "Remove tag mage" }));
     expect(screen.queryByText("mage")).not.toBeInTheDocument();
-    expect(screen.getByText("retired")).toBeInTheDocument();
+    expect(screen.getByText("wanderer")).toBeInTheDocument();
   });
 
   it("ignores empty tag input", async () => {

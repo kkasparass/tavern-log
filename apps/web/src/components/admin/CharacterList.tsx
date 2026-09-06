@@ -79,7 +79,7 @@ export function CharacterList() {
               )}
               <div>
                 <span className="font-medium text-white">{c.name}</span>
-                <span className="ml-2 text-sm text-white/40">{c.system}</span>
+                <span className="ml-2 text-sm text-white/40">{c.tagline}</span>
               </div>
             </div>
             <div className="ml-3 mt-2 flex flex-wrap items-center gap-1 text-sm sm:ml-0 md:mt-0">

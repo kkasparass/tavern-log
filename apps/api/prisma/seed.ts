@@ -26,9 +26,8 @@ async function main() {
       createdById: user.id,
       slug: "mira-ashveil",
       name: "Mira Ashveil",
-      system: "D&D 5e",
-      campaign: "The Shattered Crown",
-      status: "RETIRED",
+      tagline: "Ex-court mage turned wandering debt collector. The Ashwood remembers her.",
+      pronouns: "she/her",
       bio: "A former court mage who walked away from power after the Siege of Valdenmoor. She now wanders the Ashwood, collecting debts and forgetting names.",
       personality:
         "Dry wit, deeply loyal to a very short list of people. Distrusts institutions. Excellent at leaving before things get complicated.",
@@ -39,7 +38,7 @@ async function main() {
         accentColor: "#7c3aed",
       },
       tags: {
-        create: [{ tag: "mage" }, { tag: "D&D 5e" }, { tag: "retired" }],
+        create: [{ tag: "mage" }, { tag: "D&D 5e" }, { tag: "The Shattered Crown" }],
       },
       stories: {
         create: [
@@ -125,9 +124,8 @@ async function main() {
       createdById: user.id,
       slug: "nara-solis",
       name: "Nara Solis",
-      system: "Blades in the Dark",
-      campaign: "Shadows of Doskvol",
-      status: "ACTIVE",
+      tagline: "Dockworker turned enforcer, now running her own crew out of Crow's Foot.",
+      pronouns: "she/her",
       bio: "Former dockworker turned enforcer for the Red Sashes. She cut ties with the crew after a job went sideways in the Dusk ward and now runs her own small operation out of Crow's Foot.",
       personality:
         "Pragmatic to a fault. Doesn't enjoy violence but is very good at it. Has a reputation for honoring her word — which in Doskvol is either an asset or a liability depending on who's asking.",
@@ -138,7 +136,7 @@ async function main() {
         accentColor: "#d4901a",
       },
       tags: {
-        create: [{ tag: "scoundrel" }, { tag: "Blades in the Dark" }, { tag: "active" }],
+        create: [{ tag: "scoundrel" }, { tag: "Blades in the Dark" }, { tag: "Shadows of Doskvol" }],
       },
       stories: {
         create: [

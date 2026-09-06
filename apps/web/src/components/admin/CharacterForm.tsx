@@ -1,16 +1,14 @@
 "use client";
-import { CharacterStatus } from "@/lib/types";
-import { characterStatusLabel } from "@/lib/constants";
 import { useCharacterForm } from "./useCharacterForm";
+import { TagInput } from "./TagInput";
 import { FileUpload } from "./FileUpload";
 import { ThemeSection } from "./ThemeSection";
-import { Select } from "@/components/ui/Select";
 
 export type CharacterFormData = {
   name: string;
-  system: string;
-  campaign: string;
-  status: CharacterStatus;
+  tagline: string;
+  pronouns: string;
+  designedBy: string;
   bio: string;
   personality: string;
   thumbnailUrl: string;
@@ -41,12 +39,12 @@ export function CharacterForm({
   const {
     name,
     setName,
-    system,
-    setSystem,
-    campaign,
-    setCampaign,
-    status,
-    setStatus,
+    tagline,
+    setTagline,
+    pronouns,
+    setPronouns,
+    designedBy,
+    setDesignedBy,
     bio,
     setBio,
     personality,
@@ -63,7 +61,6 @@ export function CharacterForm({
     setTagInput,
     addTag,
     removeTag,
-    handleTagKeyDown,
     submitForm,
   } = useCharacterForm(defaultValues);
 
@@ -94,47 +91,45 @@ export function CharacterForm({
           />
         </div>
         <div className="flex flex-col gap-1">
-          <label htmlFor="system" className={labelClass}>
-            System *
+          <label htmlFor="pronouns" className={labelClass}>
+            Pronouns
           </label>
           <input
-            id="system"
+            id="pronouns"
             type="text"
-            value={system}
-            onChange={(e) => setSystem(e.target.value)}
-            required
+            value={pronouns}
+            onChange={(e) => setPronouns(e.target.value)}
             className={inputClass}
           />
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div className="flex flex-col gap-1">
-          <label htmlFor="campaign" className={labelClass}>
-            Campaign
-          </label>
-          <input
-            id="campaign"
-            type="text"
-            value={campaign}
-            onChange={(e) => setCampaign(e.target.value)}
-            className={inputClass}
-          />
-        </div>
-        <div className="flex flex-col gap-1">
-          <label htmlFor="status" className={labelClass}>
-            Status
-          </label>
-          <Select
-            id="status"
-            value={status}
-            onChange={(val) => setStatus(val as CharacterStatus)}
-            options={Object.values(CharacterStatus).map((s) => ({
-              value: s,
-              label: characterStatusLabel[s],
-            }))}
-          />
-        </div>
+      <div className="flex flex-col gap-1">
+        <label htmlFor="tagline" className={labelClass}>
+          Tagline
+        </label>
+        <input
+          id="tagline"
+          type="text"
+          value={tagline}
+          onChange={(e) => setTagline(e.target.value)}
+          maxLength={140}
+          placeholder="A quick intro line shown on the character card"
+          className={inputClass}
+        />
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <label htmlFor="designedBy" className={labelClass}>
+          Designed by
+        </label>
+        <input
+          id="designedBy"
+          type="text"
+          value={designedBy}
+          onChange={(e) => setDesignedBy(e.target.value)}
+          className={inputClass}
+        />
       </div>
 
       <div className="flex flex-col gap-1">
@@ -189,47 +184,14 @@ export function CharacterForm({
 
       <ThemeSection value={theme} onChange={setTheme} />
 
-      <div className="flex flex-col gap-2">
-        <span className={labelClass}>Tags</span>
-        <div className="flex gap-2">
-          <input
-            type="text"
-            value={tagInput}
-            onChange={(e) => setTagInput(e.target.value)}
-            onKeyDown={handleTagKeyDown}
-            placeholder="Add a tag…"
-            className={`${inputClass} flex-1`}
-            aria-label="Tag input"
-          />
-          <button
-            type="button"
-            onClick={addTag}
-            className="rounded border border-white/20 px-4 py-2 text-sm text-white/70 transition-colors hover:border-white/40 hover:text-white"
-          >
-            Add
-          </button>
-        </div>
-        {tags.length > 0 && (
-          <ul className="flex flex-wrap gap-2">
-            {tags.map((tag) => (
-              <li
-                key={tag}
-                className="flex items-center gap-1 rounded-full bg-white/10 px-2 py-1 text-sm text-white/80"
-              >
-                {tag}
-                <button
-                  type="button"
-                  onClick={() => removeTag(tag)}
-                  aria-label={`Remove tag ${tag}`}
-                  className="leading-none text-white/40 transition-colors hover:text-white"
-                >
-                  ×
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+      <TagInput
+        value={tagInput}
+        onValueChange={setTagInput}
+        tags={tags}
+        onAdd={addTag}
+        onRemove={removeTag}
+        inputClassName={inputClass}
+      />
 
       {error && <p className="text-sm text-red-400">{error}</p>}
 

@@ -34,17 +34,33 @@ function renderCard(props = mockCharacterListItem) {
 }
 
 describe("CharacterCard", () => {
-  it("renders name and system in overlay", () => {
+  it("renders name, tagline and tags in overlay", () => {
     renderCard();
     expect(screen.getByText("Mira Ashveil")).toBeInTheDocument();
-    // 'D&D 5e' appears twice: once as the system label, once as a tag
-    expect(screen.getAllByText("D&D 5e")).toHaveLength(2);
+    expect(
+      screen.getByText(
+        "Ex-court mage turned wandering debt collector. The Ashwood remembers her."
+      )
+    ).toBeInTheDocument();
+    // tagline replaces the old system label, so 'D&D 5e' appears only as a tag
+    expect(screen.getAllByText("D&D 5e")).toHaveLength(1);
+  });
+
+  it("falls back to the first 3 tags as subtext when tagline is empty", () => {
+    renderCard({ ...mockCharacterListItem, tagline: null });
+    expect(screen.getByText("mage · D&D 5e · The Shattered Crown")).toBeInTheDocument();
+  });
+
+  it("renders no subtext line when tagline and tags are empty", () => {
+    renderCard({ ...mockCharacterListItem, tagline: null, tags: [] });
+    expect(screen.getByText("Mira Ashveil")).toBeInTheDocument();
+    expect(screen.queryByText(/mage/)).not.toBeInTheDocument();
   });
 
   it("renders tags in overlay", () => {
     renderCard();
     expect(screen.getByText("mage")).toBeInTheDocument();
-    expect(screen.getByText("retired")).toBeInTheDocument();
+    expect(screen.getByText("The Shattered Crown")).toBeInTheDocument();
   });
 
   it("links to the character page", () => {

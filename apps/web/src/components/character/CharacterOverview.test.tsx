@@ -13,7 +13,18 @@ describe("CharacterOverview", () => {
     expect(screen.getByText(mockCharacter.bio!)).toBeInTheDocument();
     expect(screen.getByText(mockCharacter.personality!)).toBeInTheDocument();
     expect(screen.getByText("mage")).toBeInTheDocument();
-    expect(screen.getByText("retired")).toBeInTheDocument();
+    expect(screen.getByText("The Shattered Crown")).toBeInTheDocument();
+  });
+
+  it("renders pronouns and designedBy chips where set", () => {
+    renderWithQuery(<CharacterOverview slug={slug} />, cacheEntry);
+    expect(screen.getByText("Pronouns: she/her")).toBeInTheDocument();
+  });
+
+  it("omits the meta chips when pronouns and designedBy are unset", () => {
+    const data = { ...mockCharacter, pronouns: null, designedBy: null };
+    renderWithQuery(<CharacterOverview slug={slug} />, [[["character", slug], data]]);
+    expect(screen.queryByText("Pronouns: she/her")).not.toBeInTheDocument();
   });
 
   it("omits sections for null bio and personality", () => {
