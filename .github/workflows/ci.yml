@@ -43,7 +43,7 @@ jobs:
         run: npm test --workspace=apps/web
 
   deploy:
-    name: Migrate & Deploy
+    name: Migrate
     needs: ci
     if: github.ref == 'refs/heads/master' && github.event_name == 'push'
     runs-on: ubuntu-latest
@@ -66,49 +66,5 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Log in to GHCR
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ secrets.GHCR_USERNAME }}
-          password: ${{ secrets.GHCR_TOKEN }}
-
-      - name: Build and push image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: apps/api/Dockerfile
-          platforms: linux/amd64
-          push: true
-          tags: ghcr.io/${{ github.repository_owner }}/tavern-log/tavern-api:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-      - name: Deploy to GCP VM
-        uses: appleboy/ssh-action@v1
-        env:
-          IMAGE: ghcr.io/${{ github.repository_owner }}/tavern-log/tavern-api:latest
-          GHCR_USER: ${{ secrets.GHCR_USERNAME }}
-          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
-        with:
-          host: ${{ secrets.GCP_HOST }}
-          username: ${{ secrets.GCP_USER }}
-          key: ${{ secrets.GCP_SSH_KEY }}
-          passphrase: ${{ secrets.GCP_SSH_KEY_PASSPHRASE }}
-          envs: IMAGE,GHCR_USER,GHCR_TOKEN
-          script: |
-            set -e
-            echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
-            docker pull $IMAGE
-            docker stop tavern-api || true
-            docker rm tavern-api || true
-            docker run -d \
-              --name tavern-api \
-              --restart unless-stopped \
-              --env-file /home/gcp-tavern-log/tavern-api.env \
-              -p 3001:3001 \
-              $IMAGE
-            docker image prune -f
+  # App deployment: Render auto-deploys the API from master using
+  # apps/api/Dockerfile (repo-root build context). No GHCR or VM involved.
