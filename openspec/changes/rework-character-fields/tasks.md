@@ -26,9 +26,9 @@
 
 ## 4. Tag Autocomplete UI
 
-- [ ] 4.1 Build suggestion fetching — debounced (~250ms) call to `GET /tags?q=` as tag input value changes; skip fetch for empty input
-- [ ] 4.2 Extend the tag input in `CharacterForm.tsx` with the dropdown — suggestion listbox, click/Enter to add, arrow-key highlight, Escape/blur/empty close; exclude already-added tags case-insensitively; combobox aria wiring (`role="combobox"`, `aria-expanded`, `aria-activedescendant`, `role="option"` + ids)
-- [ ] 4.3 Add component tests — suggestions narrow on typing, Enter/click adds chip, duplicates excluded, keyboard nav + Escape, debounce limits requests, blur closes without adding
+- [x] 4.1 Build suggestion fetching — debounced (~250ms) call to `GET /tags?q=` as tag input value changes; skip fetch for empty input
+- [x] 4.2 Extend the tag input in `CharacterForm.tsx` with the dropdown — suggestion listbox, click/Enter to add, arrow-key highlight, Escape/blur/empty close; exclude already-added tags case-insensitively; combobox aria wiring (`role="combobox"`, `aria-expanded`, `aria-activedescendant`, `role="option"` + ids)
+- [x] 4.3 Add component tests — suggestions narrow on typing, Enter/click adds chip, duplicates excluded, keyboard nav + Escape, debounce limits requests, blur closes without adding
 
 ## 5. Admin Form Field Rework
 

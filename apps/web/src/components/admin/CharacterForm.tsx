@@ -1,5 +1,6 @@
 "use client";
 import { useCharacterForm } from "./useCharacterForm";
+import { useTagSuggestions } from "./useTagSuggestions";
 import { FileUpload } from "./FileUpload";
 import { ThemeSection } from "./ThemeSection";
 
@@ -60,9 +61,32 @@ export function CharacterForm({
     setTagInput,
     addTag,
     removeTag,
-    handleTagKeyDown,
     submitForm,
   } = useCharacterForm(defaultValues);
+  const { suggestions, highlightIndex, isOpen: suggestionsOpen, moveHighlight, dismiss } =
+    useTagSuggestions(tagInput, tags);
+
+  function handleTagKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (suggestionsOpen && (e.key === "ArrowDown" || e.key === "ArrowUp")) {
+      e.preventDefault();
+      moveHighlight(e.key === "ArrowDown" ? 1 : -1);
+      return;
+    }
+    if (suggestionsOpen && e.key === "Escape") {
+      e.preventDefault();
+      dismiss();
+      return;
+    }
+    if (e.key === "Enter") {
+      e.preventDefault();
+      if (suggestionsOpen && highlightIndex >= 0) {
+        addTag(suggestions[highlightIndex].tag);
+        dismiss();
+        return;
+      }
+      addTag();
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -187,18 +211,60 @@ export function CharacterForm({
       <div className="flex flex-col gap-2">
         <span className={labelClass}>Tags</span>
         <div className="flex gap-2">
-          <input
-            type="text"
-            value={tagInput}
-            onChange={(e) => setTagInput(e.target.value)}
-            onKeyDown={handleTagKeyDown}
-            placeholder="Add a tag…"
-            className={`${inputClass} flex-1`}
-            aria-label="Tag input"
-          />
+          <div className="relative flex-1">
+            <input
+              type="text"
+              value={tagInput}
+              onChange={(e) => setTagInput(e.target.value)}
+              onKeyDown={handleTagKeyDown}
+              onBlur={dismiss}
+              placeholder="Add a tag…"
+              className={inputClass}
+              aria-label="Tag input"
+              role="combobox"
+              aria-expanded={suggestionsOpen}
+              aria-controls="tag-suggestions"
+              aria-autocomplete="list"
+              aria-activedescendant={
+                suggestionsOpen && highlightIndex >= 0
+                  ? `tag-suggestion-${highlightIndex}`
+                  : undefined
+              }
+            />
+            {suggestionsOpen && (
+              <ul
+                id="tag-suggestions"
+                role="listbox"
+                aria-label="Tag suggestions"
+                className="absolute z-10 mt-1 w-full overflow-hidden rounded border border-white/10 bg-gray-800 shadow-lg"
+              >
+                {suggestions.map((s, i) => (
+                  <li
+                    key={s.tag}
+                    id={`tag-suggestion-${i}`}
+                    role="option"
+                    aria-selected={i === highlightIndex}
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      addTag(s.tag);
+                      dismiss();
+                    }}
+                    className={`flex cursor-pointer items-center justify-between px-3 py-2 text-sm transition-colors ${
+                      i === highlightIndex
+                        ? "bg-white/10 text-white"
+                        : "text-white/70 hover:bg-white/5 hover:text-white"
+                    }`}
+                  >
+                    <span>{s.tag}</span>
+                    <span className="text-xs text-white/40">{s.count}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
           <button
             type="button"
-            onClick={addTag}
+            onClick={() => addTag()}
             className="rounded border border-white/20 px-4 py-2 text-sm text-white/70 transition-colors hover:border-white/40 hover:text-white"
           >
             Add

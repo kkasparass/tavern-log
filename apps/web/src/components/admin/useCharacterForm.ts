@@ -20,9 +20,9 @@ export function useCharacterForm(defaultValues?: Partial<CharacterFormData>) {
   const [tags, setTags] = useState<string[]>(defaultValues?.tags ?? []);
   const [tagInput, setTagInput] = useState("");
 
-  function addTag() {
-    const trimmed = tagInput.trim();
-    if (trimmed && !tags.includes(trimmed)) {
+  function addTag(value?: string) {
+    const trimmed = (value ?? tagInput).trim();
+    if (trimmed && !tags.some((t) => t.toLowerCase() === trimmed.toLowerCase())) {
       setTags((prev) => [...prev, trimmed]);
     }
     setTagInput("");
@@ -30,13 +30,6 @@ export function useCharacterForm(defaultValues?: Partial<CharacterFormData>) {
 
   function removeTag(tag: string) {
     setTags((prev) => prev.filter((t) => t !== tag));
-  }
-
-  function handleTagKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      addTag();
-    }
   }
 
   async function submitForm(onSubmit: (data: CharacterFormData) => void): Promise<void> {
@@ -92,7 +85,6 @@ export function useCharacterForm(defaultValues?: Partial<CharacterFormData>) {
     setTagInput,
     addTag,
     removeTag,
-    handleTagKeyDown,
     submitForm,
   };
 }
