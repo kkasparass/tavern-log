@@ -11,8 +11,13 @@ export enum CardTemplateId {
 
 export type PortraitSettings = Record<string, never>;
 
+export enum CardImageAlignment {
+  Left = "left",
+  Right = "right",
+}
+
 export type BannerSettings = {
-  imageAlignment: "left" | "right";
+  imageAlignment: CardImageAlignment;
 };
 
 export type CompactSettings = {

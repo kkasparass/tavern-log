@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { resolveCard, resolveCardFromTheme, CARD_TEMPLATE_DEFAULTS } from "./cards";
-import { CardTemplateId } from "./types";
+import { CardImageAlignment, CardTemplateId } from "./types";
 import type { BannerSettings, CompactSettings, PolaroidSettings } from "./types";
 
 describe("resolveCard", () => {
@@ -8,7 +8,7 @@ describe("resolveCard", () => {
     const result = resolveCard(CardTemplateId.Banner, {});
     expect(result).toEqual({
       template: "banner",
-      settings: { imageAlignment: "left" },
+      settings: { imageAlignment: CardImageAlignment.Left },
     });
     const alignment: BannerSettings["imageAlignment"] = result.settings.imageAlignment;
     expect(alignment).toBe("left");
@@ -34,7 +34,7 @@ describe("resolveCard", () => {
     const result = resolveCard(CardTemplateId.Banner, {
       card: { template: "banner", settings: { imageAlignment: 42 } },
     });
-    expect(result.settings).toEqual({ imageAlignment: "left" });
+    expect(result.settings).toEqual({ imageAlignment: CardImageAlignment.Left });
   });
 
   it("keeps only matching-type keys when settings are mixed", () => {
@@ -62,7 +62,7 @@ describe("resolveCardFromTheme", () => {
       card: { template: "banner", settings: { imageAlignment: "right" } },
     });
     expect(result.template).toBe("banner");
-    expect(result.settings).toEqual({ imageAlignment: "right" });
+    expect(result.settings).toEqual({ imageAlignment: CardImageAlignment.Right });
   });
 
   it("falls back to portrait when theme has no card key", () => {

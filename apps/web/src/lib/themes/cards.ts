@@ -1,9 +1,9 @@
-import { CardTemplateId } from "./types";
+import { CardImageAlignment, CardTemplateId } from "./types";
 import type { ResolvedCard, SettingsOf } from "./types";
 
 export const CARD_TEMPLATE_DEFAULTS: { [K in CardTemplateId]: SettingsOf<K> } = {
   [CardTemplateId.Portrait]: {},
-  [CardTemplateId.Banner]: { imageAlignment: "left" },
+  [CardTemplateId.Banner]: { imageAlignment: CardImageAlignment.Left },
   [CardTemplateId.Compact]: { showTags: true },
   [CardTemplateId.Polaroid]: { rotation: -3, frameColor: "#f5f0e6" },
 };
