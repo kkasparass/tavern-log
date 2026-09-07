@@ -2,6 +2,60 @@ export enum DecorationSetId {
   Forest = "forest",
 }
 
+export enum CardTemplateId {
+  Portrait = "portrait",
+  Banner = "banner",
+  Compact = "compact",
+  Polaroid = "polaroid",
+}
+
+export type PortraitSettings = Record<string, never>;
+
+export enum CardImageAlignment {
+  Left = "left",
+  Right = "right",
+}
+
+export type BannerSettings = {
+  imageAlignment: CardImageAlignment;
+};
+
+export type CompactSettings = {
+  showTags: boolean;
+};
+
+export type PolaroidSettings = {
+  rotation: number;
+  frameColor: string;
+};
+
+export type CardSettingsMap = {
+  [CardTemplateId.Portrait]: PortraitSettings;
+  [CardTemplateId.Banner]: BannerSettings;
+  [CardTemplateId.Compact]: CompactSettings;
+  [CardTemplateId.Polaroid]: PolaroidSettings;
+};
+
+export type SettingsOf<T extends CardTemplateId> = CardSettingsMap[T];
+
+export type ResolvedCard<T extends CardTemplateId = CardTemplateId> = {
+  template: T;
+  settings: SettingsOf<T>;
+};
+
+export function cardLabel(id: CardTemplateId): string {
+  switch (id) {
+    case CardTemplateId.Portrait:
+      return "Portrait";
+    case CardTemplateId.Banner:
+      return "Banner";
+    case CardTemplateId.Compact:
+      return "Compact";
+    case CardTemplateId.Polaroid:
+      return "Polaroid";
+  }
+}
+
 export enum TransitionId {
   FloralBloom = "floral-bloom",
   BellsFlower = "bells-flower",

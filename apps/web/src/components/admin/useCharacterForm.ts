@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { resolveTheme } from "@/lib/themes/presets";
+import { resolveCardFromTheme } from "@/lib/themes/cards";
 import { uploadFile } from "@/lib/upload";
-import type { ThemeConfig } from "@/lib/themes/types";
+import type { ResolvedCard, ThemeConfig } from "@/lib/themes/types";
 import type { CharacterFormData } from "./CharacterForm";
 
 export function useCharacterForm(defaultValues?: Partial<CharacterFormData>) {
@@ -17,6 +18,9 @@ export function useCharacterForm(defaultValues?: Partial<CharacterFormData>) {
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [isPublic, setIsPublic] = useState(defaultValues?.isPublic ?? true);
   const [theme, setTheme] = useState<ThemeConfig>(() => resolveTheme(defaultValues?.theme ?? {}));
+  const [card, setCard] = useState<ResolvedCard>(() =>
+    resolveCardFromTheme(defaultValues?.theme ?? {})
+  );
   const [tags, setTags] = useState<string[]>(defaultValues?.tags ?? []);
   const [tagInput, setTagInput] = useState("");
 
@@ -49,7 +53,7 @@ export function useCharacterForm(defaultValues?: Partial<CharacterFormData>) {
         personality,
         thumbnailUrl,
         isPublic,
-        theme,
+        theme: { ...theme, card },
         tags,
       });
     } catch (err) {
@@ -78,8 +82,11 @@ export function useCharacterForm(defaultValues?: Partial<CharacterFormData>) {
     uploadError,
     isPublic,
     setIsPublic,
+    existingThumbnailUrl,
     theme,
     setTheme,
+    card,
+    setCard,
     tags,
     tagInput,
     setTagInput,

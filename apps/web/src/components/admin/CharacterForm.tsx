@@ -1,8 +1,11 @@
 "use client";
+import { useEffect, useState } from "react";
 import { useCharacterForm } from "./useCharacterForm";
 import { TagInput } from "./TagInput";
 import { FileUpload } from "./FileUpload";
 import { ThemeSection } from "./ThemeSection";
+import { CardTemplateSection } from "./CardTemplateSection";
+import type { CharacterPreview } from "@/lib/types";
 
 export type CharacterFormData = {
   name: string;
@@ -49,13 +52,17 @@ export function CharacterForm({
     setBio,
     personality,
     setPersonality,
+    pendingThumbnailFile,
     setPendingThumbnailFile,
     isUploading,
     uploadError,
     isPublic,
     setIsPublic,
+    existingThumbnailUrl,
     theme,
     setTheme,
+    card,
+    setCard,
     tags,
     tagInput,
     setTagInput,
@@ -63,6 +70,30 @@ export function CharacterForm({
     removeTag,
     submitForm,
   } = useCharacterForm(defaultValues);
+
+  // Object URL for a pending thumbnail upload so the card preview can show it;
+  // revoked when the file changes or the form unmounts
+  const [pendingPreviewUrl, setPendingPreviewUrl] = useState<string | null>(null);
+  useEffect(() => {
+    if (!pendingThumbnailFile) {
+      setPendingPreviewUrl(null);
+      return;
+    }
+    const url = URL.createObjectURL(pendingThumbnailFile);
+    setPendingPreviewUrl(url);
+    return () => URL.revokeObjectURL(url);
+  }, [pendingThumbnailFile]);
+
+  const preview: CharacterPreview = {
+    id: "preview",
+    slug: "preview",
+    name: name || "Character name",
+    tagline: tagline.trim() ? tagline : null,
+    pronouns: pronouns.trim() ? pronouns : null,
+    thumbnailUrl: pendingPreviewUrl ?? (existingThumbnailUrl || null),
+    theme,
+    tags,
+  };
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -169,6 +200,15 @@ export function CharacterForm({
         {uploadError && <p className="mt-1 text-sm text-red-400">{uploadError}</p>}
       </div>
 
+      <TagInput
+        value={tagInput}
+        onValueChange={setTagInput}
+        tags={tags}
+        onAdd={addTag}
+        onRemove={removeTag}
+        inputClassName={inputClass}
+      />
+
       <div className="flex items-center gap-2">
         <input
           id="isPublic"
@@ -184,14 +224,7 @@ export function CharacterForm({
 
       <ThemeSection value={theme} onChange={setTheme} />
 
-      <TagInput
-        value={tagInput}
-        onValueChange={setTagInput}
-        tags={tags}
-        onAdd={addTag}
-        onRemove={removeTag}
-        inputClassName={inputClass}
-      />
+      <CardTemplateSection value={card} onChange={setCard} theme={theme} preview={preview} />
 
       {error && <p className="text-sm text-red-400">{error}</p>}
 

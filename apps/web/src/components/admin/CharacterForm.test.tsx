@@ -10,6 +10,10 @@ vi.mock("./ThemeSection", () => ({
   ThemeSection: () => <div data-testid="theme-section" />,
 }));
 
+vi.mock("./CardTemplateSection", () => ({
+  CardTemplateSection: () => <div data-testid="card-template-section" />,
+}));
+
 vi.mock("./FileUpload", () => ({
   FileUpload: ({ label }: { onFileSelect: (file: File | null) => void; label?: string }) => (
     <div>{label ?? "Upload file"}</div>
@@ -35,6 +39,7 @@ describe("CharacterForm", () => {
     expect(screen.getByLabelText("Public")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Save" })).toBeInTheDocument();
     expect(screen.getByTestId("theme-section")).toBeInTheDocument();
+    expect(screen.getByTestId("card-template-section")).toBeInTheDocument();
   });
 
   it("has no system, campaign, or status inputs", () => {
@@ -85,6 +90,22 @@ describe("CharacterForm", () => {
     expect(submitted.theme).toMatchObject({
       colors: expect.any(Object),
       preset: expect.any(String),
+      card: { template: "portrait", settings: {} },
+    });
+  });
+
+  it("pre-fills card template state from defaultValues theme", async () => {
+    const { onSubmit } = renderForm({
+      defaultValues: {
+        theme: { bgColor: "#1a1a2e", card: { template: "banner", settings: { imageAlignment: "right" } } },
+      },
+    });
+    await userEvent.type(screen.getByLabelText("Name *"), "Nara Solis");
+    await userEvent.click(screen.getByRole("button", { name: "Save" }));
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
+    const submitted: CharacterFormData = onSubmit.mock.calls[0][0];
+    expect(submitted.theme).toMatchObject({
+      card: { template: "banner", settings: { imageAlignment: "right" } },
     });
   });
 

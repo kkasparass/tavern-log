@@ -109,6 +109,45 @@ export const mockCharacterListItem: CharacterPreview = {
   tags: mockCharacter.tags,
 };
 
+// Nested theme shape (new ThemeConfig shape, stored as-is in Character.theme) with
+// one card-template variant per template — mirrors what admin forms submit
+const miraNestedTheme = {
+  preset: "custom",
+  colors: { bg: "#1a1a2e", text: "#e0e0e0", accent: "#7c3aed" },
+  bgPattern: "none",
+  transition: null,
+  decorations: null,
+};
+
+export const nestedThemeListItem: CharacterPreview = {
+  ...mockCharacterListItem,
+  theme: miraNestedTheme,
+};
+
+export const bannerCardListItem: CharacterPreview = {
+  ...mockCharacterListItem,
+  theme: {
+    ...miraNestedTheme,
+    card: { template: "banner", settings: { imageAlignment: "right" } },
+  },
+};
+
+export const compactCardListItem: CharacterPreview = {
+  ...mockCharacterListItem,
+  theme: {
+    ...miraNestedTheme,
+    card: { template: "compact", settings: { showTags: true } },
+  },
+};
+
+export const polaroidCardListItem: CharacterPreview = {
+  ...mockCharacterListItem,
+  theme: {
+    ...miraNestedTheme,
+    card: { template: "polaroid", settings: { rotation: -3, frameColor: "#f5f0e6" } },
+  },
+};
+
 export const naraCharacter: Character = {
   id: "cuid-nara",
   createdById: "user-1",
