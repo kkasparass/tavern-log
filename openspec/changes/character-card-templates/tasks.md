@@ -21,15 +21,15 @@
 
 ## 4. Admin template section
 
-- [ ] 4.1 Build `CardTemplateSection.tsx` — controlled `value/onChange` section: template dropdown (registry labels), selected template's `SettingsControls`, and inline live preview rendering the actual `CharacterCard` dispatcher with the character's current data (effort: 3)
-- [ ] 4.2 Build per-template `SettingsControls` components — banner alignment toggle, compact show-tags toggle, polaroid rotation + frame colour controls; changing template resets settings to that template's defaults (effort: 2)
-- [ ] 4.3 Update `useCharacterForm.ts` — separate `card` state initialised via `resolveCard(defaultValues?.theme ?? {})`; `submitForm` merges into the submitted `theme` blob (`{ ...theme, card }`); card edits never touch theme state or `preset: "custom"` (effort: 1)
-- [ ] 4.4 Render `<CardTemplateSection />` in `CharacterForm.tsx` as a sibling to `ThemeSection` (effort: 1)
-- [ ] 4.5 Test `CardTemplateSection` — dropdown change swaps settings controls and resets settings; inline preview renders the selected template with character data; hovering the preview triggers and clears the theme hover-preview (effort: 2)
-- [ ] 4.6 Update `CharacterForm.test.tsx` / form hook tests — submitted `theme` payload includes `card: { template, settings }`; pre-fill from existing `theme.card`; card changes don't set `preset: "custom"`; preset fills don't stomp card state (effort: 2)
+- [x] 4.1 Build `CardTemplateSection.tsx` — controlled `value/onChange` section: template dropdown (registry labels), selected template's `SettingsControls`, and inline live preview rendering the actual `CharacterCard` dispatcher with the character's current data (effort: 3)
+- [x] 4.2 ~~Build per-template SettingsControls~~ — built with the registry in 2.1 (required by the entry type); this task delivered the section wiring: template switch resets settings to defaults and swaps controls (effort: 2)
+- [x] 4.3 Update `useCharacterForm.ts` — separate `card` state initialised via `resolveCard(defaultValues?.theme ?? {})`; `submitForm` merges into the submitted `theme` blob (`{ ...theme, card }`); card edits never touch theme state or `preset: "custom"` (effort: 1)
+- [x] 4.4 Render `<CardTemplateSection />` in `CharacterForm.tsx` as a sibling to `ThemeSection` (effort: 1)
+- [x] 4.5 Test `CardTemplateSection` — dropdown change swaps settings controls and resets settings; inline preview renders the selected template with character data; hovering the preview triggers and clears the theme hover-preview (effort: 2)
+- [x] 4.6 Update `CharacterForm.test.tsx` / form hook tests — submitted `theme` payload includes `card: { template, settings }`; pre-fill from existing `theme.card`; card changes don't set `preset: "custom"`; preset fills don't stomp card state (effort: 2)
 
 ## 5. Fixtures and final verification
 
-- [ ] 5.1 Update `apps/web/src/test/fixtures.ts` — add characters with the new nested theme shape + `theme.card` variants for each template (keep both apps' fixtures in sync where relevant) (effort: 1)
-- [ ] 5.2 Confirm zero API changes — API tests untouched and passing; no Prisma migration generated (effort: 0)
-- [ ] 5.3 Run full verification — lint, typecheck, and all tests pass in both apps (effort: 1)
+- [x] 5.1 Update `apps/web/src/test/fixtures.ts` — add characters with the new nested theme shape + `theme.card` variants for each template (keep both apps' fixtures in sync where relevant) (effort: 1)
+- [x] 5.2 Confirm zero API changes — API tests untouched and passing; no Prisma migration generated (effort: 0)
+- [x] 5.3 Run full verification — lint, typecheck, and all tests pass in both apps (effort: 1)

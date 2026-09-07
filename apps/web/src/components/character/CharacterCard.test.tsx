@@ -3,8 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi } from "vitest";
 import { CharacterCard } from "./CharacterCard";
 import { TransitionProvider, useTransition } from "@/components/transitions/TransitionProvider";
-import { CardTemplateId } from "@/lib/themes/types";
-import { mockCharacterListItem } from "@/test/fixtures";
+import { mockCharacterListItem, bannerCardListItem, compactCardListItem, polaroidCardListItem } from "@/test/fixtures";
 
 vi.mock("next/image");
 const mockPush = vi.fn();
@@ -55,6 +54,12 @@ describe("CharacterCard", () => {
     expect(screen.queryByText("mage")).not.toBeInTheDocument();
   });
 
+  it("renders the nested theme shape with card settings end-to-end", () => {
+    // banner fixture: new-shape theme + card settings imageAlignment: "right"
+    const { container } = renderCard(bannerCardListItem);
+    expect(container.querySelector(".flex-row-reverse")).not.toBeNull();
+  });
+
   it("falls back to the portrait template for an unknown template id", () => {
     renderCard(withCardTemplate("hologram"));
     expect(screen.getByText("Mira Ashveil")).toBeInTheDocument();
@@ -62,12 +67,12 @@ describe("CharacterCard", () => {
   });
 
   it.each([
-    [CardTemplateId.Portrait, {}],
-    [CardTemplateId.Banner, {}],
-    [CardTemplateId.Compact, { showTags: true }],
-    [CardTemplateId.Polaroid, { rotation: -3, frameColor: "#f5f0e6" }],
-  ])("sets and clears previewTheme on hover for the %s template", async (template, settings) => {
-    renderCard(withCardTemplate(template, settings as Record<string, unknown>));
+    ["portrait", mockCharacterListItem],
+    ["banner", bannerCardListItem],
+    ["compact", compactCardListItem],
+    ["polaroid", polaroidCardListItem],
+  ])("sets and clears previewTheme on hover for the %s template", async (_label, character) => {
+    renderCard(character);
     await userEvent.hover(screen.getByRole("link"));
     expect(screen.getByTestId("theme")).toHaveTextContent("set");
     expect(screen.getByTestId("bg")).toHaveTextContent("#1a1a2e");
