@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { CardImage } from "./CardImage";
 import { getCardSubtext } from "./subtext";
 import type { CardComponentProps } from "./types";
 import type { CardTemplateId } from "@/lib/themes/types";
@@ -20,12 +20,9 @@ export function PolaroidCard({
     >
       <div className="relative overflow-hidden">
         {thumbnailUrl ? (
-          <Image
+          <CardImage
             src={thumbnailUrl}
             alt={name}
-            width={0}
-            height={0}
-            sizes="100vw"
             className="block h-auto w-full"
           />
         ) : (

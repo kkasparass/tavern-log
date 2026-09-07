@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { CardImage } from "./CardImage";
 import { getCardSubtext } from "./subtext";
 import type { CardComponentProps } from "./types";
 import type { CardTemplateId } from "@/lib/themes/types";
@@ -16,11 +16,9 @@ export function CompactCard({
     <div className="flex items-center gap-4 rounded-lg bg-white/5 p-4">
       <div className="h-16 w-16 shrink-0 overflow-hidden rounded-full bg-white/10">
         {thumbnailUrl ? (
-          <Image
+          <CardImage
             src={thumbnailUrl}
             alt={name}
-            width={0}
-            height={0}
             sizes="64px"
             className="block h-full w-full object-cover"
           />

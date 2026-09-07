@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { CardImage } from "./CardImage";
 import { getCardSubtext } from "./subtext";
 import type { CardComponentProps } from "./types";
 import { CardImageAlignment } from "@/lib/themes/types";
@@ -21,11 +21,9 @@ export function BannerCard({
     >
       <div className="relative w-2/5 shrink-0 overflow-hidden">
         {thumbnailUrl ? (
-          <Image
+          <CardImage
             src={thumbnailUrl}
             alt={name}
-            width={0}
-            height={0}
             sizes="40vw"
             className="block h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
           />
