@@ -1,8 +1,8 @@
 ## 1. Types and resolution foundation
 
-- [ ] 1.1 Add `CardTemplateId` enum (`portrait`, `banner`, `compact`, `polaroid`), per-template settings types (`PortraitSettings = {}`, `BannerSettings`, `CompactSettings`, `PolaroidSettings`), `SettingsOf<T>` mapping, and `cardLabel()` helper in `apps/web/src/lib/themes/types.ts` (effort: 1)
-- [ ] 1.2 Build `resolveCard()` in `apps/web/src/lib/themes/` — reads `theme.card` from raw JSON, validates template against the registry, sanitises settings (merge over declared defaults, drop unknown keys, type-check against default types), falls back to `{ template: "portrait", settings: {} }` for missing/legacy/invalid input; generic `resolveCard<T>` narrowing to `SettingsOf<T>` without casts (effort: 2)
-- [ ] 1.3 Test `resolveCard` — defaults on missing/legacy flat shape/garbage input; unknown template id → portrait; unknown settings keys dropped; mistyped values fall back to defaults; typed narrowing compiles without casts (effort: 2)
+- [x] 1.1 Add `CardTemplateId` enum (`portrait`, `banner`, `compact`, `polaroid`), per-template settings types (`PortraitSettings = {}`, `BannerSettings`, `CompactSettings`, `PolaroidSettings`), `SettingsOf<T>` mapping, and `cardLabel()` helper in `apps/web/src/lib/themes/types.ts` (effort: 1)
+- [x] 1.2 Build `resolveCard()` in `apps/web/src/lib/themes/` — reads `theme.card` from raw JSON, validates template against the registry, sanitises settings (merge over declared defaults, drop unknown keys, type-check against default types), falls back to `{ template: "portrait", settings: {} }` for missing/legacy/invalid input; generic `resolveCard<T>` narrowing to `SettingsOf<T>` without casts (effort: 2)
+- [x] 1.3 Test `resolveCard` — defaults on missing/legacy flat shape/garbage input; unknown template id → portrait; unknown settings keys dropped; mistyped values fall back to defaults; typed narrowing compiles without casts (effort: 2)
 
 ## 2. Card template registry and components
 
