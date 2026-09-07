@@ -12,6 +12,10 @@ function renderPolaroid(
   return render(<PolaroidCard {...mockCharacterListItem} {...props} settings={settings} />);
 }
 
+function frameOf(container: HTMLElement): HTMLElement {
+  return container.firstElementChild as HTMLElement;
+}
+
 describe("PolaroidCard", () => {
   it("renders name, tagline and tags on the frame", () => {
     renderPolaroid();
@@ -26,21 +30,19 @@ describe("PolaroidCard", () => {
 
   it("applies the rotation and frame colour to the frame element", () => {
     const { container } = renderPolaroid();
-    const frame = container.firstElementChild as HTMLElement;
+    const frame = frameOf(container);
     expect(frame.style.transform).toBe("rotate(-3deg)");
     expect(frame.style.backgroundColor).toBe("rgb(245, 240, 230)");
   });
 
   it("clamps rotation to ±6 degrees", () => {
     const { container } = renderPolaroid({}, { rotation: 45, frameColor: "#ffffff" });
-    expect((container.firstElementChild as HTMLElement).style.transform).toBe("rotate(6deg)");
+    expect(frameOf(container).style.transform).toBe("rotate(6deg)");
   });
 
   it("applies the frame colour to the frame background", () => {
     const { container } = renderPolaroid({}, { rotation: 0, frameColor: "#ff0000" });
-    expect((container.firstElementChild as HTMLElement).style.backgroundColor).toBe(
-      "rgb(255, 0, 0)"
-    );
+    expect(frameOf(container).style.backgroundColor).toBe("rgb(255, 0, 0)");
   });
 
   it("renders thumbnail image when thumbnailUrl is set", () => {

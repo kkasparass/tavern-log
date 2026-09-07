@@ -6,18 +6,18 @@
 
 ## 2. Card template registry and components
 
-- [ ] 2.1 Create the registry in `apps/web/src/lib/themes/cardTemplates.ts` — `Record<CardTemplateId, { label, CardComponent, SettingsControls, defaultSettings }>` mirroring the `decorations.ts` pattern; extract shared subtext logic (`tagline ?? first 3 tags`, omitted when both empty) for reuse by all card components (effort: 1)
-- [ ] 2.2 Extract the current card into `PortraitCard.tsx` (2:3 full-bleed image, gradient overlay, bottom-anchored text, hover zoom) with `{}` settings; move existing `CharacterCard.test.tsx` portrait assertions onto it (effort: 2)
-- [ ] 2.3 Build `BannerCard.tsx` — horizontal thumbnail-left/text-right layout with `imageAlignment: "left" | "right"` mirroring; placeholder handling for missing thumbnails (effort: 2)
-- [ ] 2.4 Build `CompactCard.tsx` — dense row: avatar circle + name + tagline, tags row toggled by `showTags` (effort: 1)
-- [ ] 2.5 Build `PolaroidCard.tsx` — framed/tilted decorative variant with `rotation` (clamped to ±6°) and `frameColor` settings (effort: 2)
-- [ ] 2.6 Test each template component — renders name/tagline/tags/thumbnail per its settings; settings toggles visibly change output (banner mirrors, compact hides tags, polaroid applies rotation/colour) (effort: 3)
+- [x] 2.1 Create the registry in `apps/web/src/lib/themes/cardTemplates.ts` — `Record<CardTemplateId, { label, CardComponent, SettingsControls, defaultSettings }>` mirroring the `decorations.ts` pattern; extract shared subtext logic (`tagline ?? first 3 tags`, omitted when both empty) for reuse by all card components (effort: 1)
+- [x] 2.2 Extract the current card into `PortraitCard.tsx` (2:3 full-bleed image, gradient overlay, bottom-anchored text, hover zoom) with `{}` settings; move existing `CharacterCard.test.tsx` portrait assertions onto it (effort: 2)
+- [x] 2.3 Build `BannerCard.tsx` — horizontal thumbnail-left/text-right layout with `imageAlignment: "left" | "right"` mirroring; placeholder handling for missing thumbnails (effort: 2)
+- [x] 2.4 Build `CompactCard.tsx` — dense row: avatar circle + name + tagline, tags row toggled by `showTags` (effort: 1)
+- [x] 2.5 Build `PolaroidCard.tsx` — framed/tilted decorative variant with `rotation` (clamped to ±6°) and `frameColor` settings (effort: 2)
+- [x] 2.6 Test each template component — renders name/tagline/tags/thumbnail per its settings; settings toggles visibly change output (banner mirrors, compact hides tags, polaroid applies rotation/colour) (effort: 3)
 
 ## 3. Card dispatcher on the landing page
 
-- [ ] 3.1 Refactor `CharacterCard.tsx` into a dispatcher — `resolveTheme(theme)` + `resolveCard(theme)` on the raw JSON, registry lookup, portrait fallback for unknown ids; hover wiring (`hoverPreview`/`clearHoverPreview`) and `TransitionLink` navigation live in the dispatcher so every template inherits them (effort: 2)
-- [ ] 3.2 Verify `CharacterGrid` single-column layout holds with mixed template heights; adjust card container spacing so polaroid rotation doesn't shift layout (effort: 1)
-- [ ] 3.3 Test dispatcher — renders the stored template per character; falls back to portrait; `hoverPreview`/`clearHoverPreview` fire with the resolved theme from every template; `TransitionLink` receives correct `href` + theme; existing `CharacterCard.test.tsx` suite stays green (effort: 2)
+- [x] 3.1 Refactor `CharacterCard.tsx` into a dispatcher — `resolveTheme(theme)` + `resolveCard(theme)` on the raw JSON, registry lookup, portrait fallback for unknown ids; hover wiring (`hoverPreview`/`clearHoverPreview`) and `TransitionLink` navigation live in the dispatcher so every template inherits them (effort: 2)
+- [x] 3.2 Verify `CharacterGrid` single-column layout holds with mixed template heights; adjust card container spacing so polaroid rotation doesn't shift layout (effort: 1)
+- [x] 3.3 Test dispatcher — renders the stored template per character; falls back to portrait; `hoverPreview`/`clearHoverPreview` fire with the resolved theme from every template; `TransitionLink` receives correct `href` + theme; existing `CharacterCard.test.tsx` suite stays green (effort: 2)
 
 ## 4. Admin template section
 

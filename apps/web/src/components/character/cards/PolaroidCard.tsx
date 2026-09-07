@@ -15,7 +15,7 @@ export function PolaroidCard({
 
   return (
     <div
-      className="rounded-sm p-3 shadow-lg"
+      className="m-3 rounded-sm p-3 shadow-lg"
       style={{ backgroundColor: settings.frameColor, transform: `rotate(${rotation}deg)` }}
     >
       <div className="relative overflow-hidden">
